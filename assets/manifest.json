@@ -7,7 +7,7 @@
       "off-off": {
         "label": "off-off",
         "baseSha1": "F623DE7ED838A2F7A359557D6C8FFFA10E2DE3DE",
-        "patchedSha1": "50DDFCA0FB56D30EE95FA56590B18F2B9AFCCB10",
+        "patchedSha1": "BBC53AFEB7F2D8B16282BC26A5F692DB6B64FCDC",
         "size": 179212648,
         "enablePatch": "brggame-off-off-enable.lidbin",
         "disablePatch": "brggame-off-off-disable.lidbin"
@@ -15,7 +15,7 @@
       "on-off": {
         "label": "on-off",
         "baseSha1": "981D7513E12FD7BB5B4C3FB510A1D88DC2196967",
-        "patchedSha1": "F421256D190B1D1E999EB934BDD51EC79216A194",
+        "patchedSha1": "F366C43AF0F0FC34FBD7450933B42013F3859886",
         "size": 179212648,
         "enablePatch": "brggame-on-off-enable.lidbin",
         "disablePatch": "brggame-on-off-disable.lidbin"
@@ -23,7 +23,7 @@
       "off-on": {
         "label": "off-on",
         "baseSha1": "1B82F2C30115F52EC8BBF118AC71F88BF1F31BEF",
-        "patchedSha1": "5361DC47653B2B66D82C24D0F74C47A018EDC998",
+        "patchedSha1": "16E8DCE4BF7F66E0A1A5B31379076C07BBC98812",
         "size": 179212648,
         "enablePatch": "brggame-off-on-enable.lidbin",
         "disablePatch": "brggame-off-on-disable.lidbin"
@@ -31,7 +31,7 @@
       "on-on": {
         "label": "on-on",
         "baseSha1": "83EC668A342BFA8CBF9F35430A537A2D4CBE9B12",
-        "patchedSha1": "4E5546673DE156380C86D10D4E69D07880FF6558",
+        "patchedSha1": "49DB0A2D073A5930081F1BAE7CFABAA8B113135B",
         "size": 179212648,
         "enablePatch": "brggame-on-on-enable.lidbin",
         "disablePatch": "brggame-on-on-disable.lidbin"
@@ -39,7 +39,7 @@
       "off-on-v1.1": {
         "label": "off-on-v1.1",
         "baseSha1": "2DA3E88B05A834C530C8DBFDE9B195943A29FC49",
-        "patchedSha1": "0FEC3459AB1FE7211CE497CC35263C60A7A34003",
+        "patchedSha1": "DA4438DA274303583AE7CC3DC0A0EACF2D7BEE69",
         "size": 179212648,
         "enablePatch": "brggame-off-on-v1.1-enable.lidbin",
         "disablePatch": "brggame-off-on-v1.1-disable.lidbin"
@@ -47,7 +47,7 @@
       "on-on-v1.1": {
         "label": "on-on-v1.1",
         "baseSha1": "9CF81F5783A4C411D5A58274422660004D9090C2",
-        "patchedSha1": "CFEADD3973BE84598A6F252D358385BA705E8175",
+        "patchedSha1": "C850ACCD93B5083ACCBD053B180BAF3D75BC46E5",
         "size": 179212648,
         "enablePatch": "brggame-on-on-v1.1-enable.lidbin",
         "disablePatch": "brggame-on-on-v1.1-disable.lidbin"
@@ -57,9 +57,9 @@
   "heavenEntry": {
     "relativePath": "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
     "baseSha1": "D9FBE2E449294554A10E0AC6CE8B634BDB8804F4",
-    "patchedSha1": "5C9A2478A0DD8E0E7F8E39A7C087157DA299A36B",
+    "patchedSha1": "1830FE9CFB5639720D2C7811034EE465827EFA0F",
     "baseSize": 462127,
-    "patchedSize": 847170,
+    "patchedSize": 847056,
     "enablePatch": "heaven-entry-enable.lidbin",
     "disablePatch": "heaven-entry-disable.lidbin"
   },
