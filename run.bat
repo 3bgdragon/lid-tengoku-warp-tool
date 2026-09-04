@@ -5,6 +5,12 @@ chcp 65001 >nul
 fltmc >nul 2>nul
 if errorlevel 1 (
   powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -WorkingDirectory '%~dp0' -Verb RunAs"
+  if errorlevel 1 (
+    echo Failed to restart with administrator privileges.
+    echo Right-click run.bat and select Run as administrator.
+    pause
+    exit /b 1
+  )
   exit /b
 )
 
