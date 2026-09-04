@@ -7,7 +7,7 @@
       "off-off": {
         "label": "off-off",
         "baseSha1": "F623DE7ED838A2F7A359557D6C8FFFA10E2DE3DE",
-        "patchedSha1": "BFBAABF3EA0C76692A26C58798F531C2B5C7DB37",
+        "patchedSha1": "9CA94981C165BD27D26530B2CDDC2FEF40443213",
         "size": 179212648,
         "enablePatch": "brggame-off-off-enable.lidbin",
         "disablePatch": "brggame-off-off-disable.lidbin"
@@ -15,7 +15,7 @@
       "on-off": {
         "label": "on-off",
         "baseSha1": "981D7513E12FD7BB5B4C3FB510A1D88DC2196967",
-        "patchedSha1": "AFD888CEBAF446E14A9F37F7590AAB1B37A50E6A",
+        "patchedSha1": "E4EB2E54A4D4BAC930BC90EC355DEC8E6F2DEDC7",
         "size": 179212648,
         "enablePatch": "brggame-on-off-enable.lidbin",
         "disablePatch": "brggame-on-off-disable.lidbin"
@@ -23,7 +23,7 @@
       "off-on": {
         "label": "off-on",
         "baseSha1": "1B82F2C30115F52EC8BBF118AC71F88BF1F31BEF",
-        "patchedSha1": "BBC62BA1C5F1D6693C93D995CCF16FB2296EEF20",
+        "patchedSha1": "81ADCF5C3792944A1FF9BF637DDE4EC39D09AEB9",
         "size": 179212648,
         "enablePatch": "brggame-off-on-enable.lidbin",
         "disablePatch": "brggame-off-on-disable.lidbin"
@@ -31,7 +31,7 @@
       "on-on": {
         "label": "on-on",
         "baseSha1": "83EC668A342BFA8CBF9F35430A537A2D4CBE9B12",
-        "patchedSha1": "2868654C52F10E6FCCA98AAE1D7EFE5F4195BFD1",
+        "patchedSha1": "C31439E8C155934E0F31DBC3B502DC11DADDBA2C",
         "size": 179212648,
         "enablePatch": "brggame-on-on-enable.lidbin",
         "disablePatch": "brggame-on-on-disable.lidbin"
@@ -39,7 +39,7 @@
       "off-on-v1.1": {
         "label": "off-on-v1.1",
         "baseSha1": "2DA3E88B05A834C530C8DBFDE9B195943A29FC49",
-        "patchedSha1": "A511A986A7DC617AB7093CA0EAF7024F61258E64",
+        "patchedSha1": "35C5C27B13F996DF42F245B88248532BF7893B32",
         "size": 179212648,
         "enablePatch": "brggame-off-on-v1.1-enable.lidbin",
         "disablePatch": "brggame-off-on-v1.1-disable.lidbin"
@@ -47,7 +47,7 @@
       "on-on-v1.1": {
         "label": "on-on-v1.1",
         "baseSha1": "9CF81F5783A4C411D5A58274422660004D9090C2",
-        "patchedSha1": "B0C3BE4C9BFFF2A94EFEAF5DC2804D8E6AE4EBB6",
+        "patchedSha1": "70B91B913CF2E3B4221D0C622C527AA325F976AD",
         "size": 179212648,
         "enablePatch": "brggame-on-on-v1.1-enable.lidbin",
         "disablePatch": "brggame-on-on-v1.1-disable.lidbin"
