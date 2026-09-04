@@ -57,9 +57,9 @@
   "heavenEntry": {
     "relativePath": "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
     "baseSha1": "D9FBE2E449294554A10E0AC6CE8B634BDB8804F4",
-    "patchedSha1": "5276D527F8F9A4B61DB3699587C28826450A649F",
+    "patchedSha1": "8EAFBF85C472A60F155C71CF55E660CA162E7FF5",
     "baseSize": 462127,
-    "patchedSize": 847235,
+    "patchedSize": 847208,
     "enablePatch": "heaven-entry-enable.lidbin",
     "disablePatch": "heaven-entry-disable.lidbin"
   },
