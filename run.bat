@@ -21,7 +21,7 @@ set "NODE_EXE=node.exe"
 where node.exe >nul 2>nul
 if not errorlevel 1 goto run_tool
 
-echo Node.js was not found. Install Node.js 22.5 or newer and try again.
+echo Node.js was not found. Install Node.js 18 or newer and try again.
 pause
 exit /b 1
 
