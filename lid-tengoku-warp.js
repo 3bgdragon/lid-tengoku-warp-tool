@@ -19,7 +19,7 @@ const { DatabaseSync } = require('node:sqlite');
 const FORMAT_MAGIC = Buffer.from([0x42, 0x52, 0x47, 0x00]);
 const FORMAT_VERSION = 2;
 const FORMAT_CODEC = Buffer.from('ZLIB', 'ascii');
-const TOOL_VERSION = '0.1.0';
+const TOOL_VERSION = '0.2.0';
 const SOURCE_CHECKPOINT_AREA = 'HVN_AREA_000';
 const EXPECTED_NODE_IDS = ['4HMA', 'A', 'B', 'C', 'D'];
 const EXPECTED_UNITS = [
@@ -34,21 +34,37 @@ const WARP_POINTS = [
     floorId: 'HVN_FLR_0050',
     sourceAreaId: 'HVN_AREA_017',
     areaId: 'HVN_AREA_WARP_100',
-    stopId: 'ELV_MAIN_HVN_WARP_100',
+    stopId: 'ELV_SUB01_AMS_FLR_02_A',
+    legacyStopId: 'ELV_MAIN_HVN_WARP_100',
+    originalStop: { elvid: 'ELV_AMS_SUB01', name: 'ELEVATOR.TXT_ELV_MAIN_AMS_FLR_02' },
+    originalStopNodes: [
+      { id: '4HMA', stgid: 'S_AMS', flrid: 'AMS_FLR_02', areaid: 'AMS_AREA_V001' },
+      { id: 'A', stgid: 'S_AMS', flrid: 'AMS_FLR_02', areaid: 'AMS_AREA_V001' },
+    ],
   },
   {
     floor: 200,
     floorId: 'HVN_FLR_0150',
     sourceAreaId: 'HVN_AREA_017',
     areaId: 'HVN_AREA_WARP_200',
-    stopId: 'ELV_MAIN_HVN_WARP_200',
+    stopId: 'ELV_SUB02_AMS_FLR_02_B',
+    legacyStopId: 'ELV_MAIN_HVN_WARP_200',
+    originalStop: { elvid: 'ELV_AMS_SUB02', name: 'ELEVATOR.TXT_ELV_MAIN_AMS_FLR_02' },
+    originalStopNodes: [
+      { id: 'B', stgid: 'S_AMS', flrid: 'AMS_FLR_02', areaid: 'AMS_AREA_V008' },
+    ],
   },
   {
     floor: 300,
     floorId: 'HVN_FLR_0250',
     sourceAreaId: 'HVN_AREA_017',
     areaId: 'HVN_AREA_WARP_300',
-    stopId: 'ELV_MAIN_HVN_WARP_300',
+    stopId: 'ELV_SUB03_AMS_FLR_02_C',
+    legacyStopId: 'ELV_MAIN_HVN_WARP_300',
+    originalStop: { elvid: 'ELV_AMS_SUB03', name: 'ELEVATOR.TXT_ELV_MAIN_AMS_FLR_02' },
+    originalStopNodes: [
+      { id: 'C', stgid: 'S_AMS', flrid: 'AMS_FLR_02', areaid: 'AMS_AREA_V017' },
+    ],
   },
 ];
 
@@ -411,16 +427,14 @@ function replaceOpenElevatorFloors(save, operation) {
     fail('엘리베이터 해금 목록 교차 검증에 실패했습니다.');
   }
 
-  const warpIds = new Set(WARP_POINTS.map((point) => point.stopId));
-  let changed;
+  const changed = [...current];
   if (operation === 'install') {
-    changed = [...current];
     const existing = new Set(changed.map((entry) => entry.id));
     for (const point of WARP_POINTS) {
       if (!existing.has(point.stopId)) changed.push({ id: point.stopId });
     }
-  } else {
-    changed = current.filter((entry) => !warpIds.has(entry.id));
+  } else if (operation !== 'remove') {
+    fail(`알 수 없는 세이브 작업입니다: ${operation}`);
   }
 
   const jsonText = save.jsonText.slice(0, field.valueStart) +
@@ -432,8 +446,9 @@ function replaceOpenElevatorFloors(save, operation) {
     fail(`수정된 세이브 JSON 검증에 실패했습니다: ${error.message}`);
   }
   const ids = new Set(verified.soul.openelvflr.map((entry) => entry.id));
-  const correct = WARP_POINTS.every((point) =>
-    operation === 'install' ? ids.has(point.stopId) : !ids.has(point.stopId));
+  const correct = operation === 'install'
+    ? WARP_POINTS.every((point) => ids.has(point.stopId))
+    : JSON.stringify(verified.soul.openelvflr) === JSON.stringify(current);
   if (!correct) fail('수정된 엘리베이터 해금 목록 검증에 실패했습니다.');
   return { jsonText, changedCount: Math.abs(changed.length - current.length) };
 }
@@ -528,8 +543,16 @@ function getDatabasePatchState(database) {
       ).get('S_HVN', point.areaId).count,
       nodes: database.prepare(
         'SELECT COUNT(*) count FROM master_area_connect_node ' +
+        'WHERE stgid = ? AND flrid = ? AND areaid = ?',
+      ).get('S_HVN', point.floorId, point.areaId).count,
+      patchedNodes: database.prepare(
+        'SELECT COUNT(*) count FROM master_area_connect_node ' +
         'WHERE stgid = ? AND flrid = ? AND areaid = ? AND elvflrid = ?',
       ).get('S_HVN', point.floorId, point.areaId, point.stopId).count,
+      legacyNodes: database.prepare(
+        'SELECT COUNT(*) count FROM master_area_connect_node ' +
+        'WHERE stgid = ? AND flrid = ? AND areaid = ? AND elvflrid = ?',
+      ).get('S_HVN', point.floorId, point.areaId, point.legacyStopId).count,
       areaEscalators: database.prepare(
         'SELECT COUNT(*) count FROM master_area_escalator WHERE ' +
         '(uflrid = ? AND uareaid = ?) OR (lflrid = ? AND lareaid = ?)',
@@ -538,35 +561,94 @@ function getDatabasePatchState(database) {
         'SELECT COUNT(*) count FROM master_area_connect_escalator ' +
         'WHERE stgid = ? AND flrid = ? AND areaid = ?',
       ).get('S_HVN', point.floorId, point.areaId).count,
-      stop: database.prepare(
+      patchedStop: database.prepare(
         'SELECT COUNT(*) count FROM master_elevator_stop_floor ' +
         'WHERE id = ? AND elvid = ? AND name = ?',
       ).get(point.stopId, 'ELV_MAIN', '').count,
+      originalStop: database.prepare(
+        'SELECT COUNT(*) count FROM master_elevator_stop_floor ' +
+        'WHERE id = ? AND elvid = ? AND name = ?',
+      ).get(point.stopId, point.originalStop.elvid, point.originalStop.name).count,
+      legacyStop: database.prepare(
+        'SELECT COUNT(*) count FROM master_elevator_stop_floor ' +
+        'WHERE id = ? AND elvid = ? AND name = ?',
+      ).get(point.legacyStopId, 'ELV_MAIN', '').count,
+      stopNodeRefs: database.prepare(
+        'SELECT COUNT(*) count FROM master_area_connect_node WHERE elvflrid = ?',
+      ).get(point.stopId).count,
     };
-    const installed = counts.floor === 1 && counts.setting === 1 &&
+    counts.originalNodeRefs = point.originalStopNodes.filter((node) =>
+      database.prepare(
+        'SELECT COUNT(*) count FROM master_area_connect_node ' +
+        'WHERE id = ? AND stgid = ? AND flrid = ? AND areaid = ? AND elvflrid = ?',
+      ).get(node.id, node.stgid, node.flrid, node.areaid, point.stopId).count === 1,
+    ).length;
+    const customCoreInstalled = counts.floor === 1 && counts.setting === 1 &&
       counts.units === EXPECTED_UNITS.length && counts.nodes === EXPECTED_NODE_IDS.length &&
-      counts.areaEscalators === 2 && counts.connectEscalators === EXPECTED_NODE_IDS.length * 2 &&
-      counts.stop === 1;
-    const artifactCount = Object.values(counts).reduce((sum, value) => sum + value, 0);
-    points.push({ point, counts, installed, artifactCount });
+      counts.areaEscalators === 2 && counts.connectEscalators === EXPECTED_NODE_IDS.length * 2;
+    const installed = customCoreInstalled && counts.patchedNodes === EXPECTED_NODE_IDS.length &&
+      counts.legacyNodes === 0 && counts.patchedStop === 1 && counts.originalStop === 0 &&
+      counts.legacyStop === 0 && counts.originalNodeRefs === 0 &&
+      counts.stopNodeRefs === EXPECTED_NODE_IDS.length;
+    const legacyInstalled = customCoreInstalled && counts.legacyNodes === EXPECTED_NODE_IDS.length &&
+      counts.patchedNodes === 0 && counts.patchedStop === 0 && counts.originalStop === 1 &&
+      counts.legacyStop === 1 && counts.originalNodeRefs === point.originalStopNodes.length &&
+      counts.stopNodeRefs === point.originalStopNodes.length;
+    const artifactCount = counts.floor + counts.setting + counts.units + counts.nodes +
+      counts.areaEscalators + counts.connectEscalators + counts.legacyStop;
+    const clean = artifactCount === 0 && counts.originalStop === 1 && counts.patchedStop === 0 &&
+      counts.originalNodeRefs === point.originalStopNodes.length &&
+      counts.stopNodeRefs === point.originalStopNodes.length;
+    points.push({ point, counts, installed, legacyInstalled, clean, artifactCount });
   }
   const allInstalled = points.every((item) => item.installed);
-  const noneInstalled = points.every((item) => item.artifactCount === 0);
+  const allLegacyInstalled = points.every((item) => item.legacyInstalled);
+  const allClean = points.every((item) => item.clean);
   return {
     points,
-    state: allInstalled ? 'installed' : noneInstalled ? 'clean' : 'partial',
+    state: allInstalled ? 'installed' : allLegacyInstalled ? 'legacy-installed' : allClean ? 'clean' : 'partial',
   };
+}
+
+function repurposeOfficialStop(database, point) {
+  for (const node of point.originalStopNodes) {
+    const result = database.prepare(
+      'UPDATE master_area_connect_node SET elvflrid = ? ' +
+      'WHERE id = ? AND stgid = ? AND flrid = ? AND areaid = ? AND elvflrid = ?',
+    ).run('', node.id, node.stgid, node.flrid, node.areaid, point.stopId);
+    if (result.changes !== 1) fail(`${point.floor}층용 공식 엘리베이터 연결을 분리하지 못했습니다.`);
+  }
+  const result = database.prepare(
+    'UPDATE master_elevator_stop_floor SET elvid = ?, name = ? ' +
+    'WHERE id = ? AND elvid = ? AND name = ?',
+  ).run('ELV_MAIN', '', point.stopId, point.originalStop.elvid, point.originalStop.name);
+  if (result.changes !== 1) fail(`${point.floor}층용 공식 엘리베이터 정차 항목을 전환하지 못했습니다.`);
+}
+
+function restoreOfficialStop(database, point) {
+  const stop = database.prepare('SELECT * FROM master_elevator_stop_floor WHERE id = ?').all(point.stopId);
+  if (stop.length !== 1) fail(`${point.floor}층용 공식 엘리베이터 정차 항목을 복원할 수 없습니다.`);
+  database.prepare(
+    'UPDATE master_elevator_stop_floor SET elvid = ?, name = ? WHERE id = ?',
+  ).run(point.originalStop.elvid, point.originalStop.name, point.stopId);
+  for (const node of point.originalStopNodes) {
+    const result = database.prepare(
+      'UPDATE master_area_connect_node SET elvflrid = ? ' +
+      'WHERE id = ? AND stgid = ? AND flrid = ? AND areaid = ?',
+    ).run(point.stopId, node.id, node.stgid, node.flrid, node.areaid);
+    if (result.changes !== 1) fail(`${point.floor}층용 원본 엘리베이터 연결을 복원하지 못했습니다.`);
+  }
 }
 
 function installDatabasePatch(databasePath) {
   const database = new DatabaseSync(databasePath);
   try {
-    validateBaseline(database);
     const before = getDatabasePatchState(database);
     if (before.state === 'installed') return { alreadyInstalled: true };
     if (before.state === 'partial') {
       fail('마스터 DB에 불완전한 텐고쿠 워프 패치 흔적이 있습니다. 최신 백업을 복원하세요.');
     }
+    validateBaseline(database);
     let nextIndex = database.prepare('SELECT MAX(idx) value FROM master_floor').get().value + 1;
     let nextEscalatorIndex = Math.max(
       database.prepare('SELECT MAX(idx) value FROM master_area_escalator').get().value,
@@ -582,6 +664,23 @@ function installDatabasePatch(databasePath) {
       ).all('S_HVN', SOURCE_CHECKPOINT_AREA);
 
       for (const point of WARP_POINTS) {
+        if (before.state === 'legacy-installed') {
+          const updated = database.prepare(
+            'UPDATE master_area_connect_node SET elvflrid = ? ' +
+            'WHERE stgid = ? AND flrid = ? AND areaid = ? AND elvflrid = ?',
+          ).run(point.stopId, 'S_HVN', point.floorId, point.areaId, point.legacyStopId);
+          if (updated.changes !== EXPECTED_NODE_IDS.length) {
+            fail(`${point.floor}층 구형 워프 연결을 변환하지 못했습니다.`);
+          }
+          const removed = database.prepare(
+            'DELETE FROM master_elevator_stop_floor WHERE id = ? AND elvid = ? AND name = ?',
+          ).run(point.legacyStopId, 'ELV_MAIN', '');
+          if (removed.changes !== 1) fail(`${point.floor}층 구형 정차 항목을 제거하지 못했습니다.`);
+          repurposeOfficialStop(database, point);
+          continue;
+        }
+
+        repurposeOfficialStop(database, point);
         const sourceFloor = database.prepare(
           'SELECT * FROM master_floor WHERE id = ? AND areaid = ? AND stgid = ?',
         ).get(point.floorId, point.sourceAreaId, 'S_HVN');
@@ -655,11 +754,6 @@ function installDatabasePatch(databasePath) {
           });
         }
 
-        insertObject(database, 'master_elevator_stop_floor', {
-          id: point.stopId,
-          elvid: 'ELV_MAIN',
-          name: '',
-        });
         nextIndex += 1;
       }
 
@@ -672,7 +766,7 @@ function installDatabasePatch(databasePath) {
       try { database.exec('ROLLBACK'); } catch {}
       throw error;
     }
-    return { alreadyInstalled: false };
+    return { alreadyInstalled: false, migrated: before.state === 'legacy-installed' };
   } finally {
     database.close();
   }
@@ -689,7 +783,7 @@ function removeDatabasePatch(databasePath) {
     database.exec('BEGIN IMMEDIATE');
     try {
       for (const point of [...WARP_POINTS].reverse()) {
-        database.prepare('DELETE FROM master_elevator_stop_floor WHERE id = ?').run(point.stopId);
+        database.prepare('DELETE FROM master_elevator_stop_floor WHERE id = ?').run(point.legacyStopId);
         database.prepare(
           'DELETE FROM master_area_connect_escalator WHERE stgid = ? AND flrid = ? AND areaid = ?',
         ).run('S_HVN', point.floorId, point.areaId);
@@ -708,6 +802,7 @@ function removeDatabasePatch(databasePath) {
         ).run('S_HVN', point.areaId);
         database.prepare('DELETE FROM master_floor WHERE id = ? AND areaid = ?')
           .run(point.floorId, point.areaId);
+        restoreOfficialStop(database, point);
       }
       const integrity = database.prepare('PRAGMA integrity_check').get();
       if (integrity.integrity_check !== 'ok') fail(`마스터 DB 무결성 검사 실패: ${integrity.integrity_check}`);
@@ -865,15 +960,11 @@ function getStatus(masterPath, savePath) {
 function applyPatch(masterPath, savePath) {
   if (isGameRunning()) fail('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.');
   const before = getStatus(masterPath, savePath);
-  if (before.databaseState.state === 'partial' ||
-      (before.saveCount !== 0 && before.saveCount !== WARP_POINTS.length)) {
+  if (before.databaseState.state === 'partial') {
     fail('DB 또는 세이브에 불완전한 워프 패치 흔적이 있습니다. 최신 백업을 복원하세요.');
   }
   if (before.databaseState.state === 'installed' && before.saveCount === WARP_POINTS.length) {
     return { alreadyInstalled: true, backup: null };
-  }
-  if (before.databaseState.state !== 'clean' || before.saveCount !== 0) {
-    fail('DB와 세이브의 패치 상태가 서로 다릅니다. 최신 백업을 복원하세요.');
   }
 
   const originalMasterHash = sha256File(masterPath);
@@ -885,12 +976,14 @@ function applyPatch(masterPath, savePath) {
     }
     installDatabasePatch(masterPath);
     const replacement = replaceOpenElevatorFloors(before.save, 'install');
-    const packed = packSave(
-      replacement.jsonText,
-      before.save.blockCount,
-      before.save.trailer,
-    );
-    writeSaveAtomic(savePath, packed, originalSaveHash, 'tengoku-warp-install');
+    if (replacement.changedCount > 0) {
+      const packed = packSave(
+        replacement.jsonText,
+        before.save.blockCount,
+        before.save.trailer,
+      );
+      writeSaveAtomic(savePath, packed, originalSaveHash, 'tengoku-warp-install');
+    }
     const after = getStatus(masterPath, savePath);
     if (after.databaseState.state !== 'installed' || after.saveCount !== WARP_POINTS.length) {
       fail('패치 최종 검증에 실패했습니다.');
@@ -907,16 +1000,20 @@ function applyPatch(masterPath, savePath) {
     }
     throw error;
   }
-  return { alreadyInstalled: false, backup };
+  return {
+    alreadyInstalled: false,
+    migrated: before.databaseState.state === 'legacy-installed',
+    backup,
+  };
 }
 
 function removePatch(masterPath, savePath) {
   if (isGameRunning()) fail('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.');
   const before = getStatus(masterPath, savePath);
-  if (before.databaseState.state === 'clean' && before.saveCount === 0) {
+  if (before.databaseState.state === 'clean') {
     return { alreadyRemoved: true, backup: null };
   }
-  if (before.databaseState.state !== 'installed' || before.saveCount !== WARP_POINTS.length) {
+  if (before.databaseState.state === 'partial') {
     fail('DB와 세이브의 패치 상태가 불완전합니다. 최신 백업 복원을 사용하세요.');
   }
   const masterHash = sha256File(masterPath);
@@ -925,10 +1022,12 @@ function removePatch(masterPath, savePath) {
   try {
     removeDatabasePatch(masterPath);
     const replacement = replaceOpenElevatorFloors(before.save, 'remove');
-    const packed = packSave(replacement.jsonText, before.save.blockCount, before.save.trailer);
-    writeSaveAtomic(savePath, packed, saveHash, 'tengoku-warp-remove');
+    if (replacement.changedCount > 0) {
+      const packed = packSave(replacement.jsonText, before.save.blockCount, before.save.trailer);
+      writeSaveAtomic(savePath, packed, saveHash, 'tengoku-warp-remove');
+    }
     const after = getStatus(masterPath, savePath);
-    if (after.databaseState.state !== 'clean' || after.saveCount !== 0) {
+    if (after.databaseState.state !== 'clean') {
       fail('패치 제거 최종 검증에 실패했습니다.');
     }
   } catch (error) {
@@ -977,15 +1076,21 @@ function restoreBackup(masterPath, savePath, requestedDirectory) {
 }
 
 function printStatus(masterPath, savePath, status) {
-  const labels = { clean: '미적용', installed: '적용됨', partial: '불완전' };
+  const labels = {
+    clean: '미적용',
+    installed: '적용됨',
+    'legacy-installed': '구형 패치(자동 변환 가능)',
+    partial: '불완전',
+  };
   console.log(`\n마스터 DB: ${masterPath}`);
   console.log(`세이브: ${savePath}`);
   console.log(`DB 패치: ${labels[status.databaseState.state]}`);
-  console.log(`세이브 워프 해금: ${status.saveCount}/${WARP_POINTS.length}`);
+  console.log(`세이브 공식 ID 준비: ${status.saveCount}/${WARP_POINTS.length}`);
   for (const item of status.databaseState.points) {
     const open = status.save.data.soul.openelvflr.some((entry) => entry.id === item.point.stopId);
-    console.log(`  ${item.point.floor}층: DB ${item.installed ? '완료' : item.artifactCount ? '불완전' : '없음'} / ` +
-      `세이브 ${open ? '해금' : '미해금'}`);
+    const dbLabel = item.installed ? '완료' : item.legacyInstalled ? '구형' :
+      item.artifactCount ? '불완전' : '없음';
+    console.log(`  ${item.point.floor}층: DB ${dbLabel} / 공식 ID ${open ? '준비됨' : '없음'}`);
   }
   console.log(`DB SHA-256: ${sha256File(masterPath)}`);
   console.log(`세이브 SHA-256: ${sha256Buffer(status.save.packed)}`);
@@ -1071,10 +1176,11 @@ async function interactive(rl, paths) {
     const answer = (await rl.question('선택: ')).trim();
     if (answer === '1') {
       console.log('\n주의: 자연 진행용 100·200·300층은 그대로 두고, 엘리베이터 전용 체크포인트 영역을 추가합니다.');
+      console.log('패치 중에는 22층 보조 엘리베이터 정차 지점 3개를 워프 ID로 재사용하며, 제거하면 원래대로 복원됩니다.');
       if (!await confirm(rl, '게임이 완전히 종료되어 있습니까? 패치를 적용할까요?')) continue;
       const result = applyPatch(paths.masterPath, paths.savePath);
       if (result.alreadyInstalled) console.log('이미 패치가 적용되어 있습니다.');
-      else console.log(`적용 완료. 백업: ${result.backup.directory}`);
+      else console.log(`${result.migrated ? '구형 패치 변환' : '적용'} 완료. 백업: ${result.backup.directory}`);
     } else if (answer === '2') {
       if (!await confirm(rl, '도구가 추가한 워프 데이터만 제거할까요?')) continue;
       const result = removePatch(paths.masterPath, paths.savePath);
