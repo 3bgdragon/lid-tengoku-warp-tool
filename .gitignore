@@ -1,0 +1,5 @@
+backups/*
+!backups/.gitkeep
+.integration-temp/
+*.tmp
+*.rollback
