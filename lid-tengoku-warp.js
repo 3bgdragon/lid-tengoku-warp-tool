@@ -293,7 +293,7 @@ function printStatus(status) {
   console.log(`BrgGame 변형: ${profileLabel(status.brgGame.profileName)}`);
   console.log(`50층 진입 맵: ${status.heavenEntry.enabled === true ? '선택 메뉴 적용' :
     status.heavenEntry.enabled === false ? '순정' : `지원하지 않음 (${status.heavenEntry.hash})`}`);
-  console.log(`에스컬레이터 예약 이동: ${status.executable.native.enabled === true ? '네이티브 이동 연결 적용 (실게임 검증 중)' :
+  console.log(`에스컬레이터 예약 이동: ${status.executable.native.enabled === true ? '적용됨 (51·101·201·301층 사용자 실게임 확인 완료)' :
     status.executable.native.enabled === false ? '순정' : '지원하지 않는 실행 파일'}`);
   if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
   console.log(`실행 파일 해시 연결: ${status.executable.valid ? '정상' : '불일치'}`);

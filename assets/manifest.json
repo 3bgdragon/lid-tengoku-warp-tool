@@ -1,7 +1,7 @@
 {
   "format": 1,
   "gameVersion": "5.0.1.0",
-  "releaseStatus": "static-verified-awaiting-gameplay",
+  "releaseStatus": "verified-escalator-routing",
   "brgGame": {
     "relativePath": "BrgGame/CookedPCConsole/BrgGame.upk",
     "profiles": {
