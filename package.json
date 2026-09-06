@@ -1,6 +1,6 @@
 {
   "name": "lid-tengoku-warp-tool",
-  "version": "1.0.6",
+  "version": "1.0.9-dev",
   "description": "LET IT DIE 5.0.1.0 offline standard Tengoku start-floor selector patch and restore tool",
   "license": "MIT",
   "private": false,
@@ -8,6 +8,7 @@
     "node": ">=18"
   },
   "scripts": {
+    "test": "node --test tests/*.test.js",
     "check": "node --check lid-tengoku-warp.js",
     "status": "node --no-warnings lid-tengoku-warp.js status"
   }

@@ -10,7 +10,7 @@ const readline = require('readline/promises');
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
 const ASSET_DIRECTORY = path.join(__dirname, 'assets');
 const manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
-const FILE_KEYS = ['brgGame', 'heavenEntry', 'executable'];
+const FILE_KEYS = ['brgGame', 'heavenEntry', 'brgStart', 'executable'];
 
 function fail(message) {
   const error = new Error(message);
@@ -106,6 +106,7 @@ function expectedPaths(gameDirectory) {
   return {
     brgGame: fromManifest(manifest.brgGame.relativePath),
     heavenEntry: fromManifest(manifest.heavenEntry.relativePath),
+    brgStart: fromManifest(manifest.brgStart.relativePath),
     executable: fromManifest(manifest.executable.relativePath),
   };
 }
@@ -124,7 +125,8 @@ function resolveGameInput(input) {
     const lower = resolved.toLowerCase();
     if (lower.endsWith('\\binaries\\win64\\brggame-steam.exe')) candidates.push(path.resolve(resolved, '..', '..', '..'));
     if (lower.endsWith('\\brggame\\cookedpcconsole\\brggame.upk') ||
-        lower.endsWith('\\brggame\\cookedpcconsole\\heaven_a01_st_col.upk')) {
+        lower.endsWith('\\brggame\\cookedpcconsole\\heaven_a01_st_col.upk') ||
+        lower.endsWith('\\brggame\\cookedpcconsole\\brgstart_pl.upk')) {
       candidates.push(path.resolve(resolved, '..', '..', '..'));
     }
   } else {
@@ -160,7 +162,7 @@ async function chooseGameDirectory(rl, explicitPath, interactiveMode) {
   } else console.log('\nLET IT DIE 설치 폴더를 자동으로 찾지 못했습니다.');
   const entered = await rl.question('게임 설치 폴더 또는 BrgGame-Steam.exe/UPK 경로: ');
   const resolved = resolveGameInput(entered);
-  if (resolved.length !== 1) fail(`해당 경로에서 LET IT DIE 설치 파일 3개를 찾지 못했습니다: ${stripQuotes(entered)}`);
+  if (resolved.length !== 1) fail(`해당 경로에서 LET IT DIE 필수 설치 파일을 찾지 못했습니다: ${stripQuotes(entered)}`);
   return resolved[0];
 }
 
@@ -189,6 +191,16 @@ function identifyHeavenEntry(filePath) {
   const size = fs.statSync(filePath).size;
   if (hash === manifest.heavenEntry.baseSha1) return { hash, size, enabled: false };
   if (hash === manifest.heavenEntry.patchedSha1) return { hash, size, enabled: true };
+  const legacy = (manifest.heavenEntry.legacy || []).find((item) => item.sha1 === hash);
+  if (legacy) return { hash, size, enabled: true, upgradePatch: legacy.upgradePatch, disablePatch: legacy.disablePatch };
+  return { hash, size, enabled: null };
+}
+
+function identifyBrgStart(filePath) {
+  const hash = sha1File(filePath);
+  const size = fs.statSync(filePath).size;
+  if (hash === manifest.brgStart.baseSha1) return { hash, size, enabled: false };
+  if (hash === manifest.brgStart.patchedSha1) return { hash, size, enabled: true };
   return { hash, size, enabled: null };
 }
 
@@ -219,19 +231,51 @@ function inspectExecutable(executablePath, expectedHashes) {
     const digests = offsets.map((offset) => executable.subarray(offset, offset + 20).toString('hex').toUpperCase());
     entries[assetName] = { offsets, digests, valid: digests.every((value) => value === expectedHashes[assetName]) };
   }
-  return { entries, valid: Object.values(entries).every((entry) => entry.valid) };
+  const native = identifyNativeExecutable(executable);
+  return { entries, native, valid: native.enabled !== null && Object.values(entries).every((entry) => entry.valid) };
+}
+
+function normalizedExecutable(executable) {
+  const result = Buffer.from(executable);
+  for (const [assetName, count] of Object.entries(manifest.executable.manifestEntries)) {
+    for (const offset of manifestDigestOffsets(result, assetName, count)) result.fill(0, offset, offset + 20);
+  }
+  return result;
+}
+
+function identifyNativeExecutable(executable) {
+  const definitions = [manifest.executable.native, ...Object.values(manifest.executable.nativeVariants || {})].filter(Boolean);
+  if (!definitions.length) return { enabled: false, hash: null };
+  const hash = crypto.createHash('sha1').update(normalizedExecutable(executable)).digest('hex').toUpperCase();
+  const definition = definitions.find((item) => hash === item.baseSha1 || hash === item.patchedSha1);
+  if (!definition) {
+    for (const item of definitions) {
+      const legacy = (item.legacy || []).find((old) => old.sha1 === hash);
+      if (legacy) return { hash, definition: item, enabled: true, upgradePatch: legacy.upgradePatch, disablePatch: legacy.disablePatch };
+    }
+  }
+  return { hash, definition, enabled: definition ? hash === definition.patchedSha1 : null };
 }
 
 function readStatus(gameDirectory) {
   const paths = expectedPaths(gameDirectory);
   const brgGame = identifyBrgGame(paths.brgGame);
   const heavenEntry = identifyHeavenEntry(paths.heavenEntry);
+  // A user profile can already contain the centered UI. Preserve it byte-for-byte
+  // and derive selector activation from the map; native coherence is checked below.
+  if (brgGame.profile && brgGame.profile.baseSha1 === brgGame.profile.patchedSha1) {
+    brgGame.enabled = heavenEntry.enabled;
+  }
+  const brgStart = identifyBrgStart(paths.brgStart);
   const executable = inspectExecutable(paths.executable, {
-    'brggame.upk': brgGame.hash, 'heaven_a01_st_col.upk': heavenEntry.hash,
+    'brggame.upk': brgGame.hash,
+    'heaven_a01_st_col.upk': heavenEntry.hash,
+    'brgstart_pl.upk': brgStart.hash,
   });
-  const coherent = brgGame.enabled !== null && heavenEntry.enabled !== null &&
-    brgGame.enabled === heavenEntry.enabled && executable.valid;
-  return { gameDirectory, paths, brgGame, heavenEntry, executable, coherent };
+  const coherent = brgGame.enabled !== null && heavenEntry.enabled !== null && brgStart.enabled !== null &&
+    brgGame.enabled === heavenEntry.enabled && brgStart.enabled === false &&
+    brgGame.enabled === executable.native.enabled && executable.valid;
+  return { gameDirectory, paths, brgGame, heavenEntry, brgStart, executable, coherent };
 }
 
 function profileLabel(name) {
@@ -249,14 +293,18 @@ function printStatus(status) {
   console.log(`BrgGame 변형: ${profileLabel(status.brgGame.profileName)}`);
   console.log(`50층 진입 맵: ${status.heavenEntry.enabled === true ? '선택 메뉴 적용' :
     status.heavenEntry.enabled === false ? '순정' : `지원하지 않음 (${status.heavenEntry.hash})`}`);
+  console.log(`에스컬레이터 예약 이동: ${status.executable.native.enabled === true ? '네이티브 이동 연결 적용 (실게임 검증 중)' :
+    status.executable.native.enabled === false ? '순정' : '지원하지 않는 실행 파일'}`);
   if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
   console.log(`실행 파일 해시 연결: ${status.executable.valid ? '정상' : '불일치'}`);
   console.log('22층 엘리베이터·세이브·MASTER DB: 변경하지 않음');
 }
 
 function assertSupported(status) {
+  if (status.executable.native.enabled === null) fail('지원하지 않는 실행 파일입니다. 변경하지 않습니다.');
   if (!status.brgGame.profileName) fail(`지원하지 않는 BrgGame.upk입니다. SHA-1: ${status.brgGame.hash}`);
   if (status.heavenEntry.enabled === null) fail(`지원하지 않는 Heaven_A01_ST_COL.upk입니다. SHA-1: ${status.heavenEntry.hash}`);
+  if (status.brgStart.enabled === null) fail(`지원하지 않는 BrgStart_PL.upk입니다. SHA-1: ${status.brgStart.hash}`);
 }
 
 function readPatch(patchName) {
@@ -296,9 +344,21 @@ function makePackageTemp(sourcePath, patchName, expectedHash, tempPath) {
   if (actualHash !== expectedHash) fail(`임시 패키지 SHA-1 검증 실패: ${actualHash} (예상 ${expectedHash})`);
 }
 
-function makeExecutableTemp(sourcePath, packageHashes, tempPath) {
+function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
   if (fs.existsSync(tempPath)) fail(`이전 임시 파일이 남아 있습니다: ${tempPath}`);
-  const executable = fs.readFileSync(sourcePath);
+  const source = fs.readFileSync(sourcePath);
+  const native = identifyNativeExecutable(source);
+  if (native.enabled === null) fail('알려지지 않은 실행 파일입니다. 네이티브 패치를 적용하지 않습니다.');
+  let executable = normalizedExecutable(source);
+  if (native.enabled !== enable || (enable && native.upgradePatch)) {
+    const definition = native.definition;
+    const patch = readPatch(enable ? (native.upgradePatch || definition.enablePatch) : (native.disablePatch || definition.disablePatch));
+    const changed = Buffer.alloc(patch.targetSize);
+    executable.copy(changed, 0, 0, Math.min(executable.length, changed.length));
+    for (const { offset, payload } of patch.entries) payload.copy(changed, offset);
+    executable = changed;
+  }
+  if (identifyNativeExecutable(executable).enabled !== enable) fail('네이티브 실행 파일 패치 검증에 실패했습니다.');
   for (const [assetName, count] of Object.entries(manifest.executable.manifestEntries)) {
     const digest = Buffer.from(packageHashes[assetName], 'hex');
     for (const offset of manifestDigestOffsets(executable, assetName, count)) digest.copy(executable, offset);
@@ -349,6 +409,7 @@ function readAndValidateBackup(directory) {
   for (const key of FILE_KEYS) {
     const record = metadata.files?.[key];
     const filePath = record?.name && path.join(directory, record.name);
+    if (!record && key === 'brgStart') continue;
     if (!record || !filePath || !fs.existsSync(filePath) || fs.statSync(filePath).size !== record.size ||
         sha1File(filePath) !== record.sha1) fail(`백업 파일 검증 실패: ${key}`);
   }
@@ -379,20 +440,27 @@ function transactionalReplace(replacements) {
   }
 }
 
-function setPatchState(gameDirectory, enable) {
+function setPatchState(gameDirectory, enable, experimental = false) {
+  if (enable && manifest.releaseStatus !== 'verified-escalator-routing' &&
+      !(experimental && manifest.releaseStatus === 'static-verified-awaiting-gameplay')) {
+    fail('고층 에스컬레이터 이동 구현을 검증 중이므로 이 개발판의 적용을 차단했습니다. 게임 파일은 변경하지 않았습니다. 백업과 복원은 사용할 수 있습니다.');
+  }
   if (isGameRunning()) fail('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.');
   const status = readStatus(gameDirectory);
   assertSupported(status);
-  if (status.brgGame.enabled === enable && status.heavenEntry.enabled === enable && status.executable.valid) {
+  if (status.brgGame.enabled === enable && status.heavenEntry.enabled === enable &&
+      status.executable.native.enabled === enable && status.executable.valid && !status.heavenEntry.upgradePatch && !status.executable.native.upgradePatch) {
     return { changed: false, status };
   }
   const backupPath = createBackup(status, enable ? 'enable-selector' : 'disable-selector');
   const profile = status.brgGame.profile;
   const targetBrgHash = enable ? profile.patchedSha1 : profile.baseSha1;
   const targetMapHash = enable ? manifest.heavenEntry.patchedSha1 : manifest.heavenEntry.baseSha1;
+  const targetBrgStartHash = manifest.brgStart.baseSha1;
   const temps = {
     brgGame: `${status.paths.brgGame}.lid-tengoku.tmp`,
     heavenEntry: `${status.paths.heavenEntry}.lid-tengoku.tmp`,
+    brgStart: `${status.paths.brgStart}.lid-tengoku.tmp`,
     executable: `${status.paths.executable}.lid-tengoku.tmp`,
   };
   try {
@@ -400,11 +468,18 @@ function setPatchState(gameDirectory, enable) {
       status.brgGame.enabled === enable ? null : (enable ? profile.enablePatch : profile.disablePatch),
       targetBrgHash, temps.brgGame);
     makePackageTemp(status.paths.heavenEntry,
-      status.heavenEntry.enabled === enable ? null : (enable ? manifest.heavenEntry.enablePatch : manifest.heavenEntry.disablePatch),
+      enable && status.heavenEntry.upgradePatch ? status.heavenEntry.upgradePatch :
+        (status.heavenEntry.enabled === enable ? null : (enable ? manifest.heavenEntry.enablePatch :
+          (status.heavenEntry.disablePatch || manifest.heavenEntry.disablePatch))),
       targetMapHash, temps.heavenEntry);
+    makePackageTemp(status.paths.brgStart,
+      status.brgStart.enabled ? manifest.brgStart.disablePatch : null,
+      targetBrgStartHash, temps.brgStart);
     makeExecutableTemp(status.paths.executable, {
-      'brggame.upk': targetBrgHash, 'heaven_a01_st_col.upk': targetMapHash,
-    }, temps.executable);
+      'brggame.upk': targetBrgHash,
+      'heaven_a01_st_col.upk': targetMapHash,
+      'brgstart_pl.upk': targetBrgStartHash,
+    }, temps.executable, enable);
     transactionalReplace(FILE_KEYS.map((key) => ({ target: status.paths[key], temp: temps[key] })));
   } catch (error) {
     cleanupFiles(Object.values(temps));
@@ -425,8 +500,16 @@ function restoreBackup(gameDirectory, backupPath) {
   try {
     for (const key of FILE_KEYS) {
       temps[key] = `${current.paths[key]}.lid-tengoku.tmp`;
-      fs.copyFileSync(path.join(backupPath, metadata.files[key].name), temps[key], fs.constants.COPYFILE_EXCL);
-      if (sha1File(temps[key]) !== metadata.files[key].sha1) fail(`복원 임시 파일 검증 실패: ${key}`);
+      const record = metadata.files[key];
+      if (!record && key === 'brgStart') {
+        if (current.brgStart.enabled === null) fail('구버전 백업에 BrgStart_PL.upk가 없고 현재 파일도 지원하지 않습니다.');
+        makePackageTemp(current.paths.brgStart,
+          current.brgStart.enabled ? manifest.brgStart.disablePatch : null,
+          manifest.brgStart.baseSha1, temps[key]);
+      } else {
+        fs.copyFileSync(path.join(backupPath, record.name), temps[key], fs.constants.COPYFILE_EXCL);
+        if (sha1File(temps[key]) !== record.sha1) fail(`복원 임시 파일 검증 실패: ${key}`);
+      }
     }
     transactionalReplace(FILE_KEYS.map((key) => ({ target: current.paths[key], temp: temps[key] })));
   } catch (error) {
@@ -440,15 +523,17 @@ function restoreBackup(gameDirectory, backupPath) {
 function parseCommandLine(argv) {
   const positional = [];
   let gameDirectory;
+  let experimental = false;
   let yes = false;
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--game') {
       if (!argv[index + 1]) fail('--game 뒤에 설치 폴더가 필요합니다.');
       gameDirectory = argv[++index];
-    } else if (argv[index] === '--yes') yes = true;
+    } else if (argv[index] === '--experimental') experimental = true;
+    else if (argv[index] === '--yes') yes = true;
     else positional.push(argv[index]);
   }
-  return { positional, gameDirectory, yes };
+  return { positional, gameDirectory, yes, experimental };
 }
 
 async function confirm(rl, message, assumeYes) {
@@ -504,7 +589,7 @@ async function main() {
     if (command === 'apply' || command === 'remove') {
       const enable = command === 'apply';
       if (!await confirm(rl, enable ? '패치를 적용할까요?' : '패치를 제거할까요?', options.yes)) return;
-      const result = setPatchState(gameDirectory, enable);
+      const result = setPatchState(gameDirectory, enable, options.experimental);
       printStatus(result.status);
       console.log(result.changed ? `변경 전 백업: ${result.backupPath}` : '변경할 내용이 없습니다.');
       return;

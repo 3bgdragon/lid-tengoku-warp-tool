@@ -1,13 +1,14 @@
 {
   "format": 1,
   "gameVersion": "5.0.1.0",
+  "releaseStatus": "static-verified-awaiting-gameplay",
   "brgGame": {
     "relativePath": "BrgGame/CookedPCConsole/BrgGame.upk",
     "profiles": {
       "off-off": {
         "label": "off-off",
         "baseSha1": "F623DE7ED838A2F7A359557D6C8FFFA10E2DE3DE",
-        "patchedSha1": "BBC53AFEB7F2D8B16282BC26A5F692DB6B64FCDC",
+        "patchedSha1": "83E3440B38BBCAC787CEE1C6AD553C98EB7A7C8B",
         "size": 179212648,
         "enablePatch": "brggame-off-off-enable.lidbin",
         "disablePatch": "brggame-off-off-disable.lidbin"
@@ -15,7 +16,7 @@
       "on-off": {
         "label": "on-off",
         "baseSha1": "981D7513E12FD7BB5B4C3FB510A1D88DC2196967",
-        "patchedSha1": "F366C43AF0F0FC34FBD7450933B42013F3859886",
+        "patchedSha1": "40AFAB97882EF96C21B355FE9F5C183C6499C353",
         "size": 179212648,
         "enablePatch": "brggame-on-off-enable.lidbin",
         "disablePatch": "brggame-on-off-disable.lidbin"
@@ -23,7 +24,7 @@
       "off-on": {
         "label": "off-on",
         "baseSha1": "1B82F2C30115F52EC8BBF118AC71F88BF1F31BEF",
-        "patchedSha1": "16E8DCE4BF7F66E0A1A5B31379076C07BBC98812",
+        "patchedSha1": "8ECA9A1A90E9BCBB5FC228CD5273BA35D1C5A773",
         "size": 179212648,
         "enablePatch": "brggame-off-on-enable.lidbin",
         "disablePatch": "brggame-off-on-disable.lidbin"
@@ -31,7 +32,7 @@
       "on-on": {
         "label": "on-on",
         "baseSha1": "83EC668A342BFA8CBF9F35430A537A2D4CBE9B12",
-        "patchedSha1": "49DB0A2D073A5930081F1BAE7CFABAA8B113135B",
+        "patchedSha1": "EA64DC36C1CA5A86CDCBAE0D3D72393D0115181F",
         "size": 179212648,
         "enablePatch": "brggame-on-on-enable.lidbin",
         "disablePatch": "brggame-on-on-disable.lidbin"
@@ -39,7 +40,7 @@
       "off-on-v1.1": {
         "label": "off-on-v1.1",
         "baseSha1": "2DA3E88B05A834C530C8DBFDE9B195943A29FC49",
-        "patchedSha1": "DA4438DA274303583AE7CC3DC0A0EACF2D7BEE69",
+        "patchedSha1": "26F156BCF8C83F15DCC8B79A6B6CD0D1AE301EEF",
         "size": 179212648,
         "enablePatch": "brggame-off-on-v1.1-enable.lidbin",
         "disablePatch": "brggame-off-on-v1.1-disable.lidbin"
@@ -47,27 +48,105 @@
       "on-on-v1.1": {
         "label": "on-on-v1.1",
         "baseSha1": "9CF81F5783A4C411D5A58274422660004D9090C2",
-        "patchedSha1": "C850ACCD93B5083ACCBD053B180BAF3D75BC46E5",
+        "patchedSha1": "F5BC0186EBD7599C43AC54DF9FD46756D477DAFA",
         "size": 179212648,
         "enablePatch": "brggame-on-on-v1.1-enable.lidbin",
         "disablePatch": "brggame-on-on-v1.1-disable.lidbin"
+      },
+      "local-jg-20260905": {
+        "label": "사용자 저스트가드 수정본 (2026-09-05)",
+        "baseSha1": "266C9712F6E9EB4FB30110D078BC0377B678B30B",
+        "patchedSha1": "266C9712F6E9EB4FB30110D078BC0377B678B30B",
+        "size": 179536462,
+        "enablePatch": "brggame-local-jg-20260905-enable.lidbin",
+        "disablePatch": "brggame-local-jg-20260905-disable.lidbin"
+      },
+      "local-jg-fixed": {
+        "label": "사용자 가드 분기 복구본",
+        "baseSha1": "6CEB935BDFE9D783F29BF996EF24E99C40310337",
+        "patchedSha1": "6CEB935BDFE9D783F29BF996EF24E99C40310337",
+        "size": 179858373,
+        "enablePatch": "brggame-local-jg-fixed-enable.lidbin",
+        "disablePatch": "brggame-local-jg-fixed-disable.lidbin"
       }
     }
   },
   "heavenEntry": {
     "relativePath": "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
     "baseSha1": "D9FBE2E449294554A10E0AC6CE8B634BDB8804F4",
-    "patchedSha1": "1830FE9CFB5639720D2C7811034EE465827EFA0F",
+    "patchedSha1": "B8CF84ADD73E087F6BDE912F2AAC7E13FB4ABB20",
     "baseSize": 462127,
-    "patchedSize": 847056,
+    "patchedSize": 847106,
     "enablePatch": "heaven-entry-enable.lidbin",
-    "disablePatch": "heaven-entry-disable.lidbin"
+    "disablePatch": "heaven-entry-disable.lidbin",
+    "legacy": [
+      {
+        "sha1": "B5515BD55B71815C66C979BBEDBD948E932D2D9D",
+        "upgradePatch": "heaven-entry-v109-upgrade.lidbin",
+        "disablePatch": "heaven-entry-v109-disable.lidbin"
+      },
+      {
+        "sha1": "0D6B867478675584937AD68B61A581A5EFBBF1DF",
+        "upgradePatch": "heaven-entry-v110-upgrade.lidbin",
+        "disablePatch": "heaven-entry-v110-disable.lidbin"
+      }
+    ]
+  },
+  "brgStart": {
+    "relativePath": "BrgGame/CookedPCConsole/BrgStart_PL.upk",
+    "baseSha1": "DAA9F61E101F6694BC3168069B327F45D89ECC49",
+    "patchedSha1": "DAA9F61E101F6694BC3168069B327F45D89ECC49",
+    "baseSize": 1389914,
+    "patchedSize": 1389914,
+    "enablePatch": "brgstart-enable.lidbin",
+    "disablePatch": "brgstart-disable.lidbin"
   },
   "executable": {
     "relativePath": "Binaries/Win64/BrgGame-Steam.exe",
     "manifestEntries": {
       "brggame.upk": 2,
-      "heaven_a01_st_col.upk": 1
+      "heaven_a01_st_col.upk": 1,
+      "brgstart_pl.upk": 2
+    },
+    "native": {
+      "baseSha1": "80D7D3F8FD47F86AF31B053CED0E61BECDD42EB2",
+      "patchedSha1": "B602188BDDFEB499BABFB6C09FD47DE5060BDB54",
+      "enablePatch": "executable-native-enable.lidbin",
+      "disablePatch": "executable-native-disable.lidbin",
+      "sectionRva": 268726272,
+      "flagRva": 268726272,
+      "floorRva": 268727296,
+      "pendingRva": 268729344,
+      "flagSize": 353,
+      "floorSize": 515,
+      "legacy": [
+        {
+          "sha1": "A8DDDC3BAB72B003E70C9BA00E0121954D844D80",
+          "upgradePatch": "executable-stock-v109-upgrade.lidbin",
+          "disablePatch": "executable-stock-v109-disable.lidbin"
+        }
+      ]
+    },
+    "nativeVariants": {
+      "local-jg-20260905": {
+        "baseSha1": "6CEA4AA6B1406E8639BA9E2F6F3E6A4E9952E624",
+        "patchedSha1": "7459E20482308A1B824A1F52CB3C400DF9C78AAE",
+        "enablePatch": "executable-local-jg-20260905-enable.lidbin",
+        "disablePatch": "executable-local-jg-20260905-disable.lidbin",
+        "sectionRva": 268726272,
+        "flagRva": 268726272,
+        "floorRva": 268727296,
+        "pendingRva": 268729344,
+        "flagSize": 353,
+        "floorSize": 515,
+        "legacy": [
+          {
+            "sha1": "260EC4F829ED3510025DE7108EF15808CC44E027",
+            "upgradePatch": "executable-local-v109-upgrade.lidbin",
+            "disablePatch": "executable-local-v109-disable.lidbin"
+          }
+        ]
+      }
     }
   },
   "starts": [
