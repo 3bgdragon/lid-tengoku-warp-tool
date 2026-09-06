@@ -556,10 +556,14 @@ async function interactive(gameDirectory, rl) {
     if (choice === '6') return;
     if (choice === '1' || choice === '2') {
       const enable = choice === '1';
+      const experimental = enable && manifest.releaseStatus === 'static-verified-awaiting-gameplay';
+      if (experimental) {
+        console.log('주의: 메뉴 조작은 확인됐지만 101·201·301층 전체 경로는 검증 중입니다. 적용 전 자동 백업을 만들며, 문제가 있으면 패치 제거 또는 백업 복원을 사용하세요.');
+      }
       const question = enable ? '50층 일반 텐고쿠 진입 전에 51·101·201·301층 선택 메뉴를 추가할까요?' :
         '일반 텐고쿠 시작층 선택 패치를 제거할까요?';
-      if (!await confirm(rl, question, false)) continue;
-      const result = setPatchState(gameDirectory, enable);
+      if (!await confirm(rl, experimental ? `${question} (시험 적용에 동의)` : question, false)) continue;
+      const result = setPatchState(gameDirectory, enable, experimental);
       console.log(result.changed ? `완료했습니다. 변경 전 백업: ${result.backupPath}` : '이미 선택한 상태입니다.');
     } else if (choice === '3') console.log(`백업 완료: ${createBackup(status, 'manual')}`);
     else if (choice === '4') {

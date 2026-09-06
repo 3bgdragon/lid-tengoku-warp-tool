@@ -5,6 +5,33 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const vm = require('node:vm');
+
+for (const accepted of [true, false]) {
+  test(`interactive experimental application requires consent: ${accepted}`, async () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../lid-tengoku-warp.js'), 'utf8');
+    const start = source.indexOf('async function interactive(');
+    const end = source.indexOf('\nasync function main()', start);
+    const calls = [];
+    const messages = [];
+    const answers = ['1', '6'];
+    const context = vm.createContext({
+      manifest: { releaseStatus: 'static-verified-awaiting-gameplay' },
+      readStatus: () => ({}), printStatus: () => {},
+      console: { log: (message) => messages.push(message) },
+      confirm: async (_rl, question, assumeYes) => {
+        assert.match(question, /시험 적용에 동의/);
+        assert.equal(assumeYes, false);
+        assert.ok(messages.some((message) => message.includes('전체 경로는 검증 중')));
+        return accepted;
+      },
+      setPatchState: (...args) => { calls.push(args); return { changed: false }; },
+    });
+    vm.runInContext(source.slice(start, end), context);
+    await context.interactive('test-install', { question: async () => answers.shift() });
+    assert.deepEqual(calls, accepted ? [['test-install', true, true]] : []);
+  });
+}
 
 test('unverified routing cannot modify even a user-confirmed installation', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lid-routing-safety-'));
