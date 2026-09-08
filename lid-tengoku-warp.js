@@ -9,7 +9,7 @@ const readline = require('readline/promises');
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
 const ASSET_DIRECTORY = path.join(__dirname, 'assets');
-const manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
+let manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
 const FILE_KEYS = ['brgGame', 'heavenEntry', 'brgStart', 'executable'];
 
 function fail(message) {
@@ -237,7 +237,7 @@ function inspectExecutable(executablePath, expectedHashes) {
 
 function normalizedExecutable(executable) {
   const result = Buffer.from(executable);
-  for (const [assetName, count] of Object.entries(manifest.executable.manifestEntries)) {
+  for (const [assetName, count] of Object.entries({ ...manifest.executable.manifestEntries, ...manifest.executable.normalizedExtraEntries })) {
     for (const offset of manifestDigestOffsets(result, assetName, count)) result.fill(0, offset, offset + 20);
   }
   return result;
@@ -258,6 +258,7 @@ function identifyNativeExecutable(executable) {
 }
 
 function readStatus(gameDirectory) {
+  selectBuild(gameDirectory);
   const paths = expectedPaths(gameDirectory);
   const brgGame = identifyBrgGame(paths.brgGame);
   const heavenEntry = identifyHeavenEntry(paths.heavenEntry);
@@ -278,6 +279,14 @@ function readStatus(gameDirectory) {
   return { gameDirectory, paths, brgGame, heavenEntry, brgStart, executable, coherent };
 }
 
+function selectBuild(gameDirectory) {
+  const candidatePath = path.join(ASSET_DIRECTORY, 'manifest-25136512.json');
+  if (!fs.existsSync(candidatePath)) return;
+  const candidate = JSON.parse(fs.readFileSync(candidatePath, 'utf8'));
+  const file = path.join(gameDirectory, candidate.heavenEntry.relativePath);
+  if (fs.existsSync(file) && [candidate.heavenEntry.baseSha1, candidate.heavenEntry.patchedSha1].includes(sha1File(file))) manifest = candidate;
+}
+
 function profileLabel(name) {
   return ({
     'off-off': '순정 런타임', 'on-off': '저스트가드 그로기 ON', 'off-on': '근접 방어 제한 해제',
@@ -293,7 +302,7 @@ function printStatus(status) {
   console.log(`BrgGame 변형: ${profileLabel(status.brgGame.profileName)}`);
   console.log(`50층 진입 맵: ${status.heavenEntry.enabled === true ? '선택 메뉴 적용' :
     status.heavenEntry.enabled === false ? '순정' : `지원하지 않음 (${status.heavenEntry.hash})`}`);
-  console.log(`에스컬레이터 예약 이동: ${status.executable.native.enabled === true ? '적용됨 (51·101·201·301층 사용자 실게임 확인 완료)' :
+  console.log(`에스컬레이터 예약 이동: ${status.executable.native.enabled === true ? (manifest.steamBuildId ? '적용됨 (새 빌드 실게임 검증 전)' : '적용됨 (51·101·201·301층 사용자 실게임 확인 완료)') :
     status.executable.native.enabled === false ? '순정' : '지원하지 않는 실행 파일'}`);
   if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
   console.log(`실행 파일 해시 연결: ${status.executable.valid ? '정상' : '불일치'}`);
@@ -359,6 +368,12 @@ function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
     executable = changed;
   }
   if (identifyNativeExecutable(executable).enabled !== enable) fail('네이티브 실행 파일 패치 검증에 실패했습니다.');
+  // Extra digests are normalized only for EXE recognition, never changed by warp.
+  for (const [assetName, count] of Object.entries(manifest.executable.normalizedExtraEntries || {})) {
+    const from = manifestDigestOffsets(source, assetName, count);
+    const to = manifestDigestOffsets(executable, assetName, count);
+    to.forEach((offset, index) => source.copy(executable, offset, from[index], from[index] + 20));
+  }
   for (const [assetName, count] of Object.entries(manifest.executable.manifestEntries)) {
     const digest = Buffer.from(packageHashes[assetName], 'hex');
     for (const offset of manifestDigestOffsets(executable, assetName, count)) digest.copy(executable, offset);
@@ -376,7 +391,7 @@ function backupRoot() {
 function createBackup(status, reason) {
   const directory = path.join(backupRoot(), timestamp());
   fs.mkdirSync(directory, { recursive: true });
-  const metadata = { format: 1, createdAt: new Date().toISOString(), reason, gameDirectory: status.gameDirectory, files: {} };
+  const metadata = { format: 1, steamBuildId: manifest.steamBuildId || null, createdAt: new Date().toISOString(), reason, gameDirectory: status.gameDirectory, files: {} };
   try {
     for (const key of FILE_KEYS) {
       const source = status.paths[key];
@@ -441,6 +456,7 @@ function transactionalReplace(replacements) {
 }
 
 function setPatchState(gameDirectory, enable, experimental = false) {
+  selectBuild(gameDirectory);
   if (enable && manifest.releaseStatus !== 'verified-escalator-routing' &&
       !(experimental && manifest.releaseStatus === 'static-verified-awaiting-gameplay')) {
     fail('고층 에스컬레이터 이동 구현을 검증 중이므로 이 개발판의 적용을 차단했습니다. 게임 파일은 변경하지 않았습니다. 백업과 복원은 사용할 수 있습니다.');
@@ -495,6 +511,7 @@ function restoreBackup(gameDirectory, backupPath) {
   if (isGameRunning()) fail('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.');
   const metadata = readAndValidateBackup(backupPath);
   const current = readStatus(gameDirectory);
+  if ((metadata.steamBuildId || null) !== (manifest.steamBuildId || null)) fail('게임 업데이트 전후의 백업은 서로 복원할 수 없습니다. 현재 빌드에서 만든 백업을 선택하세요.');
   const safetyBackup = createBackup(current, `before-restore:${path.basename(backupPath)}`);
   const temps = {};
   try {
@@ -558,7 +575,7 @@ async function interactive(gameDirectory, rl) {
       const enable = choice === '1';
       const experimental = enable && manifest.releaseStatus === 'static-verified-awaiting-gameplay';
       if (experimental) {
-        console.log('주의: 메뉴 조작은 확인됐지만 101·201·301층 전체 경로는 검증 중입니다. 적용 전 자동 백업을 만들며, 문제가 있으면 패치 제거 또는 백업 복원을 사용하세요.');
+        console.log('주의: 101·201·301층 전체 경로는 검증 중입니다. 새 빌드는 메뉴 조작과 실제 이동을 다시 확인해야 합니다. 적용 전 자동 백업을 만들며, 문제가 있으면 패치 제거 또는 백업 복원을 사용하세요.');
       }
       const question = enable ? '50층 일반 텐고쿠 진입 전에 51·101·201·301층 선택 메뉴를 추가할까요?' :
         '일반 텐고쿠 시작층 선택 패치를 제거할까요?';
