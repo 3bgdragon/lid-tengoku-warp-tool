@@ -4,11 +4,11 @@ const engine = require('./package-patch');
 const { profiles } = require('./profiles.json');
 const sha1 = data => crypto.createHash('sha1').update(data).digest('hex').toUpperCase();
 function identify(hash) { return profiles.find(p => p.sha1 === hash) || null; }
-function forBase(hash) { return profiles.find(p => p.baseSha1 === hash) || null; }
+function forBase(hash) { return profiles.find(p => !p.legacy && p.baseSha1 === hash) || null; }
 function strip(data) {
   const profile = identify(sha1(data));
   if (!profile || engine.sha(data) !== profile.sha256) throw new Error('검증되지 않은 M2G 패키지입니다. 변경하지 않습니다.');
-  // M2G 1.1.0 only changes two directory records and appends two chunks.
+  // Both legacy Python and Node M2G change two records and append two chunks.
   // Restore those records and truncate the append, never touch other data.
   const result = Buffer.from(data.subarray(0, profile.baseSize));
   for (const record of profile.directory) Buffer.from(record.hex, 'hex').copy(result, record.offset);

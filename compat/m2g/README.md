@@ -8,4 +8,4 @@ For Steam build 25136512, `profiles.json` contains hashes and the two original 1
 
 To toggle warp with M2G already installed: reconstruct the exact recognized pre-M2G package, apply the existing verified warp byte patch, then regenerate M2G with the same Node.js builder. The expected final hashes are fixed, independently enumerated profiles. Unknown variants fail closed.
 
-This handles M2G Node.js v1.1.0. The archived Python v1.0.0 compressor produces different files and is not implicitly accepted. Whole-backup restoration is still a whole-backup operation; it is not selective removal of a mod.
+This handles Node M2G and eight explicitly verified Python v1.0.0 packages (legacy=true). Legacy inputs use the same original directory records and base size; stripping verifies the reconstructed SHA-256. Rebuilding always selects the Node profile, never the legacy compressor. Already enabled coherent legacy packages are left untouched. Whole-backup restoration remains separate from selective mod removal.

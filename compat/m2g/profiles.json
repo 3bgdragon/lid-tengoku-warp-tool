@@ -1,7 +1,7 @@
 {
   "format": 1,
   "steamBuildId": "25136512",
-  "m2gVersion": "1.1.0",
+  "m2gVersion": "Node 1.1.x and legacy Python 1.0.0",
   "profiles": [
     {
       "guard": "off-off",
@@ -154,6 +154,166 @@
           "hex": "6a8eb115fa6f09007e14a40add5d0500"
         }
       ]
+    },
+    {
+      "guard": "off-off",
+      "warp": false,
+      "sha1": "F329D2A3707A06912B23AB633DF07465EA138DE2",
+      "sha256": "2c61946730283120e1f5c5be09c8c3d5d561b0b5e0abb81d6cd84f537a0bbc94",
+      "baseSha1": "E039760A2D248E5A84B30595AB1DD73877463DB7",
+      "baseSha256": "096b85daddfc468cbb107622b1ae4ba71af35aeb06a91bbda6ad6e10299e08f6",
+      "baseSize": 178877019,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "off-off",
+      "warp": true,
+      "sha1": "E6CBADE67A304FE7E2A79B966AE6498A7478F864",
+      "sha256": "9c4c63604c1430d10f33e4f35dafb3e90589293c0f8decf0d392323980d483ec",
+      "baseSha1": "3251352D72C2C300330CD7F8E5C8252E8A6143DA",
+      "baseSha256": "d210db4a77c063c7899b3e06b24cda8cefe1d9ca25bfe8c3ecf7e28aa1a0a404",
+      "baseSize": 179432926,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "off-on",
+      "warp": false,
+      "sha1": "278E131E73F52B51B47C045A16B07E4653A5E9B9",
+      "sha256": "d97ca32ae13a8cb6299abac29fd3f5cfa3f41fce154de63200faafdae0c07e50",
+      "baseSha1": "6D76BA68B96FB9BB1F0B860D7E6E8A31A3B22FA5",
+      "baseSha256": "b8880e27fb07450172654b6ed1b6c12a12e98bc33650f02d13a5a77183fdd0fa",
+      "baseSize": 179820439,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "off-on",
+      "warp": true,
+      "sha1": "CA371C026B3F18E977FE476E3789BB52C6B77457",
+      "sha256": "557740e33d96a1206d8d57c788e8a91e1ba072546dbc5988d079aa4b7f1c6d69",
+      "baseSha1": "D035CFDD7A9C131AA0284D87729800EB0CB0ADFF",
+      "baseSha256": "f18d77c6d21855de711969b82096c775683790e7e0b66a48cd38e63abb8353ef",
+      "baseSize": 180376346,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "on-off",
+      "warp": false,
+      "sha1": "792B3A49B49E012C5E7592B056C44EA08B7FDAD4",
+      "sha256": "fd52f9fa46eeebb3a71f391df0302b6042ef4e69e715e38a506021b18d66153f",
+      "baseSha1": "5E0A4E777D86F92101B0D935AA081E55B707E943",
+      "baseSha256": "aec2f2b02f33fa81662d12dbbff3458b1c0561229faa4ab715cbdf79597286c4",
+      "baseSize": 179198902,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "on-off",
+      "warp": true,
+      "sha1": "BD83BDEB55E36C7F18937EBC1B09BEF4A3CE0C84",
+      "sha256": "cb7bf72e66577ef8b796ecafde779a70dd7497f2180d9e5e0a0fc98a0897bf99",
+      "baseSha1": "A1A6F516376614527C3F70F08693380CDC3B2F6C",
+      "baseSha256": "9b6b6855c49101258f655ea198fdbbbe5b18a36966c85be85ac84a5539a7ca85",
+      "baseSize": 179754809,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "on-on",
+      "warp": false,
+      "sha1": "B12C12D6171F6C3A52FEB18D4B1F8EF47E0D426D",
+      "sha256": "3410c8ce7e7ab462f1a2e691ddcab55907a0ce43df79c77c6cbc1ff2204173a2",
+      "baseSha1": "5BEBA3AE528EC337F094A663683874B862C5B5CB",
+      "baseSha256": "8a2ff868b7410cc4b35d1baf0e064a9801029b38cc4320895ce623279f73fae8",
+      "baseSize": 179820438,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
+    },
+    {
+      "guard": "on-on",
+      "warp": true,
+      "sha1": "E6954465DE2011C2B80E224AE86823B3DB7221B5",
+      "sha256": "cb3e943a6f5084f6d3b71bab848df2293a5f8ef077b549d52dbb48ec93fce217",
+      "baseSha1": "953C0309CDC341D5C973B458D8F8F16DE5ADFD6C",
+      "baseSha256": "db249934dac1ed486755dceac9d5a3b0be4ff9ec5370dca0e7e402c0018d3aaa",
+      "baseSize": 180376345,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000f61aef0029310000260b2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "6a8eb115fa6f09007e14a40add5d0500"
+        }
+      ],
+      "legacy": true
     }
   ]
 }

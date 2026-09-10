@@ -9,9 +9,15 @@ test('reported hash identifies stock + M2G Node 1.1.0 exactly', () => {
   assert.equal(p.guard, 'off-off'); assert.equal(p.warp, false);
   assert.equal(p.baseSha1, manifest.brgGame.profiles['off-off'].baseSha1);
 });
+test('legacy reported hash is recognized but reapply targets Node encoding', () => {
+  const p=compat.identify('E6954465DE2011C2B80E224AE86823B3DB7221B5');
+  assert.equal(p.legacy,true);assert.equal(p.guard,'on-on');assert.equal(p.warp,true);
+  assert.notEqual(compat.forBase(p.baseSha1).sha1,p.sha1);
+  assert.ok(!compat.forBase(p.baseSha1).legacy);
+});
 test('all four guard combinations have paired reversible M2G warp states', () => {
-  assert.equal(profiles.length, 8);
-  assert.equal(new Set(profiles.map(p => p.sha1)).size, 8);
+  assert.equal(profiles.length, 16);
+  assert.equal(new Set(profiles.map(p => p.sha1)).size, 16);
   for (const original of Object.values(manifest.brgGame.profiles)) {
     assert.ok(compat.forBase(original.baseSha1)); assert.ok(compat.forBase(original.patchedSha1));
   }
