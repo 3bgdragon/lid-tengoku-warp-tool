@@ -6,6 +6,7 @@ const path = require('path');
 const crypto = require('crypto');
 const childProcess = require('child_process');
 const readline = require('readline/promises');
+const m2gCompat = require('./compat/m2g');
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
 const ASSET_DIRECTORY = path.join(__dirname, 'assets');
@@ -183,6 +184,16 @@ function identifyBrgGame(filePath) {
     if (hash === profile.baseSha1) return { hash, size, profileName, enabled: false, profile };
     if (hash === profile.patchedSha1) return { hash, size, profileName, enabled: true, profile };
   }
+  const knife = m2gCompat.identify(hash);
+  if (knife && manifest.steamBuildId === '25136512') {
+    for (const [name, original] of Object.entries(manifest.brgGame.profiles)) {
+      if (![original.baseSha1, original.patchedSha1].includes(knife.baseSha1)) continue;
+      const base = m2gCompat.forBase(original.baseSha1), patched = m2gCompat.forBase(original.patchedSha1);
+      if (!base || !patched) continue;
+      const profile = { ...original, baseSha1: base.sha1, patchedSha1: patched.sha1, m2g: true };
+      return { hash, size, profileName: `${name} + M2G 나이프`, enabled: knife.baseSha1 === original.patchedSha1, profile };
+    }
+  }
   return { hash, size, profileName: null, enabled: null, profile: null };
 }
 
@@ -337,8 +348,20 @@ function readPatch(patchName) {
   return { targetSize, entries };
 }
 
-function makePackageTemp(sourcePath, patchName, expectedHash, tempPath) {
+function makePackageTemp(sourcePath, patchName, expectedHash, tempPath, preserveM2g = false) {
   if (fs.existsSync(tempPath)) fail(`이전 임시 파일이 남아 있습니다: ${tempPath}`);
+  if (preserveM2g && patchName) {
+    const source = m2gCompat.strip(fs.readFileSync(sourcePath));
+    const patch = readPatch(patchName);
+    const base = Buffer.alloc(patch.targetSize);
+    source.copy(base);
+    for (const { offset, payload } of patch.entries) payload.copy(base, offset);
+    const result = m2gCompat.rebuild(base);
+    if (crypto.createHash('sha1').update(result).digest('hex').toUpperCase() !== expectedHash) fail('M2G 보존 패키지 SHA-1 검증 실패');
+    fs.writeFileSync(tempPath, result, { flag: 'wx' });
+    if (sha1File(tempPath) !== expectedHash) fail('M2G 임시 파일 저장 검증 실패');
+    return;
+  }
   fs.copyFileSync(sourcePath, tempPath, fs.constants.COPYFILE_EXCL);
   if (patchName) {
     const patchData = readPatch(patchName);
@@ -482,7 +505,7 @@ function setPatchState(gameDirectory, enable, experimental = false) {
   try {
     makePackageTemp(status.paths.brgGame,
       status.brgGame.enabled === enable ? null : (enable ? profile.enablePatch : profile.disablePatch),
-      targetBrgHash, temps.brgGame);
+      targetBrgHash, temps.brgGame, profile.m2g === true);
     makePackageTemp(status.paths.heavenEntry,
       enable && status.heavenEntry.upgradePatch ? status.heavenEntry.upgradePatch :
         (status.heavenEntry.enabled === enable ? null : (enable ? manifest.heavenEntry.enablePatch :
