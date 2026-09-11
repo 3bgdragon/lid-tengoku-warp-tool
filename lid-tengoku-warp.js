@@ -7,6 +7,9 @@ const crypto = require('crypto');
 const childProcess = require('child_process');
 const readline = require('readline/promises');
 const m2gCompat = require('./compat/m2g');
+const embedded = require('./compat/m2g/embedded');
+const restoreSafety = require('./restore-safety');
+const embeddedProfiles = require('./compat/m2g/embedded-profiles.json').profiles;
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
 const ASSET_DIRECTORY = path.join(__dirname, 'assets');
@@ -180,6 +183,16 @@ function isGameRunning() {
 function identifyBrgGame(filePath) {
   const hash = sha1File(filePath);
   const size = fs.statSync(filePath).size;
+  if (manifest.steamBuildId === '25244463') {
+    const found=embedded.identify(fs.readFileSync(filePath));
+    if (found) {
+      const original=manifest.brgGame.profiles[found.profile.guard];
+      const a=embeddedProfiles.find(p=>p.guard===found.profile.guard&&!p.warp);
+      const b=embeddedProfiles.find(p=>p.guard===found.profile.guard&&p.warp);
+      const profile={...original,baseSha1:found.enabled?a.sha1:a.offSha1,patchedSha1:found.enabled?b.sha1:b.offSha1,embeddedM2g:true};
+      return {hash,size,profileName:found.profile.guard+(found.enabled?' + M2G 나이프':''),enabled:found.profile.warp,profile};
+    }
+  }
   for (const [profileName, profile] of Object.entries(manifest.brgGame.profiles)) {
     if (hash === profile.baseSha1) return { hash, size, profileName, enabled: false, profile };
     if (hash === profile.patchedSha1) return { hash, size, profileName, enabled: true, profile };
@@ -356,6 +369,15 @@ function readPatch(patchName) {
 
 function makePackageTemp(sourcePath, patchName, expectedHash, tempPath, preserveM2g = false) {
   if (fs.existsSync(tempPath)) fail(`이전 임시 파일이 남아 있습니다: ${tempPath}`);
+  if (preserveM2g === 'embedded' && patchName) {
+    const input=fs.readFileSync(sourcePath), found=embedded.identify(input);
+    const source=embedded.set(input,true), patch=readPatch(patchName);
+    const target=Buffer.alloc(patch.targetSize);source.copy(target);
+    for (const {offset,payload} of patch.entries) payload.copy(target,offset);
+    const result=embedded.set(target,found.enabled);
+    if (crypto.createHash('sha1').update(result).digest('hex').toUpperCase()!==expectedHash) fail('내장 M2G 보존 검증 실패');
+    fs.writeFileSync(tempPath,result,{flag:'wx'});return;
+  }
   if (preserveM2g && patchName) {
     const source = m2gCompat.strip(fs.readFileSync(sourcePath));
     const patch = readPatch(patchName);
@@ -421,6 +443,7 @@ function createBackup(status, reason) {
   const directory = path.join(backupRoot(), timestamp());
   fs.mkdirSync(directory, { recursive: true });
   const metadata = { format: 1, steamBuildId: manifest.steamBuildId || null, createdAt: new Date().toISOString(), reason, gameDirectory: status.gameDirectory, files: {} };
+  metadata.beforeSnapshot = restoreSafety.capture(status.gameDirectory);
   try {
     for (const key of FILE_KEYS) {
       const source = status.paths[key];
@@ -511,7 +534,7 @@ function setPatchState(gameDirectory, enable, experimental = false) {
   try {
     makePackageTemp(status.paths.brgGame,
       status.brgGame.enabled === enable ? null : (enable ? profile.enablePatch : profile.disablePatch),
-      targetBrgHash, temps.brgGame, profile.m2g === true);
+      targetBrgHash, temps.brgGame, profile.embeddedM2g ? 'embedded' : profile.m2g === true);
     makePackageTemp(status.paths.heavenEntry,
       enable && status.heavenEntry.upgradePatch ? status.heavenEntry.upgradePatch :
         (status.heavenEntry.enabled === enable ? null : (enable ? manifest.heavenEntry.enablePatch :
@@ -532,6 +555,7 @@ function setPatchState(gameDirectory, enable, experimental = false) {
     throw error;
   }
   const verified = readStatus(gameDirectory);
+  restoreSafety.mark(backupPath, gameDirectory);
   if (!verified.coherent || verified.brgGame.enabled !== enable) fail(`적용 후 검증 실패. 변경 전 백업: ${backupPath}`);
   return { changed: true, backupPath, status: verified };
 }
@@ -541,6 +565,7 @@ function restoreBackup(gameDirectory, backupPath) {
   const metadata = readAndValidateBackup(backupPath);
   const current = readStatus(gameDirectory);
   if ((metadata.steamBuildId || null) !== (manifest.steamBuildId || null)) fail('게임 업데이트 전후의 백업은 서로 복원할 수 없습니다. 현재 빌드에서 만든 백업을 선택하세요.');
+  restoreSafety.assertSafe(metadata, gameDirectory);
   const safetyBackup = createBackup(current, `before-restore:${path.basename(backupPath)}`);
   const temps = {};
   try {
@@ -563,6 +588,7 @@ function restoreBackup(gameDirectory, backupPath) {
     error.message += `\n복원 직전 안전 백업: ${safetyBackup}`;
     throw error;
   }
+  restoreSafety.mark(safetyBackup, gameDirectory);
   return { backupPath, safetyBackup, status: readStatus(gameDirectory) };
 }
 

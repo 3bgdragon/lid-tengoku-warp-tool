@@ -1,0 +1,93 @@
+{
+  "build": "25244463",
+  "profiles": [
+    {
+      "guard": "off-off",
+      "warp": false,
+      "sha1": "3877130C584B2CBABB89A22DF1E7A0E437496B37",
+      "sha256": "6475029c6329f5dc99eea3237cec7c49fabc206e253f2f2c8dfd67bfefee87ab",
+      "offSha1": "016D2679529BA0C10285E47F0E2EA520E1A4F501",
+      "offSha256": "09e5f670d20f601724b861ebf0d892711fe1af3b4f1b69c9f7fa6853ce23155a",
+      "size": 182365939,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "off-off",
+      "warp": true,
+      "sha1": "F83CA59BDFA8232C7DAA0557536C4D5F6D49C909",
+      "sha256": "a3bbf4fd8f436238a9625689db7841a87073d7d71323445607ee9099bad105e5",
+      "offSha1": "C2009A13623C15B2E8B652513187EA20108A5E52",
+      "offSha256": "e2391dbca7436d9d7d0022df0f9f7d8ef214d09236d5a5865e4d8d8f11053091",
+      "size": 182921848,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "off-on",
+      "warp": false,
+      "sha1": "FA188B449C8A02621966BCDCB9F7A1C7C06E4C4D",
+      "sha256": "6e714e90c1e946ac1a28c5135a609c97f42d8a5e48c30b8bd5583e67f83b325c",
+      "offSha1": "8E4B31EA002F57B0768AAE362345F5333DC9C638",
+      "offSha256": "cf98693484cb2d8e47deb51102b8b8037006191ba809bf576c78d94609d0228a",
+      "size": 183309360,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "off-on",
+      "warp": true,
+      "sha1": "62B6D0345D573847C35CA00A4989B314BAFC7B84",
+      "sha256": "9cba236e02d6c839df991e1f1ea9e9b8aa875b19eef198ca8b9fb05f5b50d05c",
+      "offSha1": "657109D0F29925ABBC009525D6B9239109E88E76",
+      "offSha256": "8046d127be2a7f8a45991306aec79102150341dcbbc647b73d675a1661b6ed5d",
+      "size": 183865269,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "on-off",
+      "warp": false,
+      "sha1": "233397B3D8ACDDB3D9148BFA34F8E8C88CB74131",
+      "sha256": "664b154f47327404c230aa5ebd2b30d1636b8fee25c94927a9596c38fdd07eba",
+      "offSha1": "EA1CE720FAB3AAA6E545D3E04AF284FC8851B5C8",
+      "offSha256": "c684a2800f331eea7e2e48fa2f0fa50e8f0f4d77f7ac136e9fb8d2abc9990768",
+      "size": 182687822,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "on-off",
+      "warp": true,
+      "sha1": "EB90D9BB051AC9C94BCB5C8766B22DD387552FC5",
+      "sha256": "37b0e7571e6e4bd8d846938866c184b2bfeff0b7045648a836248a1525c62c82",
+      "offSha1": "84A24F9707ED13F05278C841B27A27110A35057E",
+      "offSha256": "9cb8f6e17dfd444f5780ae561e2594c904982f46d989c6aa2baf6d21ac4e1ae9",
+      "size": 183243731,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "on-on",
+      "warp": false,
+      "sha1": "C3441DA870AA717FBF35AAF87EE45CA60270C295",
+      "sha256": "e1945dd23db13dd7a689b35fb9a5fcf371f2f69f2c0560b15931f19b75fdd686",
+      "offSha1": "87287CF3A1A3E9FDF616A6DEC0A0AAC8AA7FD258",
+      "offSha256": "52f7b0b260737a6371117e8bb6aaee289d94812baa4d2ea08843fe74806854d9",
+      "size": 183309359,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    },
+    {
+      "guard": "on-on",
+      "warp": true,
+      "sha1": "36BB297EAE8F674FB973910814AB15AA2E09AEC3",
+      "sha256": "49851cb641479a2aa1d6eba4d10adee20619a98dd9684ff8d41db1fc82875047",
+      "offSha1": "0177A528AB05AB34D7A5B99837EDC36A03C6E7A9",
+      "offSha256": "4f0cd8a4a8c76955f5a046ac5526cd00c3aa7e5af8900c484ec19db6f933e729",
+      "size": 183865268,
+      "directoryOffset": 117,
+      "directoryHex": "491f0000f61aef008a73a90a4ac92f00"
+    }
+  ]
+}
