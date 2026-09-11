@@ -6,14 +6,36 @@
     "relativePath": "BrgGame/CookedPCConsole/BrgGame.upk",
     "profiles": {
       "off-off": {
-        "label": "stock",
-        "size": 182365939,
+        "label": "off-off",
         "baseSha1": "3877130C584B2CBABB89A22DF1E7A0E437496B37",
         "patchedSha1": "F83CA59BDFA8232C7DAA0557536C4D5F6D49C909",
-        "baseSize": 182365939,
-        "patchedSize": 182921848,
+        "size": 182365939,
         "enablePatch": "25244463-brggame-off-off-enable.lidbin",
         "disablePatch": "25244463-brggame-off-off-disable.lidbin"
+      },
+      "off-on": {
+        "label": "off-on",
+        "baseSha1": "FA188B449C8A02621966BCDCB9F7A1C7C06E4C4D",
+        "patchedSha1": "62B6D0345D573847C35CA00A4989B314BAFC7B84",
+        "size": 183309360,
+        "enablePatch": "25244463-brggame-off-on-enable.lidbin",
+        "disablePatch": "25244463-brggame-off-on-disable.lidbin"
+      },
+      "on-off": {
+        "label": "on-off",
+        "baseSha1": "233397B3D8ACDDB3D9148BFA34F8E8C88CB74131",
+        "patchedSha1": "EB90D9BB051AC9C94BCB5C8766B22DD387552FC5",
+        "size": 182687822,
+        "enablePatch": "25244463-brggame-on-off-enable.lidbin",
+        "disablePatch": "25244463-brggame-on-off-disable.lidbin"
+      },
+      "on-on": {
+        "label": "on-on",
+        "baseSha1": "C3441DA870AA717FBF35AAF87EE45CA60270C295",
+        "patchedSha1": "36BB297EAE8F674FB973910814AB15AA2E09AEC3",
+        "size": 183309359,
+        "enablePatch": "25244463-brggame-on-on-enable.lidbin",
+        "disablePatch": "25244463-brggame-on-on-disable.lidbin"
       }
     }
   },
