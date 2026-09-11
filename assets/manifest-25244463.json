@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "gameVersion": "Steam build 25244463",
+  "releaseStatus": "static-verified-awaiting-gameplay",
+  "brgGame": {
+    "relativePath": "BrgGame/CookedPCConsole/BrgGame.upk",
+    "profiles": {
+      "off-off": {
+        "label": "stock",
+        "size": 182365939,
+        "baseSha1": "3877130C584B2CBABB89A22DF1E7A0E437496B37",
+        "patchedSha1": "F83CA59BDFA8232C7DAA0557536C4D5F6D49C909",
+        "baseSize": 182365939,
+        "patchedSize": 182921848,
+        "enablePatch": "25244463-brggame-off-off-enable.lidbin",
+        "disablePatch": "25244463-brggame-off-off-disable.lidbin"
+      }
+    }
+  },
+  "heavenEntry": {
+    "relativePath": "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
+    "baseSha1": "445F9105C395A6B44966F0A0DB8E449C5159367E",
+    "patchedSha1": "AE48E4656A758B56B5A54DB2B7C342128E1CA71B",
+    "baseSize": 462127,
+    "patchedSize": 847096,
+    "enablePatch": "25244463-heaven-enable.lidbin",
+    "disablePatch": "25244463-heaven-disable.lidbin"
+  },
+  "brgStart": {
+    "relativePath": "BrgGame/CookedPCConsole/BrgStart_PL.upk",
+    "baseSha1": "3AA34E71224FEDDE8BD61DCC8B9DD38172965D09",
+    "patchedSha1": "3AA34E71224FEDDE8BD61DCC8B9DD38172965D09",
+    "baseSize": 1082624,
+    "patchedSize": 1082624,
+    "enablePatch": "25244463-brgstart-enable.lidbin",
+    "disablePatch": "25244463-brgstart-disable.lidbin"
+  },
+  "executable": {
+    "relativePath": "Binaries/Win64/BrgGame-Steam.exe",
+    "manifestEntries": {
+      "brggame.upk": 2,
+      "heaven_a01_st_col.upk": 1,
+      "brgstart_pl.upk": 2
+    },
+    "native": {
+      "baseSha1": "95DA9BA9E788C1143CD7D7C0766506621A56214E",
+      "patchedSha1": "B90A081FD16C1A3FBCCE18922E01C7B7EA243B99",
+      "baseSize": 44988928,
+      "patchedSize": 44993024,
+      "enablePatch": "25244463-native-enable.lidbin",
+      "disablePatch": "25244463-native-disable.lidbin",
+      "sectionRva": 268734464,
+      "flagRva": 268734464,
+      "floorRva": 268735488,
+      "pendingRva": 268737536,
+      "flagSize": 353,
+      "floorSize": 515
+    },
+    "nativeVariants": {},
+    "normalizedExtraEntries": {
+      "as_ch_main_male_common_sf.upk": 1
+    }
+  },
+  "starts": [
+    51,
+    101,
+    201,
+    301
+  ],
+  "steamBuildId": "25244463"
+}

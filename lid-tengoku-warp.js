@@ -291,11 +291,17 @@ function readStatus(gameDirectory) {
 }
 
 function selectBuild(gameDirectory) {
-  const candidatePath = path.join(ASSET_DIRECTORY, 'manifest-25136512.json');
-  if (!fs.existsSync(candidatePath)) return;
-  const candidate = JSON.parse(fs.readFileSync(candidatePath, 'utf8'));
-  const file = path.join(gameDirectory, candidate.heavenEntry.relativePath);
-  if (fs.existsSync(file) && [candidate.heavenEntry.baseSha1, candidate.heavenEntry.patchedSha1].includes(sha1File(file))) manifest = candidate;
+  manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
+  for (const build of ['25244463', '25136512']) {
+    const candidatePath = path.join(ASSET_DIRECTORY, `manifest-${build}.json`);
+    if (!fs.existsSync(candidatePath)) continue;
+    const candidate = JSON.parse(fs.readFileSync(candidatePath, 'utf8'));
+    const file = path.join(gameDirectory, candidate.heavenEntry.relativePath);
+    if (fs.existsSync(file) && [candidate.heavenEntry.baseSha1, candidate.heavenEntry.patchedSha1].includes(sha1File(file))) {
+      manifest = candidate;
+      return;
+    }
+  }
 }
 
 function profileLabel(name) {
