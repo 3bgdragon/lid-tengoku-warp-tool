@@ -305,7 +305,7 @@ function readStatus(gameDirectory) {
 
 function selectBuild(gameDirectory) {
   manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
-  for (const build of ['25244463', '25136512']) {
+  for (const build of ['25386710', '25244463', '25136512']) {
     const candidatePath = path.join(ASSET_DIRECTORY, `manifest-${build}.json`);
     if (!fs.existsSync(candidatePath)) continue;
     const candidate = JSON.parse(fs.readFileSync(candidatePath, 'utf8'));
