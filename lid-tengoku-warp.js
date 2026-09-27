@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
+const { configure, text: t } = require('./language');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -9,6 +10,7 @@ const readline = require('readline/promises');
 const m2gCompat = require('./compat/m2g');
 const embedded = require('./compat/m2g/embedded');
 const restoreSafety = require('./restore-safety');
+const mapLanguage = require('./map-language');
 const embeddedProfiles = require('./compat/m2g/embedded-profiles.json').profiles;
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
@@ -148,25 +150,25 @@ function discoverGameDirectories() {
 async function chooseGameDirectory(rl, explicitPath, interactiveMode) {
   if (explicitPath) {
     const matches = resolveGameInput(explicitPath);
-    if (matches.length !== 1) fail(`LET IT DIE 설치 폴더를 찾지 못했습니다: ${path.resolve(explicitPath)}`);
+    if (matches.length !== 1) fail(t(`LET IT DIE 설치 폴더를 찾지 못했습니다: ${path.resolve(explicitPath)}`, `LET IT DIE installation not found: ${path.resolve(explicitPath)}`));
     return matches[0];
   }
   const matches = discoverGameDirectories();
   if (matches.length === 1) return matches[0];
   if (!interactiveMode) {
-    fail(matches.length === 0 ? '설치 폴더를 자동으로 찾지 못했습니다. --game "LET IT DIE 설치 폴더"를 사용하세요.' :
-      `설치 폴더가 여러 개입니다. --game으로 지정하세요:\n${matches.join('\n')}`);
+    fail(matches.length === 0 ? t('설치 폴더를 자동으로 찾지 못했습니다. --game "LET IT DIE 설치 폴더"를 사용하세요.', 'Installation folder not found automatically. Use --game "LET IT DIE installation folder".') :
+      t(`설치 폴더가 여러 개입니다. --game으로 지정하세요:\n${matches.join('\n')}`, `Multiple installations found. Specify --game:\n${matches.join('\n')}`));
   }
   if (matches.length > 1) {
-    console.log('\nLET IT DIE 설치 폴더 선택');
+    console.log(t('\nLET IT DIE 설치 폴더 선택', '\nSelect LET IT DIE installation'));
     matches.forEach((item, index) => console.log(`${index + 1}. ${item}`));
-    console.log(`${matches.length + 1}. 다른 경로 직접 입력`);
-    const answer = Number((await rl.question('선택: ')).trim());
+    console.log(t(`${matches.length + 1}. 다른 경로 직접 입력`, `${matches.length + 1}. Enter another path`));
+    const answer = Number((await rl.question(t('선택: ', 'Select: '))).trim());
     if (answer >= 1 && answer <= matches.length) return matches[answer - 1];
-  } else console.log('\nLET IT DIE 설치 폴더를 자동으로 찾지 못했습니다.');
-  const entered = await rl.question('게임 설치 폴더 또는 BrgGame-Steam.exe/UPK 경로: ');
+  } else console.log(t('\nLET IT DIE 설치 폴더를 자동으로 찾지 못했습니다.', '\nLET IT DIE installation was not found automatically.'));
+  const entered = await rl.question(t('게임 설치 폴더 또는 BrgGame-Steam.exe/UPK 경로: ', 'Installation folder or BrgGame-Steam.exe/UPK path: '));
   const resolved = resolveGameInput(entered);
-  if (resolved.length !== 1) fail(`해당 경로에서 LET IT DIE 필수 설치 파일을 찾지 못했습니다: ${stripQuotes(entered)}`);
+  if (resolved.length !== 1) fail(t(`해당 경로에서 LET IT DIE 필수 설치 파일을 찾지 못했습니다: ${stripQuotes(entered)}`, `Required LET IT DIE files not found at: ${stripQuotes(entered)}`));
   return resolved[0];
 }
 
@@ -214,7 +216,8 @@ function identifyHeavenEntry(filePath) {
   const hash = sha1File(filePath);
   const size = fs.statSync(filePath).size;
   if (hash === manifest.heavenEntry.baseSha1) return { hash, size, enabled: false };
-  if (hash === manifest.heavenEntry.patchedSha1) return { hash, size, enabled: true };
+  if (hash === manifest.heavenEntry.patchedSha1) return { hash, size, enabled: true, language: 'ko' };
+  if (mapLanguage.identify(hash, manifest.heavenEntry.patchedSha1)) return { hash, size, enabled: true, language: 'en' };
   const legacy = (manifest.heavenEntry.legacy || []).find((item) => item.sha1 === hash);
   if (legacy) return { hash, size, enabled: true, upgradePatch: legacy.upgradePatch, disablePatch: legacy.disablePatch };
   return { hash, size, enabled: null };
@@ -243,7 +246,7 @@ function findAll(buffer, needle) {
 function manifestDigestOffsets(executable, assetName, expectedCount) {
   const needle = Buffer.from(`${assetName.toLowerCase()}\0`, 'ascii');
   const positions = findAll(executable, needle);
-  if (positions.length !== expectedCount) fail(`${assetName} 실행 파일 해시 항목이 ${expectedCount}개가 아닙니다: ${positions.length}개`);
+  if (positions.length !== expectedCount) fail(t(`${assetName} 실행 파일 해시 항목이 ${expectedCount}개가 아닙니다: ${positions.length}개`, `${assetName} executable hash entry count: expected ${expectedCount}, found ${positions.length}`));
   return positions.map((position) => position + needle.length);
 }
 
@@ -319,13 +322,25 @@ function selectBuild(gameDirectory) {
 
 function profileLabel(name) {
   return ({
-    'off-off': '순정 런타임', 'on-off': '저스트가드 그로기 ON', 'off-on': '근접 방어 제한 해제',
-    'on-on': '그로기 ON + 근접 방어 제한 해제', 'off-on-v1.1': '근접 방어 제한 해제(구버전)',
-    'on-on-v1.1': '그로기 ON + 근접 방어 제한 해제(구버전)',
-  })[name] ?? name ?? '알 수 없음';
+    'off-off': t('순정 런타임', 'Stock runtime'), 'on-off': t('저스트가드 그로기 ON', 'Just Guard groggy ON'), 'off-on': t('근접 방어 제한 해제', 'Melee guard restrictions removed'),
+    'on-on': t('그로기 ON + 근접 방어 제한 해제', 'Groggy ON + melee guard restrictions removed'), 'off-on-v1.1': t('근접 방어 제한 해제(구버전)', 'Melee guard restrictions removed (legacy)'),
+    'on-on-v1.1': t('그로기 ON + 근접 방어 제한 해제(구버전)', 'Groggy ON + melee guard restrictions removed (legacy)'),
+  })[name] ?? name ?? t('알 수 없음', 'Unknown');
 }
 
 function printStatus(status) {
+  if (t(false, true)) {
+    console.log(`\nLET IT DIE ${manifest.gameVersion} — Standard Tengoku Start-Floor Selector`);
+    console.log(`Installation: ${status.gameDirectory}`);
+    console.log(`Start-floor selector: ${status.coherent ? (status.brgGame.enabled ? 'Applied (51/101/201/301)' : 'Not applied') : 'Inconsistent/unknown'}`);
+    console.log(`BrgGame variant: ${profileLabel(status.brgGame.profileName).replace(/M2G 나이프/g, 'M2G knife')}`);
+    console.log(`Floor 50 entry map: ${status.heavenEntry.enabled === true ? 'Selector applied' : status.heavenEntry.enabled === false ? 'Stock' : `Unsupported (${status.heavenEntry.hash})`}`);
+    console.log(`Scheduled escalator travel: ${status.executable.native.enabled === true ? (manifest.steamBuildId ? 'Applied (in-game verification pending on this build)' : 'Applied (51/101/201/301 confirmed by user in game)') : status.executable.native.enabled === false ? 'Stock' : 'Unsupported executable'}`);
+    if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
+    console.log(`Executable hash links: ${status.executable.valid ? 'Valid' : 'Mismatch'}`);
+    console.log('Floor 22 elevator, save and MASTER DB: unchanged');
+    return;
+  }
   console.log(`\nLET IT DIE ${manifest.gameVersion} — 일반 텐고쿠 시작층 선택`);
   console.log(`설치 폴더: ${status.gameDirectory}`);
   console.log(`시작층 선택: ${status.coherent ? (status.brgGame.enabled ? '적용됨 (51·101·201·301층)' : '적용 안 됨') : '상태 불일치/확인 불가'}`);
@@ -340,42 +355,42 @@ function printStatus(status) {
 }
 
 function assertSupported(status) {
-  if (status.executable.native.enabled === null) fail('지원하지 않는 실행 파일입니다. 변경하지 않습니다.');
-  if (!status.brgGame.profileName) fail(`지원하지 않는 BrgGame.upk입니다. SHA-1: ${status.brgGame.hash}`);
-  if (status.heavenEntry.enabled === null) fail(`지원하지 않는 Heaven_A01_ST_COL.upk입니다. SHA-1: ${status.heavenEntry.hash}`);
-  if (status.brgStart.enabled === null) fail(`지원하지 않는 BrgStart_PL.upk입니다. SHA-1: ${status.brgStart.hash}`);
+  if (status.executable.native.enabled === null) fail(t('지원하지 않는 실행 파일입니다. 변경하지 않습니다.', 'Unsupported executable. No changes will be made.'));
+  if (!status.brgGame.profileName) fail(t(`지원하지 않는 BrgGame.upk입니다. SHA-1: ${status.brgGame.hash}`, `Unsupported BrgGame.upk. SHA-1: ${status.brgGame.hash}`));
+  if (status.heavenEntry.enabled === null) fail(t(`지원하지 않는 Heaven_A01_ST_COL.upk입니다. SHA-1: ${status.heavenEntry.hash}`, `Unsupported Heaven_A01_ST_COL.upk. SHA-1: ${status.heavenEntry.hash}`));
+  if (status.brgStart.enabled === null) fail(t(`지원하지 않는 BrgStart_PL.upk입니다. SHA-1: ${status.brgStart.hash}`, `Unsupported BrgStart_PL.upk. SHA-1: ${status.brgStart.hash}`));
 }
 
 function readPatch(patchName) {
   const patchPath = path.join(ASSET_DIRECTORY, patchName);
   const data = fs.readFileSync(patchPath);
-  if (data.length < 16 || !data.subarray(0, 8).equals(PATCH_MAGIC)) fail(`패치 파일 형식 오류: ${patchPath}`);
+  if (data.length < 16 || !data.subarray(0, 8).equals(PATCH_MAGIC)) fail(t(`패치 파일 형식 오류: ${patchPath}`, `Invalid patch file format: ${patchPath}`));
   const targetSize = data.readUInt32LE(8);
   const count = data.readUInt32LE(12);
   const entries = [];
   let cursor = 16;
   for (let index = 0; index < count; index += 1) {
-    if (cursor + 8 > data.length) fail(`패치 항목 헤더가 잘렸습니다: ${patchPath}`);
+    if (cursor + 8 > data.length) fail(t(`패치 항목 헤더가 잘렸습니다: ${patchPath}`, `Truncated patch entry header: ${patchPath}`));
     const offset = data.readUInt32LE(cursor);
     const size = data.readUInt32LE(cursor + 4);
     cursor += 8;
-    if (cursor + size > data.length || offset + size > targetSize) fail(`패치 범위 오류: ${patchPath}`);
+    if (cursor + size > data.length || offset + size > targetSize) fail(t(`패치 범위 오류: ${patchPath}`, `Patch bounds error: ${patchPath}`));
     entries.push({ offset, payload: data.subarray(cursor, cursor + size) });
     cursor += size;
   }
-  if (cursor !== data.length) fail(`패치 파일 꼬리 데이터 오류: ${patchPath}`);
+  if (cursor !== data.length) fail(t(`패치 파일 꼬리 데이터 오류: ${patchPath}`, `Invalid patch trailing data: ${patchPath}`));
   return { targetSize, entries };
 }
 
 function makePackageTemp(sourcePath, patchName, expectedHash, tempPath, preserveM2g = false) {
-  if (fs.existsSync(tempPath)) fail(`이전 임시 파일이 남아 있습니다: ${tempPath}`);
+  if (fs.existsSync(tempPath)) fail(t(`이전 임시 파일이 남아 있습니다: ${tempPath}`, `A previous temporary file still exists: ${tempPath}`));
   if (preserveM2g === 'embedded' && patchName) {
     const input=fs.readFileSync(sourcePath), found=embedded.identify(input);
     const source=embedded.set(input,true), patch=readPatch(patchName);
     const target=Buffer.alloc(patch.targetSize);source.copy(target);
     for (const {offset,payload} of patch.entries) payload.copy(target,offset);
     const result=embedded.set(target,found.enabled);
-    if (crypto.createHash('sha1').update(result).digest('hex').toUpperCase()!==expectedHash) fail('내장 M2G 보존 검증 실패');
+    if (crypto.createHash('sha1').update(result).digest('hex').toUpperCase()!==expectedHash) fail(t('내장 M2G 보존 검증 실패', 'Embedded M2G preservation verification failed'));
     fs.writeFileSync(tempPath,result,{flag:'wx'});return;
   }
   if (preserveM2g && patchName) {
@@ -385,9 +400,9 @@ function makePackageTemp(sourcePath, patchName, expectedHash, tempPath, preserve
     source.copy(base);
     for (const { offset, payload } of patch.entries) payload.copy(base, offset);
     const result = m2gCompat.rebuild(base);
-    if (crypto.createHash('sha1').update(result).digest('hex').toUpperCase() !== expectedHash) fail('M2G 보존 패키지 SHA-1 검증 실패');
+    if (crypto.createHash('sha1').update(result).digest('hex').toUpperCase() !== expectedHash) fail(t('M2G 보존 패키지 SHA-1 검증 실패', 'M2G-preserving package SHA-1 verification failed'));
     fs.writeFileSync(tempPath, result, { flag: 'wx' });
-    if (sha1File(tempPath) !== expectedHash) fail('M2G 임시 파일 저장 검증 실패');
+    if (sha1File(tempPath) !== expectedHash) fail(t('M2G 임시 파일 저장 검증 실패', 'M2G temporary-file write verification failed'));
     return;
   }
   fs.copyFileSync(sourcePath, tempPath, fs.constants.COPYFILE_EXCL);
@@ -401,14 +416,34 @@ function makePackageTemp(sourcePath, patchName, expectedHash, tempPath, preserve
     } finally { fs.closeSync(handle); }
   }
   const actualHash = sha1File(tempPath);
-  if (actualHash !== expectedHash) fail(`임시 패키지 SHA-1 검증 실패: ${actualHash} (예상 ${expectedHash})`);
+  if (actualHash !== expectedHash) fail(t(`임시 패키지 SHA-1 검증 실패: ${actualHash} (예상 ${expectedHash})`, `Temporary package SHA-1 verification failed: ${actualHash} (expected ${expectedHash})`));
+}
+
+function makeHeavenTemp(sourcePath, patchName, expectedHash, tempPath, enable) {
+  if (fs.existsSync(tempPath)) fail(t(`이전 임시 파일이 남아 있습니다: ${tempPath}`, `A previous temporary file still exists: ${tempPath}`));
+  let bytes = fs.readFileSync(sourcePath);
+  if (mapLanguage.identify(mapLanguage.sha(bytes), manifest.heavenEntry.patchedSha1)) {
+    bytes = mapLanguage.toKorean(bytes, manifest.heavenEntry.patchedSha1);
+  }
+  if (patchName) {
+    const patch = readPatch(patchName), result = Buffer.alloc(patch.targetSize);
+    bytes.copy(result);
+    for (const entry of patch.entries) entry.payload.copy(result, entry.offset);
+    bytes = result;
+  }
+  if (mapLanguage.sha(bytes) !== expectedHash) fail(t('맵 언어 변환 전 파일 검증 실패', 'Map verification failed before language conversion'));
+  if (enable && t(false, true)) bytes = mapLanguage.toEnglish(bytes, manifest.heavenEntry.patchedSha1);
+  fs.writeFileSync(tempPath, bytes, { flag: 'wx' });
+  const hash = mapLanguage.sha(bytes);
+  if (sha1File(tempPath) !== hash) fail(t('맵 언어 임시 파일 검증 실패', 'Translated map temporary-file verification failed'));
+  return hash;
 }
 
 function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
-  if (fs.existsSync(tempPath)) fail(`이전 임시 파일이 남아 있습니다: ${tempPath}`);
+  if (fs.existsSync(tempPath)) fail(t(`이전 임시 파일이 남아 있습니다: ${tempPath}`, `A previous temporary file still exists: ${tempPath}`));
   const source = fs.readFileSync(sourcePath);
   const native = identifyNativeExecutable(source);
-  if (native.enabled === null) fail('알려지지 않은 실행 파일입니다. 네이티브 패치를 적용하지 않습니다.');
+  if (native.enabled === null) fail(t('알려지지 않은 실행 파일입니다. 네이티브 패치를 적용하지 않습니다.', 'Unknown executable. Native patch will not be applied.'));
   let executable = normalizedExecutable(source);
   if (native.enabled !== enable || (enable && native.upgradePatch)) {
     const definition = native.definition;
@@ -418,7 +453,7 @@ function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
     for (const { offset, payload } of patch.entries) payload.copy(changed, offset);
     executable = changed;
   }
-  if (identifyNativeExecutable(executable).enabled !== enable) fail('네이티브 실행 파일 패치 검증에 실패했습니다.');
+  if (identifyNativeExecutable(executable).enabled !== enable) fail(t('네이티브 실행 파일 패치 검증에 실패했습니다.', 'Native executable patch verification failed.'));
   // Extra digests are normalized only for EXE recognition, never changed by warp.
   for (const [assetName, count] of Object.entries(manifest.executable.normalizedExtraEntries || {})) {
     const from = manifestDigestOffsets(source, assetName, count);
@@ -430,7 +465,7 @@ function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
     for (const offset of manifestDigestOffsets(executable, assetName, count)) digest.copy(executable, offset);
   }
   fs.writeFileSync(tempPath, executable, { flag: 'wx' });
-  if (!inspectExecutable(tempPath, packageHashes).valid) fail('임시 실행 파일 해시 연결 검증에 실패했습니다.');
+  if (!inspectExecutable(tempPath, packageHashes).valid) fail(t('임시 실행 파일 해시 연결 검증에 실패했습니다.', 'Temporary executable hash-link verification failed.'));
 }
 
 function backupRoot() {
@@ -454,7 +489,7 @@ function createBackup(status, reason) {
     }
     fs.writeFileSync(path.join(directory, 'backup.json'), `${JSON.stringify(metadata, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
   } catch (error) {
-    error.message += `\n불완전한 백업 폴더: ${directory}`;
+    error.message += t(`\n불완전한 백업 폴더: ${directory}`, `\nIncomplete backup folder: ${directory}`);
     throw error;
   }
   return directory;
@@ -472,13 +507,13 @@ function listBackups() {
 function readAndValidateBackup(directory) {
   let metadata;
   try { metadata = JSON.parse(fs.readFileSync(path.join(directory, 'backup.json'), 'utf8')); }
-  catch (error) { fail(`백업 정보를 읽을 수 없습니다: ${directory}\n${error.message}`); }
+  catch (error) { fail(t(`백업 정보를 읽을 수 없습니다: ${directory}\n${error.message}`, `Cannot read backup information: ${directory}\n${error.message}`)); }
   for (const key of FILE_KEYS) {
     const record = metadata.files?.[key];
     const filePath = record?.name && path.join(directory, record.name);
     if (!record && key === 'brgStart') continue;
     if (!record || !filePath || !fs.existsSync(filePath) || fs.statSync(filePath).size !== record.size ||
-        sha1File(filePath) !== record.sha1) fail(`백업 파일 검증 실패: ${key}`);
+        sha1File(filePath) !== record.sha1) fail(t(`백업 파일 검증 실패: ${key}`, `Backup file verification failed: ${key}`));
   }
   return metadata;
 }
@@ -489,7 +524,7 @@ function cleanupFiles(paths) {
 
 function transactionalReplace(replacements) {
   const rollbacks = replacements.map(({ target }) => `${target}.lid-tengoku.rollback`);
-  if (rollbacks.some(fs.existsSync)) fail('이전 작업의 롤백 파일이 남아 있습니다. 게임 폴더를 확인하세요.');
+  if (rollbacks.some(fs.existsSync)) fail(t('이전 작업의 롤백 파일이 남아 있습니다. 게임 폴더를 확인하세요.', 'Rollback files from a previous operation remain. Check the game folder.'));
   const moved = [];
   const installed = [];
   try {
@@ -511,19 +546,20 @@ function setPatchState(gameDirectory, enable, experimental = false) {
   selectBuild(gameDirectory);
   if (enable && manifest.releaseStatus !== 'verified-escalator-routing' &&
       !(experimental && manifest.releaseStatus === 'static-verified-awaiting-gameplay')) {
-    fail('고층 에스컬레이터 이동 구현을 검증 중이므로 이 개발판의 적용을 차단했습니다. 게임 파일은 변경하지 않았습니다. 백업과 복원은 사용할 수 있습니다.');
+    fail(t('고층 에스컬레이터 이동 구현을 검증 중이므로 이 개발판의 적용을 차단했습니다. 게임 파일은 변경하지 않았습니다. 백업과 복원은 사용할 수 있습니다.', 'This development build blocks application while high-floor escalator travel is under verification. Game files were not changed. Backup and restore remain available.'));
   }
-  if (isGameRunning()) fail('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.');
+  if (isGameRunning()) fail(t('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.', 'LET IT DIE is running. Close the game completely and try again.'));
   const status = readStatus(gameDirectory);
   assertSupported(status);
   if (status.brgGame.enabled === enable && status.heavenEntry.enabled === enable &&
-      status.executable.native.enabled === enable && status.executable.valid && !status.heavenEntry.upgradePatch && !status.executable.native.upgradePatch) {
+      status.executable.native.enabled === enable && status.executable.valid && !status.heavenEntry.upgradePatch && !status.executable.native.upgradePatch &&
+      (!enable || status.heavenEntry.language === t('ko', 'en'))) {
     return { changed: false, status };
   }
   const backupPath = createBackup(status, enable ? 'enable-selector' : 'disable-selector');
   const profile = status.brgGame.profile;
   const targetBrgHash = enable ? profile.patchedSha1 : profile.baseSha1;
-  const targetMapHash = enable ? manifest.heavenEntry.patchedSha1 : manifest.heavenEntry.baseSha1;
+  let targetMapHash = enable ? manifest.heavenEntry.patchedSha1 : manifest.heavenEntry.baseSha1;
   const targetBrgStartHash = manifest.brgStart.baseSha1;
   const temps = {
     brgGame: `${status.paths.brgGame}.lid-tengoku.tmp`,
@@ -535,11 +571,11 @@ function setPatchState(gameDirectory, enable, experimental = false) {
     makePackageTemp(status.paths.brgGame,
       status.brgGame.enabled === enable ? null : (enable ? profile.enablePatch : profile.disablePatch),
       targetBrgHash, temps.brgGame, profile.embeddedM2g ? 'embedded' : profile.m2g === true);
-    makePackageTemp(status.paths.heavenEntry,
+    targetMapHash = makeHeavenTemp(status.paths.heavenEntry,
       enable && status.heavenEntry.upgradePatch ? status.heavenEntry.upgradePatch :
         (status.heavenEntry.enabled === enable ? null : (enable ? manifest.heavenEntry.enablePatch :
           (status.heavenEntry.disablePatch || manifest.heavenEntry.disablePatch))),
-      targetMapHash, temps.heavenEntry);
+      targetMapHash, temps.heavenEntry, enable);
     makePackageTemp(status.paths.brgStart,
       status.brgStart.enabled ? manifest.brgStart.disablePatch : null,
       targetBrgStartHash, temps.brgStart);
@@ -551,20 +587,20 @@ function setPatchState(gameDirectory, enable, experimental = false) {
     transactionalReplace(FILE_KEYS.map((key) => ({ target: status.paths[key], temp: temps[key] })));
   } catch (error) {
     cleanupFiles(Object.values(temps));
-    error.message += `\n변경 전 백업: ${backupPath}`;
+    error.message += t(`\n변경 전 백업: ${backupPath}`, `\nPre-change backup: ${backupPath}`);
     throw error;
   }
   const verified = readStatus(gameDirectory);
   restoreSafety.mark(backupPath, gameDirectory);
-  if (!verified.coherent || verified.brgGame.enabled !== enable) fail(`적용 후 검증 실패. 변경 전 백업: ${backupPath}`);
+  if (!verified.coherent || verified.brgGame.enabled !== enable) fail(t(`적용 후 검증 실패. 변경 전 백업: ${backupPath}`, `Post-apply verification failed. Pre-change backup: ${backupPath}`));
   return { changed: true, backupPath, status: verified };
 }
 
 function restoreBackup(gameDirectory, backupPath) {
-  if (isGameRunning()) fail('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.');
+  if (isGameRunning()) fail(t('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.', 'LET IT DIE is running. Close the game completely and try again.'));
   const metadata = readAndValidateBackup(backupPath);
   const current = readStatus(gameDirectory);
-  if ((metadata.steamBuildId || null) !== (manifest.steamBuildId || null)) fail('게임 업데이트 전후의 백업은 서로 복원할 수 없습니다. 현재 빌드에서 만든 백업을 선택하세요.');
+  if ((metadata.steamBuildId || null) !== (manifest.steamBuildId || null)) fail(t('게임 업데이트 전후의 백업은 서로 복원할 수 없습니다. 현재 빌드에서 만든 백업을 선택하세요.', 'Backups cannot be restored across game builds. Select a backup from the current build.'));
   restoreSafety.assertSafe(metadata, gameDirectory);
   const safetyBackup = createBackup(current, `before-restore:${path.basename(backupPath)}`);
   const temps = {};
@@ -573,19 +609,19 @@ function restoreBackup(gameDirectory, backupPath) {
       temps[key] = `${current.paths[key]}.lid-tengoku.tmp`;
       const record = metadata.files[key];
       if (!record && key === 'brgStart') {
-        if (current.brgStart.enabled === null) fail('구버전 백업에 BrgStart_PL.upk가 없고 현재 파일도 지원하지 않습니다.');
+        if (current.brgStart.enabled === null) fail(t('구버전 백업에 BrgStart_PL.upk가 없고 현재 파일도 지원하지 않습니다.', 'Legacy backup lacks BrgStart_PL.upk and the current file is unsupported.'));
         makePackageTemp(current.paths.brgStart,
           current.brgStart.enabled ? manifest.brgStart.disablePatch : null,
           manifest.brgStart.baseSha1, temps[key]);
       } else {
         fs.copyFileSync(path.join(backupPath, record.name), temps[key], fs.constants.COPYFILE_EXCL);
-        if (sha1File(temps[key]) !== record.sha1) fail(`복원 임시 파일 검증 실패: ${key}`);
+        if (sha1File(temps[key]) !== record.sha1) fail(t(`복원 임시 파일 검증 실패: ${key}`, `Restore temporary-file verification failed: ${key}`));
       }
     }
     transactionalReplace(FILE_KEYS.map((key) => ({ target: current.paths[key], temp: temps[key] })));
   } catch (error) {
     cleanupFiles(Object.values(temps));
-    error.message += `\n복원 직전 안전 백업: ${safetyBackup}`;
+    error.message += t(`\n복원 직전 안전 백업: ${safetyBackup}`, `\nSafety backup made before restore: ${safetyBackup}`);
     throw error;
   }
   restoreSafety.mark(safetyBackup, gameDirectory);
@@ -599,7 +635,7 @@ function parseCommandLine(argv) {
   let yes = false;
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--game') {
-      if (!argv[index + 1]) fail('--game 뒤에 설치 폴더가 필요합니다.');
+      if (!argv[index + 1]) fail(t('--game 뒤에 설치 폴더가 필요합니다.', '--game requires an installation folder.'));
       gameDirectory = argv[++index];
     } else if (argv[index] === '--experimental') experimental = true;
     else if (argv[index] === '--yes') yes = true;
@@ -618,43 +654,43 @@ async function interactive(gameDirectory, rl) {
   while (true) {
     const status = readStatus(gameDirectory);
     printStatus(status);
-    console.log('\n1. 일반 텐고쿠 시작층 선택 적용');
-    console.log('2. 패치 제거');
-    console.log('3. 현재 게임 파일 백업');
-    console.log('4. 최신 백업 복원');
-    console.log('5. 백업 목록');
-    console.log('6. 종료');
-    const choice = (await rl.question('선택: ')).trim();
+    console.log(t('\n1. 일반 텐고쿠 시작층 선택 적용', '\n1. Apply standard Tengoku start-floor selector'));
+    console.log(t('2. 패치 제거', '2. Remove patch'));
+    console.log(t('3. 현재 게임 파일 백업', '3. Back up current game files'));
+    console.log(t('4. 최신 백업 복원', '4. Restore latest backup'));
+    console.log(t('5. 백업 목록', '5. List backups'));
+    console.log(t('6. 종료', '6. Exit'));
+    const choice = (await rl.question(t('선택: ', 'Select: '))).trim();
     if (choice === '6') return;
     if (choice === '1' || choice === '2') {
       const enable = choice === '1';
       const experimental = enable && manifest.releaseStatus === 'static-verified-awaiting-gameplay';
       if (experimental) {
-        console.log('주의: 101·201·301층 전체 경로는 검증 중입니다. 새 빌드는 메뉴 조작과 실제 이동을 다시 확인해야 합니다. 적용 전 자동 백업을 만들며, 문제가 있으면 패치 제거 또는 백업 복원을 사용하세요.');
+        console.log(t('주의: 101·201·301층 전체 경로는 검증 중입니다. 새 빌드는 메뉴 조작과 실제 이동을 다시 확인해야 합니다. 적용 전 자동 백업을 만들며, 문제가 있으면 패치 제거 또는 백업 복원을 사용하세요.', 'Warning: full routes to floors 101/201/301 are under verification. Menu controls and travel need retesting on this build. A backup is created before application. If problems occur, remove the patch or restore a backup.'));
       }
-      const question = enable ? '50층 일반 텐고쿠 진입 전에 51·101·201·301층 선택 메뉴를 추가할까요?' :
-        '일반 텐고쿠 시작층 선택 패치를 제거할까요?';
-      if (!await confirm(rl, experimental ? `${question} (시험 적용에 동의)` : question, false)) continue;
+      const question = enable ? t('50층 일반 텐고쿠 진입 전에 51·101·201·301층 선택 메뉴를 추가할까요?', 'Add a floor 51/101/201/301 selector before entering standard Tengoku from floor 50?') :
+        t('일반 텐고쿠 시작층 선택 패치를 제거할까요?', 'Remove the standard Tengoku start-floor selector?');
+      if (!await confirm(rl, experimental ? t(`${question} (시험 적용에 동의)`, `${question} (consent to experimental application)`) : question, false)) continue;
       const result = setPatchState(gameDirectory, enable, experimental);
-      console.log(result.changed ? `완료했습니다. 변경 전 백업: ${result.backupPath}` : '이미 선택한 상태입니다.');
-    } else if (choice === '3') console.log(`백업 완료: ${createBackup(status, 'manual')}`);
+      console.log(result.changed ? t(`완료했습니다. 변경 전 백업: ${result.backupPath}`, `Completed. Pre-change backup: ${result.backupPath}`) : t('이미 선택한 상태입니다.', 'Already in the selected state.'));
+    } else if (choice === '3') console.log(t('백업 완료: ', 'Backup created: ') + createBackup(status, 'manual'));
     else if (choice === '4') {
       const backups = listBackups();
-      if (backups.length === 0) { console.log('복원 가능한 백업이 없습니다.'); continue; }
-      console.log(`최신 백업: ${backups[0]}`);
-      if (!await confirm(rl, '이 백업을 복원할까요?', false)) continue;
+      if (backups.length === 0) { console.log(t('복원 가능한 백업이 없습니다.', 'No restorable backup found.')); continue; }
+      console.log(t(`최신 백업: ${backups[0]}`, `Latest backup: ${backups[0]}`));
+      if (!await confirm(rl, t('이 백업을 복원할까요?', 'Restore this backup?'), false)) continue;
       const result = restoreBackup(gameDirectory, backups[0]);
-      console.log(`복원 완료. 복원 직전 안전 백업: ${result.safetyBackup}`);
+      console.log(t(`복원 완료. 복원 직전 안전 백업: ${result.safetyBackup}`, `Restore completed. Pre-restore safety backup: ${result.safetyBackup}`));
     } else if (choice === '5') {
       const backups = listBackups();
-      if (backups.length === 0) console.log('백업이 없습니다.');
+      if (backups.length === 0) console.log(t('백업이 없습니다.', 'No backups found.'));
       else backups.forEach((item, index) => console.log(`${index + 1}. ${item}`));
-    } else console.log('잘못된 선택입니다.');
+    } else console.log(t('잘못된 선택입니다.', 'Invalid selection.'));
   }
 }
 
 async function main() {
-  const options = parseCommandLine(process.argv.slice(2));
+  const options = parseCommandLine(configure(process.argv.slice(2), __dirname));
   const command = options.positional[0];
   const interactiveMode = !command;
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -664,35 +700,35 @@ async function main() {
     if (command === 'status') return printStatus(readStatus(gameDirectory));
     if (command === 'apply' || command === 'remove') {
       const enable = command === 'apply';
-      if (!await confirm(rl, enable ? '패치를 적용할까요?' : '패치를 제거할까요?', options.yes)) return;
+      if (!await confirm(rl, enable ? t('패치를 적용할까요?', 'Apply the patch?') : t('패치를 제거할까요?', 'Remove the patch?'), options.yes)) return;
       const result = setPatchState(gameDirectory, enable, options.experimental);
       printStatus(result.status);
-      console.log(result.changed ? `변경 전 백업: ${result.backupPath}` : '변경할 내용이 없습니다.');
+      console.log(result.changed ? t(`변경 전 백업: ${result.backupPath}`, `Pre-change backup: ${result.backupPath}`) : t('변경할 내용이 없습니다.', 'No changes needed.'));
       return;
     }
     if (command === 'backup') {
-      console.log(`백업 완료: ${createBackup(readStatus(gameDirectory), 'manual')}`);
+      console.log(t('백업 완료: ', 'Backup created: ') + createBackup(readStatus(gameDirectory), 'manual'));
       return;
     }
     if (command === 'restore') {
       const backup = options.positional[1] ? path.resolve(options.positional[1]) : listBackups()[0];
-      if (!backup) fail('복원 가능한 백업이 없습니다.');
-      if (!await confirm(rl, `${backup} 백업을 복원할까요?`, options.yes)) return;
+      if (!backup) fail(t('복원 가능한 백업이 없습니다.', 'No restorable backup found.'));
+      if (!await confirm(rl, t(`${backup} 백업을 복원할까요?`, `Restore backup ${backup}?`), options.yes)) return;
       const result = restoreBackup(gameDirectory, backup);
       printStatus(result.status);
-      console.log(`복원 직전 안전 백업: ${result.safetyBackup}`);
+      console.log(t(`복원 직전 안전 백업: ${result.safetyBackup}`, `Pre-restore safety backup: ${result.safetyBackup}`));
       return;
     }
     if (command === 'list-backups') {
       const backups = listBackups();
-      console.log(backups.length ? backups.join('\n') : '백업이 없습니다.');
+      console.log(backups.length ? backups.join('\n') : t('백업이 없습니다.', 'No backups found.'));
       return;
     }
-    fail(`알 수 없는 명령: ${command}\n사용법: status | apply | remove | backup | restore [백업 폴더] | list-backups`);
+    fail(t(`알 수 없는 명령: ${command}\n사용법: status | apply | remove | backup | restore [백업 폴더] | list-backups`, `Unknown command: ${command}\nUsage: status | apply | remove | backup | restore [backup folder] | list-backups`));
   } finally { rl.close(); }
 }
 
 main().catch((error) => {
-  console.error(`\n오류: ${error.userFacing ? error.message : `${error.message}\n${error.stack}`}`);
+  console.error(t(`\n오류: ${error.userFacing ? error.message : `${error.message}\n${error.stack}`}`, `\nError: ${error.userFacing ? error.message : `${error.message}\n${error.stack}`}`));
   process.exitCode = 1;
 });

@@ -1,4 +1,5 @@
 'use strict';
+const { text: t } = require('./language');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const files=['BrgGame/CookedPCConsole/AS_CH_Main_Male_Common_SF.upk','BrgGame/CookedPCConsole/BrgGame.upk','BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk','BrgGame/CookedPCConsole/BrgStart_PL.upk','Binaries/Win64/BrgGame-Steam.exe'];
 function capture(game){return Object.fromEntries(files.map(rel=>{const f=path.join(game,rel);return [rel,fs.existsSync(f)?crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex'):null];}));}
@@ -12,6 +13,6 @@ function assertSafe(record,game){
   const rel=files.find(f=>path.basename(f)===r.name);if(!rel||!fs.existsSync(path.join(game,rel)))return false;
   return crypto.createHash('sha1').update(fs.readFileSync(path.join(game,rel))).digest('hex').toUpperCase()===r.sha1;
  }))return;
- throw Error('다른 패치/업데이트가 파일을 변경했거나 안전 복원 이력이 없습니다. 전체 백업 복원을 중단합니다. 다른 패치를 유지하려면 패치 제거 또는 순정 설정을 사용하세요. 백업은 보존했습니다.');
+ throw Error(t('다른 패치/업데이트가 파일을 변경했거나 안전 복원 이력이 없습니다. 전체 백업 복원을 중단합니다. 다른 패치를 유지하려면 패치 제거 또는 순정 설정을 사용하세요. 백업은 보존했습니다.', 'Another patch/update changed files, or safe-restore history is unavailable. Full restore blocked. Use patch removal or stock settings to preserve other patches. Backups have been preserved.'));
 }
 module.exports={capture,mark,assertSafe};

@@ -1,0 +1,54 @@
+[
+  {
+    "build": "legacy",
+    "koreanSha1": "B8CF84ADD73E087F6BDE912F2AAC7E13FB4ABB20",
+    "englishSha1": "234D02AFDB66003F6DB43FD2D94247312DDEF90A",
+    "koreanSize": 847106,
+    "englishSize": 1290471,
+    "restore": [
+      {
+        "offset": 141,
+        "bytes": "2f0d0700d3df0500"
+      }
+    ]
+  },
+  {
+    "build": "25136512",
+    "koreanSha1": "11968411F2720FE5501B3DD2BC88A75AF30F62D3",
+    "englishSha1": "3451A270AA0B3ACFE801B1D2F67468CDCBB2D8BF",
+    "koreanSize": 847099,
+    "englishSize": 1290452,
+    "restore": [
+      {
+        "offset": 141,
+        "bytes": "320d0700c9df0500"
+      }
+    ]
+  },
+  {
+    "build": "25244463",
+    "koreanSha1": "AE48E4656A758B56B5A54DB2B7C342128E1CA71B",
+    "englishSha1": "F570F66A126D2C4B815837361E167C35E19CBFBD",
+    "koreanSize": 847096,
+    "englishSize": 1290449,
+    "restore": [
+      {
+        "offset": 141,
+        "bytes": "2f0d0700c9df0500"
+      }
+    ]
+  },
+  {
+    "build": "25386710",
+    "koreanSha1": "9641E5E6BA0CAE0101E716374895F1EC01072EFB",
+    "englishSha1": "13575F57051C8EB31F0B829511A8F1390853CC45",
+    "koreanSize": 847099,
+    "englishSize": 1290452,
+    "restore": [
+      {
+        "offset": 141,
+        "bytes": "320d0700c9df0500"
+      }
+    ]
+  }
+]

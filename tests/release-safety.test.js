@@ -18,6 +18,7 @@ for (const accepted of [true, false]) {
     const messages = [];
     const answers = ['1', '6'];
     const context = vm.createContext({
+      t: require('../language').text,
       manifest: { releaseStatus },
       readStatus: () => ({}), printStatus: () => {},
       console: { log: (message) => messages.push(message) },
