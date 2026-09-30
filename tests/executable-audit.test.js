@@ -32,3 +32,18 @@ test('reported zero-entry error rejects a different executable before patching',
   const api = load();
   assert.throws(() => api.manifestDigestOffsets(Buffer.from('MZ unrelated executable'), 'brggame.upk', 2), /2.*0/);
 });
+
+test('zero-entry inspection includes actionable EXE diagnostics without changing it', () => {
+  const os = require('node:os'), directory = fs.mkdtempSync(path.join(os.tmpdir(), 'lid-zero-entry-'));
+  try {
+    const file = path.join(directory, 'BrgGame-Steam.exe'), bytes = Buffer.from('MZ unrelated executable');fs.writeFileSync(file, bytes);
+    const api = load();
+    assert.throws(() => api.inspectExecutable(file, {}), error => {
+      assert.equal(error.executableDiagnostics.size, bytes.length);
+      assert.equal(error.executableDiagnostics.packageNames['brggame.upk'].asciiLower, 0);
+      assert.ok(error.message.includes(file));assert.match(error.message, /SHA-256/);return true;
+    });
+    assert.deepEqual(fs.readFileSync(file), bytes);
+    assert.throws(() => api.manifestDigestOffsets(Buffer.from('brggame.upk\0brggame.upk\0'), 'brggame.upk', 2), /truncated|잘렸/);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});

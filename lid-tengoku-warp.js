@@ -11,6 +11,7 @@ const m2gCompat = require('./compat/m2g');
 const embedded = require('./compat/m2g/embedded');
 const restoreSafety = require('./restore-safety');
 const mapLanguage = require('./map-language');
+const executableDiagnostics = require('./executable-diagnostics');
 const embeddedProfiles = require('./compat/m2g/embedded-profiles.json').profiles;
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
@@ -18,9 +19,10 @@ const ASSET_DIRECTORY = path.join(__dirname, 'assets');
 let manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
 const FILE_KEYS = ['brgGame', 'heavenEntry', 'brgStart', 'executable'];
 
-function fail(message) {
+function fail(message, diagnostics) {
   const error = new Error(message);
   error.userFacing = true;
+  if (diagnostics) error.executableDiagnostics = diagnostics;
   throw error;
 }
 
@@ -247,7 +249,9 @@ function manifestDigestOffsets(executable, assetName, expectedCount) {
   const needle = Buffer.from(`${assetName.toLowerCase()}\0`, 'ascii');
   const positions = findAll(executable, needle);
   if (positions.length !== expectedCount) fail(t(`${assetName} 실행 파일 해시 항목이 ${expectedCount}개가 아닙니다: ${positions.length}개`, `${assetName} executable hash entry count: expected ${expectedCount}, found ${positions.length}`));
-  return positions.map((position) => position + needle.length);
+  const offsets = positions.map((position) => position + needle.length);
+  if (offsets.some((offset) => offset + 20 > executable.length)) fail(t(`${assetName} 실행 파일 해시 항목이 잘렸습니다.`, `${assetName} executable hash entry is truncated.`));
+  return offsets;
 }
 
 function inspectExecutable(executablePath, expectedHashes) {
@@ -261,7 +265,8 @@ function inspectExecutable(executablePath, expectedHashes) {
       const executableHash = crypto.createHash('sha256').update(executable).digest('hex');
       fail(error.message + t(
         `\n실행 파일: ${executablePath}\n크기: ${executable.length}바이트\nSHA-256: ${executableHash}\n지원되는 실행 파일 구조와 다릅니다. 이 오류는 관리자 권한으로 해결되지 않습니다. 게임 버전과 위 정보를 제보해 주세요.`,
-        `\nExecutable: ${executablePath}\nSize: ${executable.length} bytes\nSHA-256: ${executableHash}\nThe executable layout is unsupported. Administrator access will not resolve this error. Report your game version and the details above.`));
+        `\nExecutable: ${executablePath}\nSize: ${executable.length} bytes\nSHA-256: ${executableHash}\nThe executable layout is unsupported. Administrator access will not resolve this error. Report your game version and the details above.`),
+        executableDiagnostics.describe(executable, executablePath, Object.keys({ ...manifest.executable.manifestEntries, ...manifest.executable.normalizedExtraEntries })));
     }
     const digests = offsets.map((offset) => executable.subarray(offset, offset + 20).toString('hex').toUpperCase());
     entries[assetName] = { offsets, digests, valid: digests.every((value) => value === expectedHashes[assetName]) };
@@ -739,6 +744,11 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(t(`\n오류: ${error.userFacing ? error.message : `${error.message}\n${error.stack}`}`, `\nError: ${error.userFacing ? error.message : `${error.message}\n${error.stack}`}`));
+  console.error('\n'+executableDiagnostics.formatError(error, require('./package.json').version, t));
+  if (!error.userFacing) console.error(error.stack);
+  try {
+    const report = executableDiagnostics.saveError(__dirname, error, require('./package.json').version);
+    console.error(t(`오류 로그: ${report}`, `Error log: ${report}`));
+  } catch (logError) { console.error(t(`오류 로그 저장 실패: ${logError.message}`, `Could not save error log: ${logError.message}`)); }
   process.exitCode = 1;
 });

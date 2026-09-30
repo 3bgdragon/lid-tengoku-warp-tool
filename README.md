@@ -6,6 +6,13 @@ Select 51, 101, 201 or 301 before taking the escalator into standard Tengoku fro
 
 ## Requirements
 
+If startup fails with `executable hash entry count: expected 2, found 0`, send the
+**ERROR DIAGNOSTICS** block displayed in the window, or the JSON file shown as
+**Error log** from the tool's `logs` folder. It includes the
+EXE path, SHA-256, size, PE section layout and package-name encoding counts, not
+the executable or your save. Do not bypass the check or assume administrator
+access fixes it: the unsupported user's executable still needs investigation.
+
 - Steam offline edition of LET IT DIE on Windows.
 - Node.js 18 or newer. No npm install is needed for normal use.
 - Support is determined by file/schema checks, not just the displayed game version. Never bypass an unsupported-file error.

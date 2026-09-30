@@ -4,3 +4,4 @@ backups/*
 dev/
 *.tmp
 *.rollback
+logs/
