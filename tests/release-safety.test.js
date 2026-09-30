@@ -54,6 +54,10 @@ test('verified release rejects invalid game files without development gate', () 
       'apply', '--yes', '--game', root], { encoding: 'utf8' });
     assert.equal(result.status, 1);
     assert.doesNotMatch(result.stderr, /개발판의 적용을 차단/);
+    assert.match(result.stderr, /brggame\.upk.*2.*0/);
+    assert.ok(result.stderr.includes(path.join(root, relativePaths[3])));
+    assert.match(result.stderr, /SHA-256: [a-f0-9]{64}/);
+    assert.match(result.stderr, /관리자 권한으로 해결되지 않습니다/);
     for (const relative of relativePaths) {
       assert.equal(fs.readFileSync(path.join(root, relative), 'utf8'), `sentinel:${relative}`);
     }

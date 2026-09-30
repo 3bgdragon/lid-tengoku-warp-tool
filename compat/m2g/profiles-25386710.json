@@ -1,0 +1,159 @@
+{
+  "format": 1,
+  "steamBuildId": "25386710",
+  "m2gVersion": "Node 1.4.0",
+  "profiles": [
+    {
+      "guard": "off-off",
+      "warp": false,
+      "sha1": "CAC96C9F526EBAB7C754D998F4AE3E15EEE6AC21",
+      "sha256": "371578a8514e579b5015fbf472b868c9af41ae261aecb5c1bb6c2e36d67b41be",
+      "baseSha1": "C1C9738885B6672F61026A3767EAD65A08D7CD51",
+      "baseSha256": "02a5bb5286b2d05fa276443b2334220485ef290ceb3fa573b5138d847cbc391e",
+      "baseSize": 178870689,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "off-off",
+      "warp": true,
+      "sha1": "AA1E3887EAC30636D3C190597994A907229BB86F",
+      "sha256": "e2e67e4d0cf779daf6c37a8bef5bc9248a79ea6bd822e973363d4ab8236f3e5c",
+      "baseSha1": "B9A5DF604C70A2032971D483A159EC1FBB899E85",
+      "baseSha256": "5d79ec2c9f8a2e58a2b881c0c2f1863062e8320c5cf24dd87c2c7c4189507fa0",
+      "baseSize": 179426579,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "off-on",
+      "warp": false,
+      "sha1": "C732964BD04CE7111EAED8432C9012E711A8C4DE",
+      "sha256": "23056655ddda65f2d7093910107c10e446814ea8d5e3c8955c49458aa2eeece5",
+      "baseSha1": "08217B5BA4004027A5CEB0532EA6C5A143427C20",
+      "baseSha256": "5caa511beeb27ef2613e9daafa23cd0ae81ea07c544588df71aa4d0fba53dca4",
+      "baseSize": 179814248,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "off-on",
+      "warp": true,
+      "sha1": "C2B3F142A413BE9EC1930278FD54FF8E04A6576F",
+      "sha256": "f395cf9b7c9ed1b72b71b159bf3f38b4868e8f6ab1bcc7c1916e7b3aadeda37a",
+      "baseSha1": "FFFB87AEDF786A6B324EBF74FD6ACD01A4E1D98E",
+      "baseSha256": "268608a3d4964d2c3e10d2dbb0ddfeae0b2803c608fa591322759e22ddbd87c4",
+      "baseSize": 180370138,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "on-off",
+      "warp": false,
+      "sha1": "A6C4D4206796E9511BEBA86FEC41394420C1B924",
+      "sha256": "a799a48edc071e3a674c47d9c2573b46a3f2a18c03cc63823f98210d875a8660",
+      "baseSha1": "C81A51567436F8DEFF623DA62C43C67FB39D68DD",
+      "baseSha256": "4fef2a8afae32af8a84e26b6186cd579fe8c5d6bb1994188f2dca245edd615f2",
+      "baseSize": 179192577,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "on-off",
+      "warp": true,
+      "sha1": "75092628CFF50C541B58E9D4A5CF484BE26389AB",
+      "sha256": "66d1db2b49891a0789e6544062b7616547f99bc394312a47a3526e2265322f85",
+      "baseSha1": "4C8213C42476FED4444B0B311D445DC193D418BC",
+      "baseSha256": "9d990a30033b88ad6cb331e8d933971ff65de72a591758b45d0c0ccc44ed8732",
+      "baseSize": 179748467,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "on-on",
+      "warp": false,
+      "sha1": "E147CC2FC5E0DB1F4D4169DC441A1BE0A77547A2",
+      "sha256": "abd51e19c2fb6078d5858441dd9592fb2f2b9e9399b91626146c45f9df717cc2",
+      "baseSha1": "3B81D0202A5A15185C1EC18ECF2D1112BF4936BB",
+      "baseSha256": "a38b2f4d7530a30f746141af171548870ff25f6af0ad74ce0ac8c51711f6b322",
+      "baseSize": 179814247,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    },
+    {
+      "guard": "on-on",
+      "warp": true,
+      "sha1": "3F511C3D04024B558F6EFF3098B4B8CB7C883F3A",
+      "sha256": "17aa47bbb831ff011243e2be5cc2f655fc711ca26db4a5a1baea782d050d58d7",
+      "baseSha1": "F444D8E8547E8D71B02228DF02917E7622D71C74",
+      "baseSha256": "ee032eafebbc00e4516d17b526e6f7436793ef79f104f8ca54fdab40bd171927",
+      "baseSize": 180370137,
+      "directory": [
+        {
+          "offset": 117,
+          "hex": "491f0000131def0029310000820e2f00"
+        },
+        {
+          "offset": 4677,
+          "hex": "3492b115fa6f090095fba30a0c5e0500"
+        }
+      ]
+    }
+  ]
+}

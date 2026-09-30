@@ -59,27 +59,36 @@ function context(ref, body) {
   header.writeUInt16LE(inspect(body).memory);
   return Buffer.concat([bytes(0x19), instance(ref), header, body]);
 }
-function playerPrefix() {
-  const condition = Buffer.concat([bytes(0x77, 0x2e), u32(53632), instance(9431), bytes(0x2a, 0x16)]);
+function playerPrefix(layout) {
+  const cfg = layout || {
+    playerClassIndex: 53632,
+    pawnIndex: 9431,
+    atkTypeIndex: 9325,
+    commonPawnIndex: 9428,
+    setBulletName: 62614,
+    playAnimName: 57693,
+    reflectSkillName: 59818,
+  };
+  const condition = Buffer.concat([bytes(0x77, 0x2e), u32(cfg.playerClassIndex), instance(cfg.pawnIndex), bytes(0x2a, 0x16)]);
   // Player only; preserve AI fallback and shared IsCanFireRedNapalmGun.
   // Type 2 = knife, fired type 6 = existing game's no-previous-bullet sentinel.
   const code = Buffer.concat([
-    bytes(0x07, 0, 0), condition, bytes(0x0f), instance(9325), bytes(0x2c, 2),
-    context(9428, call(62614, bytes(0x2c, 6))),
-    call(57693), call(59818), bytes(0x04, 0x0b),
+    bytes(0x07, 0, 0), condition, bytes(0x0f), instance(cfg.atkTypeIndex), bytes(0x2c, 2),
+    context(cfg.commonPawnIndex, call(cfg.setBulletName, bytes(0x2c, 6))),
+    call(cfg.playAnimName), call(cfg.reflectSkillName), bytes(0x04, 0x0b),
   ]);
   const { memory } = inspect(code);
   code.writeUInt16LE(memory, 1);
   return { code, memory };
 }
-function patchPlayShot(original) {
+function patchPlayShot(original, layout) {
   if (original.length < 0x30) throw new Error('Truncated function');
   const memory = original.readUInt32LE(0x28), size = original.readUInt32LE(0x2c);
   if (size > original.length - 0x30) throw new Error('Truncated function script');
   const code = original.subarray(0x30, 0x30 + size);
   const measured = inspect(code);
   if (measured.memory !== memory || code.at(-1) !== 0x53) throw new Error('Original script serialization mismatch');
-  const prefix = playerPrefix(), relocated = Buffer.from(code);
+  const prefix = playerPrefix(layout), relocated = Buffer.from(code);
   for (const [offset, target] of measured.jumps) relocated.writeUInt16LE(target + prefix.memory, offset);
   const newCode = Buffer.concat([prefix.code, relocated]), resultMemory = inspect(newCode).memory;
   if (resultMemory !== memory + prefix.memory) throw new Error('Patched script serialization mismatch');

@@ -24,7 +24,7 @@ for (const [manifestFile, fixture] of cases) {
     }
     const script = path.join(root, 'lid-tengoku-warp.js');
     const context = vm.createContext({ require: createRequire(script), __dirname: root, Buffer, process, console });
-    vm.runInContext(fs.readFileSync(script, 'utf8').split('\nmain().catch')[0] + '\nglobalThis.api={makeHeavenTemp,identifyHeavenEntry,readPatch,setManifest:m=>manifest=m};', context);
+    vm.runInContext(fs.readFileSync(script, 'utf8').split('\nmain().catch')[0] + '\nglobalThis.api={makeHeavenTemp,identifyHeavenEntry,readPatch,selectBuild,getManifest:()=>manifest,setManifest:m=>manifest=m};', context);
     const api = context.api; api.setManifest(manifest);
     const patch = api.readPatch(manifest.heavenEntry.disablePatch), base = Buffer.alloc(patch.targetSize); ko.copy(base);
     for (const entry of patch.entries) entry.payload.copy(base, entry.offset);
@@ -35,6 +35,14 @@ for (const [manifestFile, fixture] of cases) {
       api.makeHeavenTemp(source, manifest.heavenEntry.enablePatch, manifest.heavenEntry.patchedSha1, target, true);
       assert.deepEqual(fs.readFileSync(target), en);
       assert.equal(api.identifyHeavenEntry(target).language, 'en');
+      const installedMap = path.join(dir, manifest.heavenEntry.relativePath);
+      fs.mkdirSync(path.dirname(installedMap), { recursive: true });
+      for (const bytes of [base, ko, en]) {
+        fs.writeFileSync(installedMap, bytes);
+        api.selectBuild(dir);
+        assert.equal(api.getManifest().heavenEntry.baseSha1, manifest.heavenEntry.baseSha1, 'Stock, Korean and English maps must select the same build');
+      }
+      api.setManifest(manifest);
       fs.renameSync(target, source);
       configure(['--lang', 'ko'], root);
       api.makeHeavenTemp(source, null, manifest.heavenEntry.patchedSha1, target, true);

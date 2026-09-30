@@ -200,7 +200,7 @@ function identifyBrgGame(filePath) {
     if (hash === profile.patchedSha1) return { hash, size, profileName, enabled: true, profile };
   }
   const knife = m2gCompat.identify(hash);
-  if (knife && manifest.steamBuildId === '25136512') {
+  if (knife && ['25136512', '25386710'].includes(manifest.steamBuildId)) {
     for (const [name, original] of Object.entries(manifest.brgGame.profiles)) {
       if (![original.baseSha1, original.patchedSha1].includes(knife.baseSha1)) continue;
       const base = m2gCompat.forBase(original.baseSha1), patched = m2gCompat.forBase(original.patchedSha1);
@@ -254,7 +254,15 @@ function inspectExecutable(executablePath, expectedHashes) {
   const executable = fs.readFileSync(executablePath);
   const entries = {};
   for (const [assetName, count] of Object.entries(manifest.executable.manifestEntries)) {
-    const offsets = manifestDigestOffsets(executable, assetName, count);
+    let offsets;
+    try { offsets = manifestDigestOffsets(executable, assetName, count); }
+    catch (error) {
+      if (!error.userFacing) throw error;
+      const executableHash = crypto.createHash('sha256').update(executable).digest('hex');
+      fail(error.message + t(
+        `\n실행 파일: ${executablePath}\n크기: ${executable.length}바이트\nSHA-256: ${executableHash}\n지원되는 실행 파일 구조와 다릅니다. 이 오류는 관리자 권한으로 해결되지 않습니다. 게임 버전과 위 정보를 제보해 주세요.`,
+        `\nExecutable: ${executablePath}\nSize: ${executable.length} bytes\nSHA-256: ${executableHash}\nThe executable layout is unsupported. Administrator access will not resolve this error. Report your game version and the details above.`));
+    }
     const digests = offsets.map((offset) => executable.subarray(offset, offset + 20).toString('hex').toUpperCase());
     entries[assetName] = { offsets, digests, valid: digests.every((value) => value === expectedHashes[assetName]) };
   }
@@ -313,7 +321,9 @@ function selectBuild(gameDirectory) {
     if (!fs.existsSync(candidatePath)) continue;
     const candidate = JSON.parse(fs.readFileSync(candidatePath, 'utf8'));
     const file = path.join(gameDirectory, candidate.heavenEntry.relativePath);
-    if (fs.existsSync(file) && [candidate.heavenEntry.baseSha1, candidate.heavenEntry.patchedSha1].includes(sha1File(file))) {
+    const hash = fs.existsSync(file) ? sha1File(file) : null;
+    if (hash && ([candidate.heavenEntry.baseSha1, candidate.heavenEntry.patchedSha1].includes(hash) ||
+        mapLanguage.identify(hash, candidate.heavenEntry.patchedSha1))) {
       manifest = candidate;
       return;
     }

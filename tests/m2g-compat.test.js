@@ -32,6 +32,26 @@ test('unknown or damaged M2G input is never stripped or rebuilt', () => {
   assert.throws(() => compat.strip(Buffer.from('unrecognized')));
   assert.throws(() => compat.rebuild(Buffer.from('unrecognized')));
 });
+
+test('25386710 recognizes all eight canonical M2G and guard/warp combinations', () => {
+  const newer = require('../compat/m2g/profiles-25386710.json').profiles;
+  const latest = require('../assets/manifest-25386710.json');
+  const source = fs.readFileSync(path.resolve(__dirname, '../lid-tengoku-warp.js'), 'utf8');
+  const code = source.slice(source.indexOf('function identifyBrgGame('), source.indexOf('\nfunction identifyHeavenEntry('));
+  assert.equal(newer.length, 8);
+  for (const p of newer) {
+    assert.equal(compat.identify(p.sha1).baseSha1, p.baseSha1);
+    const original = latest.brgGame.profiles[p.guard];
+    assert.equal(p.baseSha1, p.warp ? original.patchedSha1 : original.baseSha1);
+    const context = vm.createContext({ manifest: latest, m2gCompat: compat, sha1File: () => p.sha1, fs: { statSync: () => ({ size: 1 }) } });
+    vm.runInContext(code, context);
+    const result = context.identifyBrgGame('unused');
+    assert.equal(result.enabled, p.warp);
+    assert.equal(result.profile.m2g, true);
+    assert.ok(compat.forBase(original.baseSha1));
+    assert.ok(compat.forBase(original.patchedSha1));
+  }
+});
 test('warp recognition retains guard identity and reports M2G correctly', () => {
   const source = fs.readFileSync(path.resolve(__dirname, '../lid-tengoku-warp.js'), 'utf8');
   const code = source.slice(source.indexOf('function identifyBrgGame('), source.indexOf('\nfunction identifyHeavenEntry('));
@@ -44,3 +64,13 @@ test('warp recognition retains guard identity and reports M2G correctly', () => 
     assert.equal(result.profile.baseSha1, compat.forBase(manifest.brgGame.profiles[p.guard].baseSha1).sha1);
   }
 });
+
+for (const p of profiles.filter(p => !p.legacy)) {
+  const fixture = path.resolve(__dirname, '../.integration-temp/sha1-investigation-udfTrF', `${p.guard}-${p.warp ? 'warp' : 'no-warp'}.upk`);
+  test(`25136512 real M2G rebuild and exact removal after layout update: ${p.guard}/${p.warp}`, { skip: !fs.existsSync(fixture) }, () => {
+    const input = fs.readFileSync(fixture);
+    const output = compat.rebuild(input);
+    assert.equal(require('../compat/m2g/package-patch').sha(output), p.sha256);
+    assert.deepEqual(compat.strip(output), input);
+  });
+}

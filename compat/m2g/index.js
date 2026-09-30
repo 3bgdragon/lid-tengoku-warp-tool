@@ -2,7 +2,7 @@
 const { text: t } = require('../../language');
 const crypto = require('node:crypto');
 const engine = require('./package-patch');
-const { profiles } = require('./profiles.json');
+const profiles = [...require('./profiles.json').profiles, ...require('./profiles-25386710.json').profiles];
 const sha1 = data => crypto.createHash('sha1').update(data).digest('hex').toUpperCase();
 function identify(hash) { return profiles.find(p => p.sha1 === hash) || null; }
 function forBase(hash) { return profiles.find(p => !p.legacy && p.baseSha1 === hash) || null; }
