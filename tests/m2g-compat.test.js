@@ -43,7 +43,7 @@ test('25386710 recognizes all eight canonical M2G and guard/warp combinations', 
     assert.equal(compat.identify(p.sha1).baseSha1, p.baseSha1);
     const original = latest.brgGame.profiles[p.guard];
     assert.equal(p.baseSha1, p.warp ? original.patchedSha1 : original.baseSha1);
-    const context = vm.createContext({ manifest: latest, m2gCompat: compat, sha1File: () => p.sha1, fs: { statSync: () => ({ size: 1 }) } });
+    const context = vm.createContext({ vendingReadOnly: require('../compat/vending-readonly.json'), manifest: latest, m2gCompat: compat, sha1File: () => p.sha1, fs: { statSync: () => ({ size: 1 }) } });
     vm.runInContext(code, context);
     const result = context.identifyBrgGame('unused');
     assert.equal(result.enabled, p.warp);
@@ -56,7 +56,7 @@ test('warp recognition retains guard identity and reports M2G correctly', () => 
   const source = fs.readFileSync(path.resolve(__dirname, '../lid-tengoku-warp.js'), 'utf8');
   const code = source.slice(source.indexOf('function identifyBrgGame('), source.indexOf('\nfunction identifyHeavenEntry('));
   for (const p of profiles) {
-    const context = vm.createContext({ manifest, m2gCompat: compat, sha1File: () => p.sha1, fs: { statSync: () => ({size:1}) } });
+    const context = vm.createContext({ vendingReadOnly: require('../compat/vending-readonly.json'), manifest, m2gCompat: compat, sha1File: () => p.sha1, fs: { statSync: () => ({size:1}) } });
     vm.runInContext(code, context);
     const result = context.identifyBrgGame('unused');
     assert.equal(result.enabled, p.warp); assert.equal(result.profile.m2g, true);

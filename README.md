@@ -1,8 +1,27 @@
 # LET IT DIE Standard Tengoku Start-Floor Selector
 
+Use Node.js 22.5 or newer with shared vending management (SQLite migration needs it).
+
+## Shared composition preview — 1.5.0-dev
+
+Update warp, JG, M2G and vending together. Verified vending layers are separated
+and recomposed on temporary copies, so warp changes/removal preserve vending
+without a reverse installation order. Keep the visible game-folder `LID-Mod-State`.
+For old vending installs, register a matching backup using option 8 in the new
+vending tool first. Full shared restore refuses later changes; selective removal
+preserves other mods. Unknown code/builds and missing baselines are not guessed.
+Vending composition targets build 25386710; new paths need gameplay verification.
+The v1.4.3 read-only fallback below is for old, unregistered installations only.
+
 [English](README.md) | [한국어](README.ko.md)
 
 Select 51, 101, 201 or 301 before taking the escalator into standard Tengoku from floor 50.
+
+v1.4.3-dev recognizes the reproduced build-25386710 warp + JG on-on + M2G +
+full vending combination (Korean/English) for **read-only status**. Reapplying a
+verified, already-active selector is a no-op. To change/remove warp, restore
+vending first using its option 2, change warp, then reapply vending. Unknown
+combinations and mismatched links remain blocked; this is not all-order compatibility.
 
 ## Requirements
 

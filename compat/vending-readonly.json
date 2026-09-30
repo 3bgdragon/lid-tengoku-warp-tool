@@ -1,0 +1,10 @@
+{
+  "build": "25386710",
+  "normalizedExeSha256": "e055caa401266205aba98945ceb839302dffee009a580f53aabe6460629d738e",
+  "packages": {
+    "9B6C2FFC2BFF8318457C078811373CDCEDCF7441": {"language":"ko", "size":187360335},
+    "2BB216A499AE494C1F94DAD9AE3FF63B393DF1D4": {"language":"en", "size":187360321}
+  },
+  "profile": "on-on + M2G 나이프 + Vending",
+  "note": "Read-only recognition of reproduced vending full-feature outputs on verified centered warp + JG on-on + M2G. No removal or modification assets are provided."
+}

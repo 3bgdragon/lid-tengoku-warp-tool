@@ -12,6 +12,8 @@ const embedded = require('./compat/m2g/embedded');
 const restoreSafety = require('./restore-safety');
 const mapLanguage = require('./map-language');
 const executableDiagnostics = require('./executable-diagnostics');
+const vendingReadOnly = require('./compat/vending-readonly.json');
+const sharedLayers = require('./shared/layers');
 const embeddedProfiles = require('./compat/m2g/embedded-profiles.json').profiles;
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
@@ -187,6 +189,10 @@ function isGameRunning() {
 function identifyBrgGame(filePath) {
   const hash = sha1File(filePath);
   const size = fs.statSync(filePath).size;
+  const vending = vendingReadOnly.packages[hash];
+  if (manifest.steamBuildId === vendingReadOnly.build && vending && size === vending.size) {
+    return { hash, size, profileName: vendingReadOnly.profile, enabled: true, profile: null, foreignPatch: 'vending' };
+  }
   if (manifest.steamBuildId === '25244463') {
     const found=embedded.identify(fs.readFileSync(filePath));
     if (found) {
@@ -287,6 +293,10 @@ function identifyNativeExecutable(executable) {
   const definitions = [manifest.executable.native, ...Object.values(manifest.executable.nativeVariants || {})].filter(Boolean);
   if (!definitions.length) return { enabled: false, hash: null };
   const hash = crypto.createHash('sha1').update(normalizedExecutable(executable)).digest('hex').toUpperCase();
+  if (manifest.steamBuildId === vendingReadOnly.build &&
+      crypto.createHash('sha256').update(normalizedExecutable(executable)).digest('hex') === vendingReadOnly.normalizedExeSha256) {
+    return { hash, enabled: true, foreignPatch: 'vending' };
+  }
   const definition = definitions.find((item) => hash === item.baseSha1 || hash === item.patchedSha1);
   if (!definition) {
     for (const item of definitions) {
@@ -298,6 +308,11 @@ function identifyNativeExecutable(executable) {
 }
 
 function readStatus(gameDirectory) {
+  if(sharedLayers.active(gameDirectory))return sharedLayers.view(gameDirectory,stage=>{
+    const status=readStatus(stage);status.gameDirectory=gameDirectory;
+    for(const key of Object.keys(status.paths))status.paths[key]=path.join(gameDirectory,path.relative(stage,status.paths[key]));
+    status.sharedVending=true;return status;
+  });
   selectBuild(gameDirectory);
   const paths = expectedPaths(gameDirectory);
   const brgGame = identifyBrgGame(paths.brgGame);
@@ -344,6 +359,7 @@ function profileLabel(name) {
 }
 
 function printStatus(status) {
+  if(status.sharedVending)console.log(t('공통 합성 관리: 자판기 기능을 보존하며 워프 변경·제거 가능','Shared composition: vending is preserved when changing/removing warp'));
   if (t(false, true)) {
     console.log(`\nLET IT DIE ${manifest.gameVersion} — Standard Tengoku Start-Floor Selector`);
     console.log(`Installation: ${status.gameDirectory}`);
@@ -353,6 +369,7 @@ function printStatus(status) {
     console.log(`Scheduled escalator travel: ${status.executable.native.enabled === true ? (manifest.steamBuildId ? 'Applied (in-game verification pending on this build)' : 'Applied (51/101/201/301 confirmed by user in game)') : status.executable.native.enabled === false ? 'Stock' : 'Unsupported executable'}`);
     if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
     console.log(`Executable hash links: ${status.executable.valid ? 'Valid' : 'Mismatch'}`);
+    if (status.executable.native.foreignPatch === 'vending') console.log('Unregistered vending detected: verified combinations are status-only. Use option 8 in the updated vending tool to register a matching original backup before changing/removing warp.');
     console.log('Floor 22 elevator, save and MASTER DB: unchanged');
     return;
   }
@@ -366,6 +383,7 @@ function printStatus(status) {
     status.executable.native.enabled === false ? '순정' : '지원하지 않는 실행 파일'}`);
   if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
   console.log(`실행 파일 해시 연결: ${status.executable.valid ? '정상' : '불일치'}`);
+  if (status.executable.native.foreignPatch === 'vending') console.log('미등록 자판기 패치 감지: 검증된 조합의 상태만 확인합니다. 워프 변경·제거 전 최신 자판기 도구 8번으로 일치하는 원본 백업을 등록하세요.');
   console.log('22층 엘리베이터·세이브·MASTER DB: 변경하지 않음');
 }
 
@@ -484,12 +502,14 @@ function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
 }
 
 function backupRoot() {
+  if(process.env.LID_SHARED_STAGE_BACKUP)return process.env.LID_SHARED_STAGE_BACKUP;
   return process.env.LID_TENGOKU_BACKUP_DIR
     ? path.resolve(process.env.LID_TENGOKU_BACKUP_DIR)
     : path.join(__dirname, 'backups');
 }
 
 function createBackup(status, reason) {
+  if(status.sharedVending)return sharedLayers.backup(status.gameDirectory,'warp');
   const directory = path.join(backupRoot(), timestamp());
   fs.mkdirSync(directory, { recursive: true });
   const metadata = { format: 1, steamBuildId: manifest.steamBuildId || null, createdAt: new Date().toISOString(), reason, gameDirectory: status.gameDirectory, files: {} };
@@ -510,13 +530,14 @@ function createBackup(status, reason) {
   return directory;
 }
 
-function listBackups() {
+function listBackups(gameDirectory) {
   const root = backupRoot();
-  if (!fs.existsSync(root)) return [];
-  return fs.readdirSync(root, { withFileTypes: true })
+  const shared=gameDirectory?sharedLayers.backups(gameDirectory,'warp'):[];
+  if (!fs.existsSync(root)) return shared;
+  return [...shared,...fs.readdirSync(root, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(root, entry.name, 'backup.json')))
     .map((entry) => path.join(root, entry.name))
-    .sort((left, right) => path.basename(right).localeCompare(path.basename(left)));
+    .sort((left, right) => path.basename(right).localeCompare(path.basename(left)))];
 }
 
 function readAndValidateBackup(directory) {
@@ -558,6 +579,10 @@ function transactionalReplace(replacements) {
 }
 
 function setPatchState(gameDirectory, enable, experimental = false) {
+  if(sharedLayers.active(gameDirectory)){
+    const tx=sharedLayers.transact(gameDirectory,'warp',stage=>({result:setPatchState(stage,enable,experimental)}));
+    return {changed:tx.changed,backupPath:tx.backup,status:readStatus(gameDirectory)};
+  }
   selectBuild(gameDirectory);
   if (enable && manifest.releaseStatus !== 'verified-escalator-routing' &&
       !(experimental && manifest.releaseStatus === 'static-verified-awaiting-gameplay')) {
@@ -565,6 +590,12 @@ function setPatchState(gameDirectory, enable, experimental = false) {
   }
   if (isGameRunning()) fail(t('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.', 'LET IT DIE is running. Close the game completely and try again.'));
   const status = readStatus(gameDirectory);
+  if (status.executable.native.foreignPatch === 'vending' || status.brgGame.foreignPatch === 'vending') {
+    if (enable && status.coherent && status.executable.native.foreignPatch === 'vending' && status.brgGame.foreignPatch === 'vending') {
+      return { changed: false, status };
+    }
+    fail(t('미등록 자판기 모드가 워프와 같은 파일을 변경한 상태입니다. 워프에서 덮어쓰지 않습니다. 네 도구를 함께 업데이트하고 자판기 도구 8번으로 일치하는 구형 백업을 등록하세요. 원본이 없거나 다르면 강제로 덮어쓰지 말고 로그를 제보하세요.', 'Unregistered vending has changed files shared with warp. Warp will not overwrite them. Update all four tools and register a matching legacy backup using vending option 8. If originals are missing or differ, do not force-overwrite; report the log.'));
+  }
   assertSupported(status);
   if (status.brgGame.enabled === enable && status.heavenEntry.enabled === enable &&
       status.executable.native.enabled === enable && status.executable.valid && !status.heavenEntry.upgradePatch && !status.executable.native.upgradePatch &&
@@ -612,6 +643,8 @@ function setPatchState(gameDirectory, enable, experimental = false) {
 }
 
 function restoreBackup(gameDirectory, backupPath) {
+  if(sharedLayers.isBackup(backupPath))return {...sharedLayers.restore(gameDirectory,backupPath),status:readStatus(gameDirectory)};
+  if(sharedLayers.active(gameDirectory))fail(t('공통 레이어가 활성화된 상태에서는 구형 전체 백업을 덮어쓰지 않습니다. 워프만 제거하거나 공통 백업을 사용하세요.','Legacy full restore is blocked while shared layers are active. Remove warp only or use a shared backup.'));
   if (isGameRunning()) fail(t('LET IT DIE가 실행 중입니다. 게임을 완전히 종료한 뒤 다시 실행하세요.', 'LET IT DIE is running. Close the game completely and try again.'));
   const metadata = readAndValidateBackup(backupPath);
   const current = readStatus(gameDirectory);
@@ -690,14 +723,14 @@ async function interactive(gameDirectory, rl) {
       console.log(result.changed ? t(`완료했습니다. 변경 전 백업: ${result.backupPath}`, `Completed. Pre-change backup: ${result.backupPath}`) : t('이미 선택한 상태입니다.', 'Already in the selected state.'));
     } else if (choice === '3') console.log(t('백업 완료: ', 'Backup created: ') + createBackup(status, 'manual'));
     else if (choice === '4') {
-      const backups = listBackups();
+      const backups = listBackups(gameDirectory);
       if (backups.length === 0) { console.log(t('복원 가능한 백업이 없습니다.', 'No restorable backup found.')); continue; }
       console.log(t(`최신 백업: ${backups[0]}`, `Latest backup: ${backups[0]}`));
       if (!await confirm(rl, t('이 백업을 복원할까요?', 'Restore this backup?'), false)) continue;
       const result = restoreBackup(gameDirectory, backups[0]);
       console.log(t(`복원 완료. 복원 직전 안전 백업: ${result.safetyBackup}`, `Restore completed. Pre-restore safety backup: ${result.safetyBackup}`));
     } else if (choice === '5') {
-      const backups = listBackups();
+      const backups = listBackups(gameDirectory);
       if (backups.length === 0) console.log(t('백업이 없습니다.', 'No backups found.'));
       else backups.forEach((item, index) => console.log(`${index + 1}. ${item}`));
     } else console.log(t('잘못된 선택입니다.', 'Invalid selection.'));
@@ -726,7 +759,7 @@ async function main() {
       return;
     }
     if (command === 'restore') {
-      const backup = options.positional[1] ? path.resolve(options.positional[1]) : listBackups()[0];
+      const backup = options.positional[1] ? path.resolve(options.positional[1]) : listBackups(gameDirectory)[0];
       if (!backup) fail(t('복원 가능한 백업이 없습니다.', 'No restorable backup found.'));
       if (!await confirm(rl, t(`${backup} 백업을 복원할까요?`, `Restore backup ${backup}?`), options.yes)) return;
       const result = restoreBackup(gameDirectory, backup);
@@ -735,7 +768,7 @@ async function main() {
       return;
     }
     if (command === 'list-backups') {
-      const backups = listBackups();
+      const backups = listBackups(gameDirectory);
       console.log(backups.length ? backups.join('\n') : t('백업이 없습니다.', 'No backups found.'));
       return;
     }
