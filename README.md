@@ -1,5 +1,20 @@
 # LET IT DIE Standard Tengoku Start-Floor Selector
 
+## Native EXE compatibility (build 25386710)
+
+A different whole-file EXE hash no longer automatically rejects this reviewed
+build: the fallback checks the PE layout, all native bytes being overwritten,
+and the complete added warp section. Unrelated changes within the existing
+layout are preserved on apply/remove. Hook collisions, altered warp code,
+changed section layouts, overlays, and missing package hash entries remain
+blocked. This is not a no-validation mode or universal mod compatibility.
+Package identification and backup-restore safeguards are unchanged.
+
+If automatic installation discovery fails, the interactive launcher asks for
+the installation folder or `BrgGame-Steam.exe` path and retries invalid paths.
+Terminal CLI commands also prompt when attached to an interactive terminal;
+non-interactive commands retain a clear error and can use `--game`.
+
 Use Node.js 22.5 or newer with shared vending management (SQLite migration needs it).
 
 ## Shared composition preview — 1.5.0-dev

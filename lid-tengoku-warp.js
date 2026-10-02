@@ -12,6 +12,7 @@ const embedded = require('./compat/m2g/embedded');
 const restoreSafety = require('./restore-safety');
 const mapLanguage = require('./map-language');
 const executableDiagnostics = require('./executable-diagnostics');
+const nativeSites = require('./native-sites');
 const vendingReadOnly = require('./compat/vending-readonly.json');
 const sharedLayers = require('./shared/layers');
 const embeddedProfiles = require('./compat/m2g/embedded-profiles.json').profiles;
@@ -133,7 +134,7 @@ function resolveGameInput(input) {
   const candidates = [resolved];
   if (fs.existsSync(resolved) && fs.statSync(resolved).isFile()) {
     const lower = resolved.toLowerCase();
-    if (lower.endsWith('\\binaries\\win64\\brggame-steam.exe')) candidates.push(path.resolve(resolved, '..', '..', '..'));
+    if (path.basename(resolved).toLowerCase() === 'brggame-steam.exe') candidates.push(path.resolve(path.dirname(resolved), '..', '..'));
     if (lower.endsWith('\\brggame\\cookedpcconsole\\brggame.upk') ||
         lower.endsWith('\\brggame\\cookedpcconsole\\heaven_a01_st_col.upk') ||
         lower.endsWith('\\brggame\\cookedpcconsole\\brgstart_pl.upk')) {
@@ -154,10 +155,12 @@ function discoverGameDirectories() {
 async function chooseGameDirectory(rl, explicitPath, interactiveMode) {
   if (explicitPath) {
     const matches = resolveGameInput(explicitPath);
-    if (matches.length !== 1) fail(t(`LET IT DIE 설치 폴더를 찾지 못했습니다: ${path.resolve(explicitPath)}`, `LET IT DIE installation not found: ${path.resolve(explicitPath)}`));
-    return matches[0];
+    if (matches.length === 1) return matches[0];
+    const message = t(`LET IT DIE 설치 폴더를 찾지 못했습니다: ${path.resolve(explicitPath)}`, `LET IT DIE installation not found: ${path.resolve(explicitPath)}`);
+    if (!interactiveMode) fail(message);
+    console.log(message);
   }
-  const matches = discoverGameDirectories();
+  const matches = explicitPath ? [] : discoverGameDirectories();
   if (matches.length === 1) return matches[0];
   if (!interactiveMode) {
     fail(matches.length === 0 ? t('설치 폴더를 자동으로 찾지 못했습니다. --game "LET IT DIE 설치 폴더"를 사용하세요.', 'Installation folder not found automatically. Use --game "LET IT DIE installation folder".') :
@@ -170,10 +173,13 @@ async function chooseGameDirectory(rl, explicitPath, interactiveMode) {
     const answer = Number((await rl.question(t('선택: ', 'Select: '))).trim());
     if (answer >= 1 && answer <= matches.length) return matches[answer - 1];
   } else console.log(t('\nLET IT DIE 설치 폴더를 자동으로 찾지 못했습니다.', '\nLET IT DIE installation was not found automatically.'));
-  const entered = await rl.question(t('게임 설치 폴더 또는 BrgGame-Steam.exe/UPK 경로: ', 'Installation folder or BrgGame-Steam.exe/UPK path: '));
-  const resolved = resolveGameInput(entered);
-  if (resolved.length !== 1) fail(t(`해당 경로에서 LET IT DIE 필수 설치 파일을 찾지 못했습니다: ${stripQuotes(entered)}`, `Required LET IT DIE files not found at: ${stripQuotes(entered)}`));
-  return resolved[0];
+  for (;;) {
+    const entered = await rl.question(t('게임 설치 폴더 또는 BrgGame-Steam.exe/UPK 경로 (Enter=취소): ', 'Installation folder or BrgGame-Steam.exe/UPK path (Enter=cancel): '));
+    if (!stripQuotes(entered)) fail(t('경로 선택을 취소했습니다.', 'Path selection cancelled.'));
+    const resolved = resolveGameInput(entered);
+    if (resolved.length === 1) return resolved[0];
+    console.log(t(`해당 경로에서 LET IT DIE 필수 설치 파일을 찾지 못했습니다. EXE 또는 설치 폴더를 다시 지정하세요: ${stripQuotes(entered)}`, `Required LET IT DIE files not found. Specify the EXE or installation folder again: ${stripQuotes(entered)}`));
+  }
 }
 
 function isGameRunning() {
@@ -304,7 +310,13 @@ function identifyNativeExecutable(executable) {
       if (legacy) return { hash, definition: item, enabled: true, upgradePatch: legacy.upgradePatch, disablePatch: legacy.disablePatch };
     }
   }
-  return { hash, definition, enabled: definition ? hash === definition.patchedSha1 : null };
+  if (!definition) {
+    for (const item of definitions) {
+      const matched = nativeSites.identify(executable, item, ASSET_DIRECTORY);
+      if (matched) return { hash, ...matched };
+    }
+  }
+  return { hash, definition, validation: definition ? 'known-hash' : null, enabled: definition ? hash === definition.patchedSha1 : null };
 }
 
 function readStatus(gameDirectory) {
@@ -743,7 +755,7 @@ async function main() {
   const interactiveMode = !command;
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
-    const gameDirectory = await chooseGameDirectory(rl, options.gameDirectory, interactiveMode);
+    const gameDirectory = await chooseGameDirectory(rl, options.gameDirectory, interactiveMode || Boolean(process.stdin.isTTY));
     if (interactiveMode) return await interactive(gameDirectory, rl);
     if (command === 'status') return printStatus(readStatus(gameDirectory));
     if (command === 'apply' || command === 'remove') {

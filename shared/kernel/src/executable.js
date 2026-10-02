@@ -11,7 +11,10 @@ const STOCK_NORMALIZED='6b15ef99a7a10aca46b9b1593042ac24773317b1875f014cdee20007
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function patchExecutable(input) {
   const exact=sha(input)===SUPPORTED;
-  if(!exact&&![NORMALIZED,STOCK_NORMALIZED].includes(sha(normalizedExecutable(input)))) throw new Error('지원하지 않는 실행 파일입니다. SHA-256: '+sha(input));
+  if(!exact&&![NORMALIZED,STOCK_NORMALIZED].includes(sha(normalizedExecutable(input)))) {
+    try{require('./native-preconditions').validate(input);}
+    catch(error){throw new Error('지원하지 않는 실행 파일입니다. SHA-256: '+sha(input)+'\\n'+error.message);}
+  }
   const pe=input.readUInt32LE(0x3c), count=input.readUInt16LE(pe+6), opt=pe+24;
   if(input.toString('ascii',pe,pe+4)!=='PE\0\0'||input.readUInt16LE(opt)!==0x20b)throw new Error('PE64 형식 불일치');
   const table=opt+input.readUInt16LE(pe+20), header=table+count*40;
