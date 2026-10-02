@@ -1,6 +1,6 @@
 {
   "name": "lid-tengoku-warp-tool-tfc",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Tengoku Start-Floor Selector — separate TFC distribution; not the standalone tool",
   "engines": {

@@ -1,8 +1,14 @@
 # Tengoku Warp — TFC edition
 
+## v1.1.1 installer fix
+
+Fixes `Updated 0 file(s)` caused by missing `.upk` in patch filenames. TFC strips only `.PackagePatch`, so the installed target must be named `BrgGame.upk.PackagePatch`, not `BrgGame.PackagePatch`. Removes the leftover disposable-test display label.
+
+Download this new ZIP. A 0-file result is not a successful installation. Do not use **Uninstall all** merely to address this error, as it removes other mods too.
+
 [한국어 사용법](START-HERE.ko.md)
 
-**TFC-only release: tfc-v1.1.0.** Download the attached `*-tfc-v1.1.0.zip` asset, not GitHub's source-code ZIP.
+**TFC-only release: tfc-v1.1.1.** Download the attached `*-tfc-v1.1.1.zip` asset, not GitHub's source-code ZIP.
 This ZIP has its own launcher and runtime. The standalone release and root launcher are a different distribution and are not included here.
 
 Steam build **25386710**. Requires Node.js **22.13+** and TFC Installer **2.5.6.0**.
