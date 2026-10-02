@@ -17,7 +17,7 @@ non-interactive commands retain a clear error and can use `--game`.
 
 Use Node.js 22.5 or newer with shared vending management (SQLite migration needs it).
 
-## Shared composition preview — 1.5.0-dev
+## Shared composition preview — 1.5.1-dev
 
 Update warp, JG, M2G and vending together. Verified vending layers are separated
 and recomposed on temporary copies, so warp changes/removal preserve vending
