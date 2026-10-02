@@ -1,5 +1,7 @@
 # LET IT DIE Standard Tengoku Start-Floor Selector
 
+TFC edition: [installation and downloads](tfc/README.md). It is isolated in `tfc/`; do not mix with the standalone launcher.
+
 ## Native EXE compatibility (build 25386710)
 
 A different whole-file EXE hash no longer automatically rejects this reviewed

@@ -1,0 +1,5 @@
+<Game packageFileVersion="861" packageLicenseeVersion="19" TFCMappingFileName="Let it Die" displayName="LET IT DIE - DISPOSABLE TEST COPIES ONLY" hasHashCheck="False" enableUpdateStats="False" optimizePackageSpace="False" xmlns:yaxlib="http://www.sinairv.com/yaxlib/">
+  <PackageFolders yaxlib:realtype="UPK.Utils.GameProfiles.PackageFolder[]">
+    <PackageFolder path="BrgGame\CookedPCConsole\*" TFCpath="BrgGame\CookedPCConsole" customTFCStartIndex="0" />
+  </PackageFolders>
+</Game>

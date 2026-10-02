@@ -1,0 +1,150 @@
+{
+  "warp": [
+    {
+      "size": 42284,
+      "sha256": "8e7483bf499a02b9cd4b8163485fef38135653bcf361ab2bc51a3bce538ec8be",
+      "file": "BrgGame.upk",
+      "index": 71346
+    },
+    {
+      "size": 1753,
+      "sha256": "067d65253f090f546546e68383417f02f7f71cf034b059f6cd3c8565ba39802e",
+      "file": "BrgGame.upk",
+      "index": 82802
+    },
+    {
+      "size": 1233,
+      "sha256": "8473a492f47b2e8feb331f11aa952ceb5f56c3733e3abeab32e6c28d2386dc97",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 73
+    },
+    {
+      "size": 4631,
+      "sha256": "7bb4025549c8a16ec0c465eb6caf4bade09d50be88109c26d631873a93b0460b",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 160
+    },
+    {
+      "size": 1088,
+      "sha256": "9fb1642aa4a0d457cbaab80709041bcce59ee68c323decfaba584102a8e053d2",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 175
+    },
+    {
+      "size": 400,
+      "sha256": "6d535c2ab62ddd7aa98ac0e409496c2815c0d7879024f66bc5fd1b751f65c582",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 179
+    },
+    {
+      "size": 1414,
+      "sha256": "5fa7a2ac646efabb203ef2655be0dd0b75e03c6dc21154c270b826997b177aae",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 217
+    },
+    {
+      "size": 360,
+      "sha256": "4d919807a0d2341af9755392ab600d1ddf741d39cfbf32f11f3b5e1ec2a65e47",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 218
+    },
+    {
+      "size": 360,
+      "sha256": "cbde14c02013b537b94889c5ef89ded8fb39e243532dc4a7934614a4202ff0f3",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 219
+    },
+    {
+      "size": 360,
+      "sha256": "33925de3c5cebb822ce615a033c71cbf2c7d50a5fc5f92dafb975734c37354cc",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 220
+    },
+    {
+      "size": 360,
+      "sha256": "3505de0401a1476e4cbba6765b8fd740ac857fe942fae05ddafb0cf455bf545c",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 221
+    },
+    {
+      "size": 360,
+      "sha256": "e97bd44a9d80549a4b559fe5a4eba9d10268a82da3162a5e41f8059dd4122399",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 222
+    },
+    {
+      "size": 360,
+      "sha256": "e75cdeb3ce61cb5c84c2200b2d45e9564acdd95d5bec901d6e06c7417e26fd9e",
+      "file": "Heaven_A01_ST_COL.upk",
+      "index": 223
+    }
+  ],
+  "vending": [
+    {
+      "size": 2121,
+      "sha256": "518b177eb407f46f8ec3f731b5961e9af44228bbf27d1e8d91c468d27d5a4f66",
+      "file": "BrgGame.upk",
+      "index": 83731
+    },
+    {
+      "size": 3264,
+      "sha256": "abe86464005d83ada43631e5c29ccd2c6be8642ebd7c35453f35e81893859f60",
+      "file": "BrgGame.upk",
+      "index": 83737
+    },
+    {
+      "size": 7032,
+      "sha256": "31fd292a3a13e45f0cd9bbd300ab32dc6325ad2271fbd77484056a2c6130ff92",
+      "file": "BrgGame.upk",
+      "index": 83755
+    },
+    {
+      "size": 516,
+      "sha256": "95210e9cf39dafee5da732d87669f87fc50a807c3707faa6d11375d29739a2e2",
+      "file": "BrgGame.upk",
+      "index": 83850
+    },
+    {
+      "size": 1031,
+      "sha256": "3c3fc2247abfd2023de0ace530ae2c5103e3fbc35677e5573c16c5de990694f9",
+      "file": "BrgGame.upk",
+      "index": 83853
+    },
+    {
+      "size": 5833,
+      "sha256": "85d35466ef18ea3a3e89029cb99b476081626f5851335a07c03ee67bbabef78a",
+      "file": "BrgGame.upk",
+      "index": 83947
+    },
+    {
+      "size": 406,
+      "sha256": "dd3ccb29bb53832a6f5af31aef4e4d60668c14b33545e5c1915ff120f2141e7c",
+      "file": "BrgGame.upk",
+      "index": 83949
+    },
+    {
+      "size": 161,
+      "sha256": "122b7d43ed2b2a46ebe9896a353daa2a05fe5df87f2785c6ce0fbe9b5526476d",
+      "file": "BrgGame.upk",
+      "index": 83951
+    },
+    {
+      "size": 1551,
+      "sha256": "c4eb78eac40bb37943fa37ac4cc4a138d033c54d70a49f28e7dcd5bd9f15b676",
+      "file": "BrgGame.upk",
+      "index": 91786
+    },
+    {
+      "size": 11296,
+      "sha256": "fc28b8ad3da51e9e68155033c2e7fd13f9c6f2c9cf5830f6ce07acc6a2019b97",
+      "file": "BrgGame.upk",
+      "index": 91836
+    },
+    {
+      "size": 823,
+      "sha256": "500e68c96ef6c8a5ff65e52fa56092eea972ae4894678e2b4d6ae3b9d43e7e3a",
+      "file": "BrgGame.upk",
+      "index": 92019
+    }
+  ]
+}

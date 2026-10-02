@@ -35,6 +35,7 @@ function capture(game){
 function digests(buffers){return buffers.map(hash);}
 function matches(game,hashes){return digests(capture(game)).every((v,i)=>v===hashes[i]);}
 function receipt(game){
+ if(fs.existsSync(path.join(path.resolve(game),'LID-TFC-State','state.json'))||fs.existsSync(path.join(path.resolve(game),'LID-TFC-State','pending.json')))fail('TFC companion controls these files. Use tfc/run.bat; do not mix standalone and TFC installers / TFC 보조 도구 관리 중입니다. tfc/run.bat을 사용하세요');
  if(!fs.existsSync(statePath(game)))return null;
  const r=readJson(statePath(game));
  if(r.format!==1||typeof r.active!=='boolean')fail('Invalid shared mod state / 공통 모드 기록 형식 오류');

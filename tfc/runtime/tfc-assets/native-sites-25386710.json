@@ -1,0 +1,150 @@
+{
+  "format": 1,
+  "build": 25386710,
+  "stock": {
+    "pe": 368,
+    "machine": 34404,
+    "optional": 240,
+    "magic": 523,
+    "entry": 25935496,
+    "sectionAlignment": 4096,
+    "fileAlignment": 512,
+    "imageSize": 268738560,
+    "headerSize": 1024,
+    "sections": [
+      {
+        "name": ".text\u0000\u0000\u0000",
+        "virtualSize": 28763836,
+        "rva": 4096,
+        "rawSize": 28764160,
+        "raw": 1024,
+        "flags": 1610612768
+      },
+      {
+        "name": ".rdata\u0000\u0000",
+        "virtualSize": 12429376,
+        "rva": 28770304,
+        "rawSize": 12429824,
+        "raw": 28765184,
+        "flags": 1073741888
+      },
+      {
+        "name": ".data\u0000\u0000\u0000",
+        "virtualSize": 224374552,
+        "rva": 41201664,
+        "rawSize": 647680,
+        "raw": 41195008,
+        "flags": 3221225536
+      },
+      {
+        "name": ".pdata\u0000\u0000",
+        "virtualSize": 1210176,
+        "rva": 265576448,
+        "rawSize": 1210368,
+        "raw": 41842688,
+        "flags": 1073741888
+      },
+      {
+        "name": "_RDATA\u0000\u0000",
+        "virtualSize": 3568,
+        "rva": 266788864,
+        "rawSize": 3584,
+        "raw": 43053056,
+        "flags": 1073741888
+      },
+      {
+        "name": ".rsrc\u0000\u0000\u0000",
+        "virtualSize": 463896,
+        "rva": 266792960,
+        "rawSize": 464384,
+        "raw": 43056640,
+        "flags": 1073741888
+      },
+      {
+        "name": ".reloc\u0000\u0000",
+        "virtualSize": 1474618,
+        "rva": 267259904,
+        "rawSize": 1475072,
+        "raw": 43521024,
+        "flags": 1107296320
+      }
+    ]
+  },
+  "patched": {
+    "pe": 368,
+    "machine": 34404,
+    "optional": 240,
+    "magic": 523,
+    "entry": 25935496,
+    "sectionAlignment": 4096,
+    "fileAlignment": 512,
+    "imageSize": 268742656,
+    "headerSize": 1024,
+    "sections": [
+      {
+        "name": ".text\u0000\u0000\u0000",
+        "virtualSize": 28763836,
+        "rva": 4096,
+        "rawSize": 28764160,
+        "raw": 1024,
+        "flags": 1610612768
+      },
+      {
+        "name": ".rdata\u0000\u0000",
+        "virtualSize": 12429376,
+        "rva": 28770304,
+        "rawSize": 12429824,
+        "raw": 28765184,
+        "flags": 1073741888
+      },
+      {
+        "name": ".data\u0000\u0000\u0000",
+        "virtualSize": 224374552,
+        "rva": 41201664,
+        "rawSize": 647680,
+        "raw": 41195008,
+        "flags": 3221225536
+      },
+      {
+        "name": ".pdata\u0000\u0000",
+        "virtualSize": 1210176,
+        "rva": 265576448,
+        "rawSize": 1210368,
+        "raw": 41842688,
+        "flags": 1073741888
+      },
+      {
+        "name": "_RDATA\u0000\u0000",
+        "virtualSize": 3568,
+        "rva": 266788864,
+        "rawSize": 3584,
+        "raw": 43053056,
+        "flags": 1073741888
+      },
+      {
+        "name": ".rsrc\u0000\u0000\u0000",
+        "virtualSize": 463896,
+        "rva": 266792960,
+        "rawSize": 464384,
+        "raw": 43056640,
+        "flags": 1073741888
+      },
+      {
+        "name": ".reloc\u0000\u0000",
+        "virtualSize": 1474618,
+        "rva": 267259904,
+        "rawSize": 1475072,
+        "raw": 43521024,
+        "flags": 1107296320
+      },
+      {
+        "name": ".lidtw\u0000\u0000",
+        "virtualSize": 4096,
+        "rva": 268738560,
+        "rawSize": 4096,
+        "raw": 44996096,
+        "flags": 3758096480
+      }
+    ]
+  }
+}
