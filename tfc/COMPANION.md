@@ -3,6 +3,11 @@
 Requires Node.js 22.13+. The companion never rewrites UPKs or saves.
 Keep the game closed during both the TFC and companion steps.
 
+For normal use, follow [the quick guide](START-HERE.ko.md).
+The first menu is now: **1 Finish installation, 2 Finish removal, 3 Check connection, 4 Advanced**.
+The low-level commands described below are retained in Advanced or the command line.
+Option 1 combines hash relinking with this mod's required native setup.
+
 - **Sync package hashes:** reconnect EXE to current TFC UPKs after any UPK change.
 - **Enable / Disable native component:** controls this mod's warp or vending native component only. Guard/M2G require Sync only.
 - **Restore previous native settings:** restores prior native configuration, not an old whole game image; refuses intervening EXE/DB edits.
