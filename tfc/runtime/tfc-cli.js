@@ -49,25 +49,22 @@ async function main(mod){
   if(command==='repair-layout')console.log('Explicit UPK layout repair: backs up and relocates compressed frames in BrgGame/common, relinks EXE, preserves logical data. Not a feature reinstallation. / UPK 블록 위치와 EXE 해시만 복구합니다. 기능 재설치가 아닙니다.');
   if(!values.yes&&!/^y(es)?$/i.test(await ask('Close the game. Backed-up operation; proceed? / 게임 종료 후 백업·적용 진행? (y/N): ')))return;
   if(command==='on'||command==='sync')require('./tfc-preflight').verify(game);
-  if(command==='off'||command==='removed'){
-   const owned=require('./owned-functions');
-   for(const file of new Set(owned.catalog.objects.filter(p=>p.mod===mod).map(p=>p.file)))
-    if(owned.inspect(fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole',file)),mod,file)!=='off')throw Error('TFC UPK component is still installed / 먼저 TFC에서 UPK를 제거하세요');
-  }
   let result;
   if(command==='repair-layout')result=require('./tfc-layout-repair').repair(game);
   else if(command==='restore')result=controller.restoreLatest(game);
   else if(command==='recover')result=fs.existsSync(path.join(game,'LID-TFC-State/layout-pending.json'))?require('./tfc-layout-repair').recover(game):controller.recover(game);
   else if(command==='detach')result=controller.detach(game);
+  else if(['off','removed','off-all'].includes(command))result=controller.finishRemoval(game,command==='off-all'?'all':mod);
   else{
-   const state=controller.readState(game)?.config||controller.empty(),next=command==='off-all'?controller.empty():{...state};
-   if(mod==='warp'||mod==='vending'){if(!['sync','relink','off-all'].includes(command))next[mod]=command==='on';}
+   const state=controller.readState(game)?.config||controller.empty(),next={...state};
+   if(mod==='warp'||mod==='vending'){if(!['sync','relink'].includes(command))next[mod]=command==='on';}
    else if(command!=='sync')console.log('Guard/M2G are UPK-only: this operation only relinks hashes. Apply/remove the UPK with TFC.');
    result=controller.change(game,next,{upkMod:command==='relink'?null:mod});
   }
   if(values.json)console.log(JSON.stringify(result,null,2));
   else{
    console.log('Completed / 완료'+(result.changed===false?' (already up to date / 이미 동일한 상태)':''));
+   if(result.removedAll)console.log('All four TFC UPK features are OFF. Warp/vending native components and recorded material rows were removed; unrelated changes and saves are preserved. / TFC 기능 전체 OFF 확인: 워프·자판기 보조 기능과 기록된 재료 상품만 제거했습니다. 다른 변경과 세이브는 유지합니다.');
    if(result.backup)console.log('Backup / 백업: '+result.backup);
    for(const warning of result.featureWarnings||[])console.log('Warning / 주의: '+warning);
    if(command==='on'&&mod==='vending')console.log('Materials + decals + ammo: ready / 재료 상점·데칼 관리·탄약 충전: 사용 준비 완료');

@@ -2,7 +2,7 @@
 
 [한국어 사용법](START-HERE.ko.md)
 
-**TFC-only prerelease: tfc-v1.2.0-rc.1.** Download the attached `*-tfc-v1.2.0-rc.1.zip`, not the Source code ZIP. This distribution includes its own launcher/runtime and no standalone launcher.
+**TFC-only prerelease: tfc-v1.2.0-rc.2.** Download the attached `*-tfc-v1.2.0-rc.2.zip`, not the Source code ZIP. This distribution includes its own launcher/runtime and no standalone launcher.
 
 Requires Node.js **22.13+** and TFC Installer **2.5.6.0**. Reviewed Steam build **25386710**.
 
@@ -23,6 +23,8 @@ Enter the game folder or BrgGame-Steam.exe path when asked. If game files change
 ## Remove / change settings
 
 Remove this UPK mod with TFC while the game is closed, then run its **run-tfc.bat → 2. Finish removal**. Do not use **Uninstall all** merely to remove one mod.
+
+If you intentionally use TFC **Uninstall all**, run **2. Finish removal** from any of the four updated TFC tools afterward. It verifies every guard/warp/M2G/vending owned component is OFF before disabling both native components, removing only recorded material catalog rows and relinking current packages. UPKs, saves and unrelated EXE/DB edits are preserved. Repeating this step is safe. Partial unexpected preset loss or unknown conflicts still stop; installation and ordinary relinking never silently accept complete loss.
 
 ## Compatibility and recovery
 

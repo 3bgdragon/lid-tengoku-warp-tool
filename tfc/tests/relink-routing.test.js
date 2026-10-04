@@ -9,7 +9,8 @@ function run(t,mod,command){
  const code=`
  require(${JSON.stringify(controller)});require.cache[require.resolve(${JSON.stringify(controller)})].exports={
  EXE:'Binaries/Win64/BrgGame-Steam.exe',readState:()=>({config:{warp:true,vending:true}}),
- empty:()=>({warp:false,vending:false}),change:(game,next,options)=>({next,options})
+ empty:()=>({warp:false,vending:false}),change:(game,next,options)=>({next,options}),
+ finishRemoval:(game,mod)=>({removal:mod})
  };
  require(${JSON.stringify(preflight)});require.cache[require.resolve(${JSON.stringify(preflight)})].exports={verify:()=>{throw Error('preflight verification required');}};
  // node -e defaults parseArgs to argv.slice(1), unlike a script file.
@@ -23,4 +24,8 @@ for(const mod of ['guard','warp','m2g','vending'])test('advanced relink preserve
 });
 test('finish installation still requires the prepared full-function proof',t=>{
  const r=run(t,'guard','sync');assert.equal(r.status,1);assert.match(r.stderr,/preflight verification required/);
+});
+for(const mod of ['guard','warp','m2g','vending'])for(const command of ['off','removed','off-all'])test('explicit removal routes to locked OFF proof: '+mod+'/'+command,t=>{
+ const r=run(t,mod,command);assert.equal(r.status,0,r.stderr);
+ assert.deepEqual(JSON.parse(r.stdout),{removal:command==='off-all'?'all':mod});
 });

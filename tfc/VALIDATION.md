@@ -1,4 +1,4 @@
-# Compatibility candidate 1.2.0-rc.1 — 2026-10-04
+# Compatibility candidate 1.2.0-rc.2 — 2026-10-04
 
 Compatibility candidate, 2026-10-04; reviewed Steam build 25386710. Actual Nico DB Mod Manager 0.10.1 and TFC Installer 2.5.6.0 engines were tested separately from S3er0i9ng Mod Manager 1.3.20. File-copy tests passed; this update has NOT been retested through the GUI or in live gameplay. Unknown/conflicting layouts remain blocked. External managers can still overwrite files from cached originals; detected preset loss requires selected-feature reinstallation, not an old whole-file restore.
 
@@ -49,3 +49,48 @@ Reviewed Steam build 25386710, package version 861/19.
 
 The real installation used TFC's engine directly with a separate full-file backup, not TFC GUI installation history. Complete GUI install/uninstall is a separate validation scope.
 This confirmation does not prove every boss, weapon, daily restock cycle, foreign mod or other build. Same-object edits can conflict.
+
+## Local full-uninstall fix validation — 2026-10-04
+
+The previous companion incorrectly rejected TFC full uninstall because several
+recorded presets disappeared together. The new explicit removal path proves all
+four mods' owned components OFF under the operation lock before accepting that
+state. Ordinary relinking/installation and partial unexpected loss remain strict.
+This follow-up fix is included in tfc-v1.2.0-rc.2. The earlier rc.1 ZIP does
+not include it. Standalone code and its separately published ZIPs are unchanged.
+
+On Steam build 25386710, a disposable fixture retained the EXE/DB/controller
+state from installing all four published TFC packages with the actual TFC
+2.5.6.0 engine. Its four original UPKs were restored to reproduce full uninstall.
+This reproduces the resulting file state; it is not a TFC GUI uninstall test.
+
+The common-runtime integration suite `tests/removal.test.js` passed 12/12:
+
+- Each guard/warp/M2G/vending removal command completes full uninstall; a second
+  call is a no-op and leaving TFC mode succeeds.
+- Unrelated EXE edits, Nico file-check OFF names and unrelated DB row changes
+  survive. Only the recorded 106 material rows are removed. UPK hashes and the
+  fixture save remain unchanged.
+- Ordinary change/relink rejects simultaneous loss; explicit off-all accepts
+  only all-OFF. Missing older UPK receipts do not waive the all-component proof.
+  Invalid duplicate receipts, installed components and partial loss are rejected.
+- Selective guard removal retains an enabled vending native component/catalog.
+- Injected interruptions before commit, after EXE and after DB recover the
+  exact prior EXE/DB/state and allow safe retry.
+- Owned-native conflicts, changed recorded catalog rows, SQLite journals and
+  transaction locks still reject writes.
+
+The runtime, CLI and removal test copies are byte-identical in all four repos.
+Combined default standalone/TFC regression runs passed: warp 117, guard 84,
+M2G 93, vending 115 (409 passed, 107 optional integration skips, zero failures).
+The 12 actual-file removal tests above were run separately without skips.
+Sandbox task-list/temporary-EXE restrictions required rerunning these checks
+outside the sandbox; the reruns passed without weakening production checks.
+
+Reproduce using Node.js 22.13+ with `LID_TFC_REMOVAL_SOURCE` pointing to a
+disposable all-OFF-UPK fixture that still has the all-installed controller
+state/EXE/DB; optionally set `LID_TFC_TEST_ROOT` to a test directory, then run
+`node --test tests/removal.test.js` from the TFC folder.
+The source fixture and real installation are not mutated. This follow-up did
+not launch gameplay; all six real game-file hashes and save hashes still match
+the clean reinstall baseline.

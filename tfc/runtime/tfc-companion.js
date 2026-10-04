@@ -125,7 +125,14 @@ function stageDb(folder,before,rows,enabled){
  return {bytes:fs.readFileSync(file),rows:next};
 }
 function assertNoLegacy(game){if(fs.existsSync(path.join(game,'LID-Mod-State/operation.lock')))throw Error('Standalone operation/recovery lock exists. Resolve it with the original tool before TFC.');const f=path.join(game,'LID-Mod-State/state.json');if(fs.existsSync(f)){const r=json(f);if(r.active||r.layout)throw Error('Active standalone layer receipt exists. Remove/restore using its tool before switching to TFC.');}}
-function change(game,next,{running=stopped,failpoint=()=>{},upkMod=null}={}){
+// Only an explicit removal operation may accept simultaneous loss of all
+// recorded presets. Prove every owned UPK component OFF under the same lock
+// and package snapshot used for the EXE/DB transaction; never infer removal
+// from an empty requested native configuration or a missing receipt.
+function finishRemoval(game,mod,options={}){
+ return change(game,empty(),{...options,upkMod:null,removalMod:mod});
+}
+function change(game,next,{running=stopped,failpoint=()=>{},upkMod=null,removalMod=null}={}){
  game=path.resolve(game);next=config(next);running();assertNoLegacy(game);
  const p=files(game);fs.mkdirSync(p.root,{recursive:true});const lock=lockOperation(p.root);
  let folder,pending=false;
@@ -134,11 +141,28 @@ function change(game,next,{running=stopped,failpoint=()=>{},upkMod=null}={}){
   const old=readState(game),current=fs.readFileSync(p.exe),db=readDb(p.db),packages=packageBytes(game);
   const owned=require('./owned-functions'),upkSettings=old?.upkSettings?JSON.parse(JSON.stringify(old.upkSettings)):[];
   if(upkMod!==null&&!['guard','warp','m2g','vending'].includes(upkMod))throw Error('Invalid UPK action');
+  let removedAll=false,removedSettings;
+  if(removalMod!==null){
+   if(!['guard','warp','m2g','vending','all'].includes(removalMod)||upkMod!==null)throw Error('Invalid UPK removal action');
+   removedSettings=[];
+   for(const mod of ['guard','warp','m2g','vending'])for(const file of new Set(owned.catalog.objects.filter(p=>p.mod===mod).map(p=>p.file)))
+    removedSettings.push({mod,file,preset:owned.inspect(packages[file],mod,file)});
+   if(removedSettings.some(p=>(removalMod==='all'||p.mod===removalMod)&&p.preset!=='off'))throw Error('TFC UPK component is still installed / 먼저 TFC에서 UPK를 제거하세요');
+   removedAll=removedSettings.every(p=>p.preset==='off');
+   next=removedAll?empty():config(old?.config||empty());
+   if(!removedAll&&['warp','vending'].includes(removalMod))next[removalMod]=false;
+   upkMod=removalMod==='all'?null:removalMod;
+  }
+  const receipts=new Set();
   for(const setting of upkSettings){
    if(!['guard','warp','m2g','vending'].includes(setting.mod)||typeof setting.file!=='string'||typeof setting.preset!=='string')throw Error('Invalid UPK settings receipt');
-   if(setting.mod!==upkMod&&owned.inspect(packages[setting.file],setting.mod,setting.file)!==setting.preset)throw Error('Previously installed UPK feature was changed/lost: '+setting.mod+'/'+setting.file+' expected '+setting.preset+'. External managers may rebuild from an older original. Reinstall that selected TFC preset, prepare a new package and finish from its folder. Do not restore a whole old UPK. / 외부 관리자의 이전 원본 재적용으로 기능이 되돌아갔을 수 있습니다. 해당 프리셋만 다시 준비·적용·마무리하세요. 전체 구형 UPK를 덮어쓰지 마세요.');
+   const key=setting.mod+'/'+setting.file,variants=owned.catalog.objects.filter(p=>p.mod===setting.mod&&p.file===setting.file);
+   if(receipts.has(key)||!variants.length||!['off',...variants.map(p=>p.preset)].includes(setting.preset))throw Error('Invalid UPK settings receipt');receipts.add(key);
+   const actual=owned.inspect(packages[setting.file],setting.mod,setting.file);
+   if(!removedAll&&setting.mod!==upkMod&&actual!==setting.preset)throw Error('Previously installed UPK feature was changed/lost: '+setting.mod+'/'+setting.file+' expected '+setting.preset+'. External managers may rebuild from an older original. Reinstall that selected TFC preset, prepare a new package and finish from its folder. Do not restore a whole old UPK. / 외부 관리자의 이전 원본 재적용으로 기능이 되돌아갔을 수 있습니다. 해당 프리셋만 다시 준비·적용·마무리하세요. 전체 구형 UPK를 덮어쓰지 마세요.');
   }
-  if(upkMod!==null){
+  if(removedAll)upkSettings.splice(0,upkSettings.length,...removedSettings);
+  else if(upkMod!==null){
    const mods=upkSettings.length?[upkMod]:['guard','warp','m2g','vending'];
    for(const mod of mods)for(const file of new Set(owned.catalog.objects.filter(p=>p.mod===mod).map(p=>p.file))){
     const preset=owned.inspect(packages[file],mod,file),row={mod,file,preset},at=upkSettings.findIndex(p=>p.mod===mod&&p.file===file);
@@ -157,7 +181,7 @@ function change(game,next,{running=stopped,failpoint=()=>{},upkMod=null}={}){
   if(!fs.existsSync(baseFile))write(baseFile,base);else if(sha(fs.readFileSync(baseFile))!==baseHash)throw Error('TFC baseline blob damaged');
   const state={format:'LID-TFC-NATIVE-1',config:next,rows,base:baseHash,baseHash};
   if(upkSettings.length)state.upkSettings=upkSettings;
-  if(current.equals(afterExe)&&(db===null?afterDb===null:db.equals(afterDb))&&old&&JSON.stringify(old.config)===JSON.stringify(next)&&JSON.stringify(old.upkSettings||[])===JSON.stringify(upkSettings)){return {changed:false};}
+  if(current.equals(afterExe)&&(db===null?afterDb===null:db.equals(afterDb))&&old&&JSON.stringify(old.config)===JSON.stringify(next)&&JSON.stringify(old.upkSettings||[])===JSON.stringify(upkSettings)){return {changed:false,...(removalMod!==null?{removedAll,config:next}:{})};}
   write(path.join(folder,'before.exe'),current);write(path.join(folder,'after.exe'),afterExe);
   if(db){write(path.join(folder,'before.db'),db);write(path.join(folder,'after.db'),afterDb);}
   const record={format:'LID-TFC-TX-1',game,beforeState:old,afterState:state,packages:packageHashes(packages),exe:[sha(current),sha(afterExe)],db:db?[sha(db),sha(afterDb)]:null,status:'prepared'};
@@ -166,7 +190,7 @@ function change(game,next,{running=stopped,failpoint=()=>{},upkMod=null}={}){
   failpoint('prepared');replace(p.exe,afterExe);failpoint('exe');if(db&&!db.equals(afterDb))replace(p.db,afterDb);failpoint('db');
   if(!fs.readFileSync(p.exe).equals(afterExe)||(afterDb&&!readDb(p.db).equals(afterDb))||JSON.stringify(packageHashes(packageBytes(game)))!==JSON.stringify(record.packages))throw Error('Post-write verification failed; recovery required.');
   replace(path.join(p.root,'state.json'),Buffer.from(JSON.stringify(state)));record.status='applied';replace(path.join(folder,'manifest.json'),Buffer.from(JSON.stringify(record)));fs.unlinkSync(path.join(p.root,'pending.json'));pending=false;
-  return {changed:true,backup:folder,config:next};
+  return {changed:true,backup:folder,config:next,...(removalMod!==null?{removedAll}:{})};
  }catch(error){if(pending)error.message+='\nPrepared backup retained. Run recover; do not retry blindly. / recover로 복구하세요. '+folder;throw error;}
  finally{fs.unlinkSync(lock);}
 }
@@ -202,4 +226,4 @@ function detach(game,{running=stopped}={}){
   running();fs.unlinkSync(path.join(p.root,'state.json'));return {detached:true,message:'Only controller metadata removed; backups retained. UPK removal is still handled by TFC.'};
  }finally{fs.unlinkSync(lock);}
 }
-module.exports={change,recover,readState,config,empty,compose,reconcile,relink,verifyPackages,reader,sha,EXE,DB,backups,restoreLatest,detach};
+module.exports={change,finishRemoval,recover,readState,config,empty,compose,reconcile,relink,verifyPackages,reader,sha,EXE,DB,backups,restoreLatest,detach};

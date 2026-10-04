@@ -1,4 +1,4 @@
-# TFC companion — 1.2.0-rc.1
+# TFC companion — 1.2.0-rc.2
 
 Requires Node.js 22.13+. Normal companion operations never rewrite UPKs or saves.
 The separately confirmed Advanced → 5 interoperability repair only relocates
@@ -13,7 +13,8 @@ The low-level commands described below are retained in Advanced or the command l
 Option 1 combines hash relinking with this mod's required native setup.
 
 - **Sync package hashes:** reconnect EXE to current TFC UPKs after any UPK change.
-- **Enable / Disable native component:** controls this mod's warp or vending native component only. Guard/M2G require Sync only.
+- **Finish removal (`off` / `removed`):** after TFC removal, verifies the selected UPK component is OFF and normally disables only its native component. If all four mods' owned UPK components are OFF, it safely finalizes TFC full uninstall by disabling both native components and deleting only recorded material catalog rows. Other EXE/DB edits, UPKs and saves are preserved. Unknown conflicts and partial unexpected preset losses still stop.
+- **Explicit full removal (`off-all`):** requires every owned UPK component OFF; refuses while any component remains installed. Ordinary change/relink never bypasses recorded preset-loss checks.
 - **Restore previous native settings:** restores prior native configuration, not an old whole game image; refuses intervening EXE/DB edits.
 - **Recover interrupted operation:** restores recorded before-state only if current bytes and UPKs match the transaction.
 - **Status:** shows native warp/vending settings, not TFC's full UPK installation list.
