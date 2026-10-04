@@ -13,20 +13,48 @@ test('TFC native merge preserves unrelated bytes and ignores only hash links',()
  assert.throws(()=>api.reconcile(base,expected,Buffer.concat([expected,Buffer.alloc(1)])),/size/);
 });
 const source=process.env.LID_TFC_TEST_SOURCE;
-function fixture(t){
- const root=path.resolve(__dirname,'../.integration-temp');fs.mkdirSync(root,{recursive:true});
+function fixture(t,fixtureSource=source){
+ const root=path.resolve(process.env.LID_TFC_TEST_ROOT||path.join(__dirname,'../.integration-temp'));fs.mkdirSync(root,{recursive:true});
  const dir=fs.mkdtempSync(path.join(root,'tfc-native-')),game=path.join(dir,'game');
  const names=[api.EXE,...Object.values(links.PACKAGES).map(([f])=>'BrgGame/CookedPCConsole/'+f)];
- for(const f of names){const dst=path.join(game,f);fs.mkdirSync(path.dirname(dst),{recursive:true});fs.copyFileSync(path.join(source,f),dst);}
+ for(const f of names){const dst=path.join(game,f);fs.mkdirSync(path.dirname(dst),{recursive:true});fs.copyFileSync(path.join(fixtureSource,f),dst);}
  const {DatabaseSync}=require('node:sqlite'),file=path.join(game,api.DB);fs.mkdirSync(path.dirname(file),{recursive:true});const db=new DatabaseSync(file);
  const row={goods_id:1,lineup_id:'COMMON',entity_type:'ITEM',type_id:'ITMT_ALUMI_1',is_stable:0,freq:1,is_special:0,display_priority:100,currency_type:0,stock:1,pack_count:5,pack_money:10000,pack_metal:0,pack_recycle_point:0,pack_bloodnium:0,money_discount_rate:0,metal_discount_rate:0,recycle_point_discount_rate:0,bloodnium_discount_rate:0};
  db.exec('CREATE TABLE master_item(itemid TEXT,itemtype TEXT,rarity INTEGER); CREATE TABLE master_automaticshop_lineup ('+Object.entries(row).map(([k,v])=>k+' '+(typeof v==='number'?'INTEGER':'TEXT')).join(',')+');');
  db.prepare('INSERT INTO master_item VALUES (?,?,?)').run('ITMT_ALUMI_1','ITTP_MATERIAL',1);db.close();
  const snapshots=Object.fromEntries(names.slice(1).map(f=>[f,api.sha(fs.readFileSync(path.join(game,f)))]));
  t.after(()=>{for(const [f,hash] of Object.entries(snapshots))assert.equal(api.sha(fs.readFileSync(path.join(game,f))),hash,'UPK changed');});
+ t.after(()=>{
+  if(path.dirname(dir)!==root||!path.basename(dir).startsWith('tfc-native-'))throw Error('Unsafe fixture cleanup');
+  fs.rmSync(dir,{recursive:true,force:true});
+ });
  return game;
 }
 const opt={running:()=>{}};
+test('actual TFC Faster Drops: whole-function hash differs but warp proof and native controls work',{
+ skip:!process.env.LID_TFC_FASTER_DROPS_SOURCE
+},t=>{
+ const game=fixture(t,process.env.LID_TFC_FASTER_DROPS_SOURCE),file=path.join(game,'BrgGame/CookedPCConsole/BrgGame.upk'),data=fs.readFileSync(file);
+ const read=api.reader(data);let at=data.readUInt32LE(0x25),entry;
+ for(let i=0;i<=71346;i++){entry=read(at,68);at+=68+entry.readUInt32LE(44)*4;}
+ const body=read(entry.readUInt32LE(36),entry.readUInt32LE(32));
+ assert.equal(body[23626],0,'Prepared TFC source must have Faster Drops enabled');
+ const proof=require('../runtime/tfc-assets/upk-proof.json').warp.find(p=>p.file==='BrgGame.upk'&&p.index===71346);
+ assert.notEqual(api.sha(body),proof.sha256,'The old whole-function check must reject this sample');
+ api.change(game,{warp:true,vending:false},opt);assert.equal(api.readState(game).config.warp,true);
+ assert.equal(api.change(game,{warp:true,vending:false},opt).changed,false);
+ api.change(game,api.empty(),opt);assert.equal(api.readState(game).config.warp,false);
+ links.validatePackageLinks(fs.readFileSync(path.join(game,api.EXE)),game);
+ assert.deepEqual(fs.readFileSync(file),data,'Companion must not rewrite the merged TFC UPK');
+});
+test('actual TFC owned-instruction conflict blocks native writes and backup creation',{
+ skip:!process.env.LID_TFC_CONFLICT_SOURCE
+},t=>{
+ const game=fixture(t,process.env.LID_TFC_CONFLICT_SOURCE),exe=fs.readFileSync(path.join(game,api.EXE)),db=fs.readFileSync(path.join(game,api.DB));
+ assert.throws(()=>api.change(game,{warp:true,vending:false},opt),/instruction\/context/);
+ assert.deepEqual(fs.readFileSync(path.join(game,api.EXE)),exe);assert.deepEqual(fs.readFileSync(path.join(game,api.DB)),db);
+ assert.equal(api.readState(game),null);assert.equal(api.backups(game).length,0);
+});
 test('actual TFC files: native composition, selective removal and preservation',{skip:!source},t=>{
  const game=fixture(t);api.change(game,{warp:true,vending:false},opt);api.change(game,{warp:true,vending:true},opt);
  const standalone=path.resolve(__dirname,'../../shared/layers.js');

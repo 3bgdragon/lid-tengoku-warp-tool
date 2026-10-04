@@ -1,10 +1,14 @@
-# TFC companion — 1.0.0
+# TFC companion — 1.2.0-rc.1
 
-Requires Node.js 22.13+. The companion never rewrites UPKs or saves.
+Requires Node.js 22.13+. Normal companion operations never rewrite UPKs or saves.
+The separately confirmed Advanced → 5 interoperability repair only relocates
+existing compressed UPK frames and updates EXE package links, with backups.
+It does not edit logical game data, saves or DB. Advanced → 3 recovers an
+interrupted layout repair before further installation.
 Keep the game closed during both the TFC and companion steps.
 
 For normal use, follow [the quick guide](START-HERE.ko.md).
-The first menu is now: **1 Finish installation, 2 Finish removal, 3 Check connection, 4 Advanced**.
+The first menu is now: **1 Finish installation, 2 Finish removal, 3 Check connection, 4 Advanced, 5 Prepare compatible TFC package**.
 The low-level commands described below are retained in Advanced or the command line.
 Option 1 combines hash relinking with this mod's required native setup.
 

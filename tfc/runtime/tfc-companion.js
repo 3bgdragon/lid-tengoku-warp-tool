@@ -6,6 +6,7 @@ const links=require('./kernel/src/executable-links');
 const assets=path.join(__dirname,'tfc-assets');
 const proof=require('./tfc-assets/upk-proof.json');
 const native=require('./tfc-assets/native-sites');
+const warpInstructions=require('./warp-instructions');
 const EXE='Binaries/Win64/BrgGame-Steam.exe',DB='BrgGame/Content/masters.db';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const config=c=>{if(!c||typeof c.warp!=='boolean'||typeof c.vending!=='boolean')throw Error('Invalid native configuration');return {warp:c.warp,vending:c.vending};};
@@ -59,13 +60,27 @@ function reader(data){
  return (at,size)=>{if(!Number.isSafeInteger(size)||size<0||size>64*1024*1024)throw Error('Invalid read size');const parts=[];while(size){const i=table.findIndex(e=>at>=e[0]&&at<e[0]+e[1]);if(i<0)throw Error('Logical read outside package');const n=Math.min(size,table[i][0]+table[i][1]-at);parts.push(chunk(i).subarray(at-table[i][0],at-table[i][0]+n));at+=n;size-=n;}return Buffer.concat(parts);};
 }
 function verifyPackages(packages,c){
+ // Hash relinking is not proof that the UPK-only guard/M2G functions survived.
+ for(const mod of ['guard','m2g'])for(const file of new Set(require('./owned-functions').catalog.objects.filter(p=>p.mod===mod).map(p=>p.file))){
+  if(packages[file])require('./owned-functions').inspect(packages[file],mod,file);
+ }
  for(const mod of ['warp','vending'])if(c[mod]){
+  if(mod==='vending'){
+   const state=require('./owned-functions').inspect(packages['BrgGame.upk'],'vending','BrgGame.upk');
+   if(!['on','all-ko','all-en'].includes(state))throw Error('Install the matching vending TFC UPK patch first / 자판기 전체 기능 UPK를 먼저 설치하세요');
+   continue;
+  }
   const grouped=new Map();for(const p of proof[mod]){if(!grouped.has(p.file))grouped.set(p.file,new Map());grouped.get(p.file).set(p.index,p);}
   for(const [file,wanted] of grouped){
    const data=packages[file],read=reader(data),count=data.readUInt32LE(0x21);let at=data.readUInt32LE(0x25),found=0;
    if(count>200000)throw Error('Invalid export count');
    for(let i=0;i<count;i++){const entry=read(at,68),generations=entry.readUInt32LE(44);if(generations>10000)throw Error('Invalid export generations');
-    if(wanted.has(i)){const p=wanted.get(i),size=entry.readUInt32LE(32);if(size!==p.size||sha(read(entry.readUInt32LE(36),size))!==p.sha256)throw Error(`Install the matching ${mod} TFC UPK patch first: ${file} export ${i}. / TFC UPK 패치를 먼저 적용하세요.`);found++;}at+=68+generations*4;
+    if(wanted.has(i)){
+     const p=wanted.get(i),size=entry.readUInt32LE(32),bytes=read(entry.readUInt32LE(36),size);
+     if(mod==='warp'&&file==='BrgGame.upk'&&warpInstructions.has(i))warpInstructions.verify(i,entry,bytes,p);
+     else if(size!==p.size||sha(bytes)!==p.sha256)throw Error(`Install the matching ${mod} TFC UPK patch first: ${file} export ${i}. / TFC UPK 패치를 먼저 적용하세요.`);
+     found++;
+    }at+=68+generations*4;
    }
    if(found!==wanted.size)throw Error('Missing required TFC objects: '+mod);
   }
@@ -109,14 +124,27 @@ function stageDb(folder,before,rows,enabled){
  }catch(e){try{db.exec('ROLLBACK');}catch{}throw e;}finally{db.close();}
  return {bytes:fs.readFileSync(file),rows:next};
 }
-function assertNoLegacy(game){const f=path.join(game,'LID-Mod-State/state.json');if(fs.existsSync(f)){const r=json(f);if(r.active||r.layout)throw Error('Active standalone layer receipt exists. Remove/restore using its tool before switching to TFC.');}}
-function change(game,next,{running=stopped,failpoint=()=>{}}={}){
+function assertNoLegacy(game){if(fs.existsSync(path.join(game,'LID-Mod-State/operation.lock')))throw Error('Standalone operation/recovery lock exists. Resolve it with the original tool before TFC.');const f=path.join(game,'LID-Mod-State/state.json');if(fs.existsSync(f)){const r=json(f);if(r.active||r.layout)throw Error('Active standalone layer receipt exists. Remove/restore using its tool before switching to TFC.');}}
+function change(game,next,{running=stopped,failpoint=()=>{},upkMod=null}={}){
  game=path.resolve(game);next=config(next);running();assertNoLegacy(game);
  const p=files(game);fs.mkdirSync(p.root,{recursive:true});const lock=lockOperation(p.root);
  let folder,pending=false;
  try{
-  if(fs.existsSync(path.join(p.root,'pending.json')))throw Error('Interrupted transaction: use recover first.');
+  if(fs.existsSync(path.join(p.root,'pending.json'))||fs.existsSync(path.join(p.root,'layout-pending.json')))throw Error('Interrupted transaction: use recover first.');
   const old=readState(game),current=fs.readFileSync(p.exe),db=readDb(p.db),packages=packageBytes(game);
+  const owned=require('./owned-functions'),upkSettings=old?.upkSettings?JSON.parse(JSON.stringify(old.upkSettings)):[];
+  if(upkMod!==null&&!['guard','warp','m2g','vending'].includes(upkMod))throw Error('Invalid UPK action');
+  for(const setting of upkSettings){
+   if(!['guard','warp','m2g','vending'].includes(setting.mod)||typeof setting.file!=='string'||typeof setting.preset!=='string')throw Error('Invalid UPK settings receipt');
+   if(setting.mod!==upkMod&&owned.inspect(packages[setting.file],setting.mod,setting.file)!==setting.preset)throw Error('Previously installed UPK feature was changed/lost: '+setting.mod+'/'+setting.file+' expected '+setting.preset+'. External managers may rebuild from an older original. Reinstall that selected TFC preset, prepare a new package and finish from its folder. Do not restore a whole old UPK. / 외부 관리자의 이전 원본 재적용으로 기능이 되돌아갔을 수 있습니다. 해당 프리셋만 다시 준비·적용·마무리하세요. 전체 구형 UPK를 덮어쓰지 마세요.');
+  }
+  if(upkMod!==null){
+   const mods=upkSettings.length?[upkMod]:['guard','warp','m2g','vending'];
+   for(const mod of mods)for(const file of new Set(owned.catalog.objects.filter(p=>p.mod===mod).map(p=>p.file))){
+    const preset=owned.inspect(packages[file],mod,file),row={mod,file,preset},at=upkSettings.findIndex(p=>p.mod===mod&&p.file===file);
+    if(at<0)upkSettings.push(row);else upkSettings[at]=row;
+   }
+  }
   verifyPackages(packages,next);
   let base=old?reconcile(baseOf(game,old),compose(baseOf(game,old),old.config),current):current;
   if(!old){const layout=native.peLayout(base);if(layout.sections.some(s=>s.name.startsWith('.lidvend')||s.name.startsWith('.lidtw')))throw Error('Unregistered native patch. Restore it with the original tool first.');}
@@ -128,7 +156,8 @@ function change(game,next,{running=stopped,failpoint=()=>{}}={}){
   const baseHash=sha(base),baseFile=path.join(p.root,'bases',baseHash);
   if(!fs.existsSync(baseFile))write(baseFile,base);else if(sha(fs.readFileSync(baseFile))!==baseHash)throw Error('TFC baseline blob damaged');
   const state={format:'LID-TFC-NATIVE-1',config:next,rows,base:baseHash,baseHash};
-  if(current.equals(afterExe)&&(db===null?afterDb===null:db.equals(afterDb))&&old&&JSON.stringify(old.config)===JSON.stringify(next)){return {changed:false};}
+  if(upkSettings.length)state.upkSettings=upkSettings;
+  if(current.equals(afterExe)&&(db===null?afterDb===null:db.equals(afterDb))&&old&&JSON.stringify(old.config)===JSON.stringify(next)&&JSON.stringify(old.upkSettings||[])===JSON.stringify(upkSettings)){return {changed:false};}
   write(path.join(folder,'before.exe'),current);write(path.join(folder,'after.exe'),afterExe);
   if(db){write(path.join(folder,'before.db'),db);write(path.join(folder,'after.db'),afterDb);}
   const record={format:'LID-TFC-TX-1',game,beforeState:old,afterState:state,packages:packageHashes(packages),exe:[sha(current),sha(afterExe)],db:db?[sha(db),sha(afterDb)]:null,status:'prepared'};
@@ -165,7 +194,9 @@ function restoreLatest(game,options={}){
 }
 function detach(game,{running=stopped}={}){
  game=path.resolve(game);running();const p=files(game),state=readState(game);
- if(!state)return {detached:false};if(state.config.warp||state.config.vending||fs.existsSync(path.join(p.root,'pending.json')))throw Error('Disable native components/recover before leaving TFC mode.');
+ if(fs.existsSync(path.join(p.root,'pending.json'))||fs.existsSync(path.join(p.root,'layout-pending.json')))throw Error('Recover interrupted operation before leaving TFC mode.');
+ if(!state)return {detached:false};if(state.config.warp||state.config.vending)throw Error('Disable native components before leaving TFC mode.');
+ for(const setting of state.upkSettings||[])if(require('./owned-functions').inspect(packageBytes(game)[setting.file],setting.mod,setting.file)!=='off')throw Error('Remove every TFC UPK feature before leaving TFC mode: '+setting.mod);
  const lock=lockOperation(p.root);try{
   reconcile(baseOf(game,state),compose(baseOf(game,state),state.config),fs.readFileSync(p.exe));links.validatePackageLinks(fs.readFileSync(p.exe),game);
   running();fs.unlinkSync(path.join(p.root,'state.json'));return {detached:true,message:'Only controller metadata removed; backups retained. UPK removal is still handled by TFC.'};

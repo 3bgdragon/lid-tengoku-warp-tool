@@ -41,11 +41,9 @@ function patchPackage(source,selectedPlan=plan){
 }
 function linkExecutable(exe,before,after){
  if(exe.subarray(0,2).toString('ascii')!=='MZ')throw new Error('Windows 실행 파일이 아닙니다');
- const needle=Buffer.from('brggame.upk\0'),locations=[];let at=0;
- while((at=exe.indexOf(needle,at))>=0){at+=needle.length;locations.push(at);}
- if(locations.length!==2)throw new Error('실행 파일 패키지 해시 테이블 불일치');
+ const entries=require('./executable-links').digestEntries(exe,'brggame.upk',2);
  const hash=b=>createHash('sha1').update(b).digest(),old=hash(before),next=hash(after),output=Buffer.from(exe);
- for(const at of locations){if(!exe.subarray(at,at+20).equals(old))throw new Error('실행 파일과 BrgGame 패키지의 해시 연결이 다릅니다');next.copy(output,at);}
+ for(const {offset:at,checked} of entries){if(checked&&!exe.subarray(at,at+20).equals(old))throw new Error('실행 파일과 BrgGame 패키지의 해시 연결이 다릅니다');next.copy(output,at);}
  return output;
 }
 module.exports={patchPackage,patchFunction,linkExecutable,plan};

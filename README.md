@@ -1,8 +1,60 @@
 # LET IT DIE Standard Tengoku Start-Floor Selector
 
-TFC edition: [installation and downloads](tfc/README.md). It is isolated in `tfc/`; do not mix with the standalone launcher.
+TFC edition: [separate download](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.0-rc.1). The repository's `tfc/` is isolated; it is NOT included in the standalone ZIP. Do not mix installation modes.
+
+Compatibility candidate **1.5.2-rc.1**: [rules and test evidence](COMPATIBILITY-VALIDATION.md).
+
+Compatibility candidate, 2026-10-04; reviewed Steam build 25386710. Actual Nico DB Mod Manager 0.10.1 and TFC Installer 2.5.6.0 engines were tested separately from S3er0i9ng Mod Manager 1.3.20. File-copy tests passed; this update has NOT been retested through the GUI or in live gameplay. Unknown/conflicting layouts remain blocked. External managers can still overwrite files from cached originals; detected preset loss requires selected-feature reinstallation, not an old whole-file restore.
+
+## Experimental UPK editor-compatible layout
+
+After applying your chosen mods, run `upk-compat.bat` (Node.js 22.13+).
+For English: `upk-compat.bat --lang=en`. You can also pass the installation
+folder or `BrgGame-Steam.exe` path in quotes. Confirm only with the game closed.
+
+This optional conversion packs existing LZO chunks contiguously and updates
+only their EXE digest links. It does not change compressed payloads, game logic,
+save data or database contents. Before conversion it creates a full shared backup
+under `GAME/LID-Mod-State`; keep this folder. Use versions of **all four tools**
+containing this feature. Subsequent managed edits preserve the contiguous layout.
+
+For exact pre-conversion restoration use `upk-compat.bat --restore`.
+Restoration refuses later changes. Unknown edits made by an external UPK editor
+are deliberately blocked, not silently discarded. Reading/exporting a package
+does not imply support for arbitrary external writes or Nico's vanilla replacement.
+Actual Nico/TFC engine read/apply and recovery tests passed on disposable copies.
+GUI and gameplay retesting remain pending; this is a compatibility prerelease.
+Nico file-check OFF is preserved. Recorded guard/M2G preset loss can be repaired
+with `upk-compat.bat "<game folder>" --reapply=guard` or `--reapply=m2g`.
+Unknown edits still stop. Do not use old whole-UPK backups to repair one feature.
+
 
 ## Native EXE compatibility (build 25386710)
+
+### BrgGame instruction-scoped compatibility
+
+On build 25386710, an unknown whole-file BrgGame hash is no longer an automatic
+rejection. The standalone tool validates the identities, serialized sizes,
+function headers and instruction contexts of the two warp exports, then changes
+only the four owned bytes. Other instructions, including Faster Drops in the same
+Initialize function, are preserved when enabling or removing warp. Existing LZO
+chunks are packed contiguously; logical data outside the owned bytes is retained.
+
+Mod Manager v1.3.20 Faster Drops → warp apply → repeat apply → warp removal passed
+file-level tests. This is not an in-game test or a promise of universal compatibility.
+Edits to warp's own instruction contexts, resized functions, unsupported layouts,
+EXE hook conflicts and mismatched digest links are still blocked. Use **Remove
+patch** to retain later unrelated edits; whole-backup restore retains its safety
+checks. If a verified pre-warp backup reproduces the current UPK exactly by adding
+warp alone, removal restores that original compressed file byte-for-byte so the
+manager can still recognize it. Later foreign edits prevent this shortcut; only
+warp's instructions are then removed. A shared-layer receipt changed externally remains protected and is not
+silently adopted. This does not change the manager's own EXE acceptance policy.
+
+For a reproducible file-level test, prepare a disposable build 25386710 copy with
+Mod Manager v1.3.20 Faster Drops enabled, then run
+`node tests/run-scoped-integration.js "PATH_TO_COPY"`. The source remains read-only;
+the script creates a separate `.integration-temp` copy and prints its results.
 
 A different whole-file EXE hash no longer automatically rejects this reviewed
 build: the fallback checks the PE layout, all native bytes being overwritten,
@@ -17,7 +69,7 @@ the installation folder or `BrgGame-Steam.exe` path and retries invalid paths.
 Terminal CLI commands also prompt when attached to an interactive terminal;
 non-interactive commands retain a clear error and can use `--game`.
 
-Use Node.js 22.5 or newer with shared vending management (SQLite migration needs it).
+Use Node.js 22.13 or newer with shared vending management (SQLite migration needs it).
 
 ## Shared composition preview — 1.5.1-dev
 
@@ -50,7 +102,7 @@ the executable or your save. Do not bypass the check or assume administrator
 access fixes it: the unsupported user's executable still needs investigation.
 
 - Steam offline edition of LET IT DIE on Windows.
-- Node.js 18 or newer. No npm install is needed for normal use.
+- Node.js 22.13 or newer. No npm install is needed for normal use.
 - Support is determined by file/schema checks, not just the displayed game version. Never bypass an unsupported-file error.
 
 ## Installation

@@ -146,17 +146,11 @@ function build(source) {
 
 function linkExecutable(source, before, after) {
   if (source.subarray(0, 2).toString('ascii') !== 'MZ') throw new Error('Not a Windows executable');
-  const needle = Buffer.from('brggame.upk\0'), locations = []; let cursor = 0;
-  while (true) {
-    const at = source.indexOf(needle, cursor);
-    if (at < 0) break;
-    cursor = at + needle.length; locations.push(cursor);
-  }
-  if (locations.length !== 2) throw new Error('Unexpected executable manifest entry count');
+  const entries = require('../../shared/kernel/src/executable-links').digestEntries(source, 'brggame.upk', 2);
   const oldHash = createHash('sha1').update(before).digest(), newHash = createHash('sha1').update(after).digest();
   const result = Buffer.from(source);
-  for (const offset of locations) {
-    if (!source.subarray(offset, offset + 20).equals(oldHash)) throw new Error('Executable package hash does not match');
+  for (const {offset, checked} of entries) {
+    if (checked && !source.subarray(offset, offset + 20).equals(oldHash)) throw new Error('Executable package hash does not match');
     newHash.copy(result, offset);
   }
   return result;

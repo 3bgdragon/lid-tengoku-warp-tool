@@ -4,6 +4,12 @@ const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const s=require('../shared/layers');
 function fixture(t){const game=fs.mkdtempSync(path.join(os.tmpdir(),'lid-layer-test-'));t.after(()=>{assert.equal(path.dirname(game),path.resolve(os.tmpdir()));assert.match(path.basename(game),/^lid-layer-test-/);fs.rmSync(game,{recursive:true,force:true});});s.FILES.forEach((f,i)=>{const p=path.join(game,f);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,'file-'+i);});return game;}
 const opts={checkRunning:()=>false};
+for(const marker of ['state.json','pending.json','layout-pending.json','operation.lock'])test('TFC marker blocks standalone writes and snapshot restore: '+marker,t=>{
+ const game=fixture(t),file=path.join(game,'LID-TFC-State',marker);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,'sentinel');
+ assert.throws(()=>s.transact(game,'test',()=>{throw Error('must not stage');},opts),/TFC/);
+ assert.throws(()=>s.restore(game,'unused',opts),/TFC/);
+ s.FILES.forEach((f,i)=>assert.equal(fs.readFileSync(path.join(game,f),'utf8'),'file-'+i));assert.equal(fs.readFileSync(file,'utf8'),'sentinel');
+});
 test('staged no-op leaves all files intact and creates no backup',t=>{
  const game=fixture(t);assert.equal(s.transact(game,'test',()=>({result:'ok'}),opts).changed,false);assert.deepEqual(s.backups(game),[]);
  s.FILES.forEach((f,i)=>assert.equal(fs.readFileSync(path.join(game,f),'utf8'),'file-'+i));

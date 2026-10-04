@@ -7,7 +7,11 @@ test('English launcher forwards language and quoted installation paths from chec
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'lid-warp-launcher-'));
   try {
     fs.writeFileSync(path.join(directory, 'lid-tengoku-warp.js'), 'console.log("ARGV:"+JSON.stringify(process.argv.slice(2)));');
-    const variants = [fs.readFileSync(path.join(root, 'run-en.bat')), execFileSync('git', ['show', 'HEAD:run-en.bat'], { cwd: root })];
+    const variants = [fs.readFileSync(path.join(root, 'run-en.bat'))];
+    // A release ZIP deliberately has no .git directory or Git requirement.
+    // The checkout-only comparison supplements, but never replaces, the real
+    // launcher test on the extracted release bytes.
+    if (fs.existsSync(path.join(root, '.git'))) variants.push(execFileSync('git', ['show', 'HEAD:run-en.bat'], { cwd: root }));
     const installation = path.join(directory, '한글 경로', 'LET IT DIE');
     for (const bytes of variants) {
       const bat = path.join(directory, 'run-en.bat'); fs.writeFileSync(bat, bytes);

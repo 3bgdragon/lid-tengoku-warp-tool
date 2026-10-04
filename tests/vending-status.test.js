@@ -21,8 +21,13 @@ test('incoherent or half-recognized vending combinations cannot bypass checks',(
   const api=load();api.simulate(s);assert.throws(()=>api.setPatchState('unused',true,true),/자판기|vending/);
  }
 });
-const game='C:/Program Files (x86)/Steam/steamapps/common/LET IT DIE';
-test('reported live vending combination is recognized read-only with genuine hash links',{
+// readStatus can stage a shared-layer view. Never run it on a live installation.
+// Opt in with a prepared, disposable fixture inside this repository only.
+const fixtureRoot=path.join(root,'.integration-temp');
+const game=path.resolve(process.env.LID_WARP_VENDING_TEST_GAME||path.join(fixtureRoot,'vending-status-fixture'));
+if(!game.toLowerCase().startsWith((fixtureRoot+path.sep).toLowerCase()))
+ throw Error('LID_WARP_VENDING_TEST_GAME must be a disposable .integration-temp fixture, not a live game.');
+test('reported vending fixture is recognized with genuine hash links',{
  skip:!fs.existsSync(path.join(game,'Binaries/Win64/BrgGame-Steam.exe')) ||
  require('node:crypto').createHash('sha1').update(fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole/BrgGame.upk'))).digest('hex')!=='2bb216a499ae494c1f94dad9ae3ff63b393df1d4'
 },()=>{

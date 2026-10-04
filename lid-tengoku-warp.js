@@ -15,6 +15,9 @@ const executableDiagnostics = require('./executable-diagnostics');
 const nativeSites = require('./native-sites');
 const vendingReadOnly = require('./compat/vending-readonly.json');
 const sharedLayers = require('./shared/layers');
+const scopedPackage = require('./compat/scoped-package');
+const scopedWarpPlan = require('./assets/scoped-warp-25386710.json');
+const ownedFunctions = require('./shared/owned-functions');
 const embeddedProfiles = require('./compat/m2g/embedded-profiles.json').profiles;
 
 const PATCH_MAGIC = Buffer.from('LIDBIN1\0', 'ascii');
@@ -223,6 +226,15 @@ function identifyBrgGame(filePath) {
       return { hash, size, profileName: `${name} + M2G 나이프`, enabled: knife.baseSha1 === original.patchedSha1, profile };
     }
   }
+  if (manifest.steamBuildId === scopedWarpPlan.build) {
+    try {
+      const state = scopedPackage.inspect(fs.readFileSync(filePath), scopedWarpPlan);
+      return { hash, size, profileName: t('워프 구간 검증 · 외부 변경 보존', 'Validated warp objects · foreign edits preserved'),
+        enabled: state.enabled, profile: { scoped: true } };
+    } catch (error) {
+      return { hash, size, profileName: null, enabled: null, profile: null, conflict: error.message };
+    }
+  }
   return { hash, size, profileName: null, enabled: null, profile: null };
 }
 
@@ -258,6 +270,11 @@ function findAll(buffer, needle) {
 }
 
 function manifestDigestOffsets(executable, assetName, expectedCount) {
+  const pe = executable.length >= 64 ? executable.readUInt32LE(60) : 0;
+  if (pe && pe + 4 <= executable.length && executable.toString('ascii', pe, pe + 4) === 'PE\0\0') {
+    try { return require('./shared/kernel/src/executable-links').digestOffsets(executable, assetName, expectedCount); }
+    catch (error) { fail(error.message); }
+  }
   const needle = Buffer.from(`${assetName.toLowerCase()}\0`, 'ascii');
   const positions = findAll(executable, needle);
   if (positions.length !== expectedCount) fail(t(`${assetName} 실행 파일 해시 항목이 ${expectedCount}개가 아닙니다: ${positions.length}개`, `${assetName} executable hash entry count: expected ${expectedCount}, found ${positions.length}`));
@@ -281,7 +298,8 @@ function inspectExecutable(executablePath, expectedHashes) {
         executableDiagnostics.describe(executable, executablePath, Object.keys({ ...manifest.executable.manifestEntries, ...manifest.executable.normalizedExtraEntries })));
     }
     const digests = offsets.map((offset) => executable.subarray(offset, offset + 20).toString('hex').toUpperCase());
-    entries[assetName] = { offsets, digests, valid: digests.every((value) => value === expectedHashes[assetName]) };
+    const records = require('./shared/kernel/src/executable-links').digestEntries(executable, assetName, count);
+    entries[assetName] = { offsets, digests, checkDisabled: records.every(e => !e.checked), valid: records.every((e, i) => !e.checked || digests[i] === expectedHashes[assetName]) };
   }
   const native = identifyNativeExecutable(executable);
   return { entries, native, valid: native.enabled !== null && Object.values(entries).every((entry) => entry.valid) };
@@ -290,7 +308,7 @@ function inspectExecutable(executablePath, expectedHashes) {
 function normalizedExecutable(executable) {
   const result = Buffer.from(executable);
   for (const [assetName, count] of Object.entries({ ...manifest.executable.manifestEntries, ...manifest.executable.normalizedExtraEntries })) {
-    for (const offset of manifestDigestOffsets(result, assetName, count)) result.fill(0, offset, offset + 20);
+    for (const offset of manifestDigestOffsets(result, assetName, count)) { result.fill(0, offset, offset + 20); result[offset - 2] = assetName.charCodeAt(assetName.length - 1); }
   }
   return result;
 }
@@ -331,7 +349,8 @@ function readStatus(gameDirectory) {
   const heavenEntry = identifyHeavenEntry(paths.heavenEntry);
   // A user profile can already contain the centered UI. Preserve it byte-for-byte
   // and derive selector activation from the map; native coherence is checked below.
-  if (brgGame.profile && brgGame.profile.baseSha1 === brgGame.profile.patchedSha1) {
+  if (brgGame.profile && typeof brgGame.profile.baseSha1 === 'string' &&
+      brgGame.profile.baseSha1 === brgGame.profile.patchedSha1) {
     brgGame.enabled = heavenEntry.enabled;
   }
   const brgStart = identifyBrgStart(paths.brgStart);
@@ -381,6 +400,8 @@ function printStatus(status) {
     console.log(`Scheduled escalator travel: ${status.executable.native.enabled === true ? (manifest.steamBuildId ? 'Applied (in-game verification pending on this build)' : 'Applied (51/101/201/301 confirmed by user in game)') : status.executable.native.enabled === false ? 'Stock' : 'Unsupported executable'}`);
     if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
     console.log(`Executable hash links: ${status.executable.valid ? 'Valid' : 'Mismatch'}`);
+    const disabled = Object.entries(status.executable.entries || {}).filter(([, e]) => e.checkDisabled).map(([name]) => name);
+    if (disabled.length) console.log('External manager file checks OFF (preserved): ' + disabled.join(', '));
     if (status.executable.native.foreignPatch === 'vending') console.log('Unregistered vending detected: verified combinations are status-only. Use option 8 in the updated vending tool to register a matching original backup before changing/removing warp.');
     console.log('Floor 22 elevator, save and MASTER DB: unchanged');
     return;
@@ -395,13 +416,17 @@ function printStatus(status) {
     status.executable.native.enabled === false ? '순정' : '지원하지 않는 실행 파일'}`);
   if (!status.brgGame.profileName) console.log(`BrgGame SHA-1: ${status.brgGame.hash}`);
   console.log(`실행 파일 해시 연결: ${status.executable.valid ? '정상' : '불일치'}`);
+  const disabled = Object.entries(status.executable.entries || {}).filter(([, e]) => e.checkDisabled).map(([name]) => name);
+  if (disabled.length) console.log('외부 관리자의 파일 검사 OFF (유지): ' + disabled.join(', '));
   if (status.executable.native.foreignPatch === 'vending') console.log('미등록 자판기 패치 감지: 검증된 조합의 상태만 확인합니다. 워프 변경·제거 전 최신 자판기 도구 8번으로 일치하는 원본 백업을 등록하세요.');
   console.log('22층 엘리베이터·세이브·MASTER DB: 변경하지 않음');
 }
 
 function assertSupported(status) {
   if (status.executable.native.enabled === null) fail(t('지원하지 않는 실행 파일입니다. 변경하지 않습니다.', 'Unsupported executable. No changes will be made.'));
-  if (!status.brgGame.profileName) fail(t(`지원하지 않는 BrgGame.upk입니다. SHA-1: ${status.brgGame.hash}`, `Unsupported BrgGame.upk. SHA-1: ${status.brgGame.hash}`));
+  if (!status.brgGame.profileName) fail(t(`지원하지 않는 BrgGame.upk입니다. SHA-1: ${status.brgGame.hash}`, `Unsupported BrgGame.upk. SHA-1: ${status.brgGame.hash}`) + (status.brgGame.conflict ? `\n${status.brgGame.conflict}` : ''));
+  if (status.brgGame.profile?.scoped && !status.executable.valid)
+    fail(t('외부 변경 패키지와 EXE 해시 연결이 일치하지 않습니다. 자동으로 덮어쓰지 않습니다.', 'Foreign package and EXE digest links do not match. No automatic overwrite.'));
   if (status.heavenEntry.enabled === null) fail(t(`지원하지 않는 Heaven_A01_ST_COL.upk입니다. SHA-1: ${status.heavenEntry.hash}`, `Unsupported Heaven_A01_ST_COL.upk. SHA-1: ${status.heavenEntry.hash}`));
   if (status.brgStart.enabled === null) fail(t(`지원하지 않는 BrgStart_PL.upk입니다. SHA-1: ${status.brgStart.hash}`, `Unsupported BrgStart_PL.upk. SHA-1: ${status.brgStart.hash}`));
 }
@@ -509,6 +534,11 @@ function makeExecutableTemp(sourcePath, packageHashes, tempPath, enable) {
     const digest = Buffer.from(packageHashes[assetName], 'hex');
     for (const offset of manifestDigestOffsets(executable, assetName, count)) digest.copy(executable, offset);
   }
+  // Recognition canonicalizes disabled resource names; writing must preserve
+  // the manager's X/Y setting, never silently re-enable file checks.
+  for (const [name, [, count]] of Object.entries(require('./shared/kernel/src/executable-links').PACKAGES)) {
+    for (const e of require('./shared/kernel/src/executable-links').digestEntries(source, name, count)) executable[e.offset - 2] = source[e.offset - 2];
+  }
   fs.writeFileSync(tempPath, executable, { flag: 'wx' });
   if (!inspectExecutable(tempPath, packageHashes).valid) fail(t('임시 실행 파일 해시 연결 검증에 실패했습니다.', 'Temporary executable hash-link verification failed.'));
 }
@@ -570,6 +600,27 @@ function cleanupFiles(paths) {
   for (const filePath of paths) { try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch {} }
 }
 
+function exactScopedRemovalSource(gameDirectory, current) {
+  // Recover the manager's original compressed representation only when a
+  // verified backup reproduces the CURRENT file exactly by adding warp alone.
+  // Any later foreign edit makes this comparison fail; then remove only our
+  // instructions instead. This is not an unconditional whole-backup restore.
+  for (const directory of listBackups(gameDirectory).slice(0, 16)) {
+    try {
+      const record = JSON.parse(fs.readFileSync(path.join(directory, 'backup.json'), 'utf8'));
+      if (record.reason !== 'enable-selector' || record.steamBuildId !== scopedWarpPlan.build ||
+          path.resolve(record.gameDirectory) !== path.resolve(gameDirectory) ||
+          record.files?.brgGame?.name !== 'BrgGame.upk') continue;
+      const file = path.join(directory, 'BrgGame.upk');
+      if (fs.statSync(file).size !== record.files.brgGame.size || sha1File(file) !== record.files.brgGame.sha1) continue;
+      const original = fs.readFileSync(file);
+      if (!scopedPackage.inspect(original, scopedWarpPlan).enabled &&
+          scopedPackage.set(original, true, scopedWarpPlan).equals(current)) return original;
+    } catch { /* An absent/damaged/unrelated backup must never force a restore. */ }
+  }
+  return null;
+}
+
 function transactionalReplace(replacements) {
   const rollbacks = replacements.map(({ target }) => `${target}.lid-tengoku.rollback`);
   if (rollbacks.some(fs.existsSync)) fail(t('이전 작업의 롤백 파일이 남아 있습니다. 게임 폴더를 확인하세요.', 'Rollback files from a previous operation remain. Check the game folder.'));
@@ -616,7 +667,7 @@ function setPatchState(gameDirectory, enable, experimental = false) {
   }
   const backupPath = createBackup(status, enable ? 'enable-selector' : 'disable-selector');
   const profile = status.brgGame.profile;
-  const targetBrgHash = enable ? profile.patchedSha1 : profile.baseSha1;
+  let targetBrgHash = enable ? profile.patchedSha1 : profile.baseSha1;
   let targetMapHash = enable ? manifest.heavenEntry.patchedSha1 : manifest.heavenEntry.baseSha1;
   const targetBrgStartHash = manifest.brgStart.baseSha1;
   const temps = {
@@ -626,7 +677,15 @@ function setPatchState(gameDirectory, enable, experimental = false) {
     executable: `${status.paths.executable}.lid-tengoku.tmp`,
   };
   try {
-    makePackageTemp(status.paths.brgGame,
+    if (profile.scoped) {
+      const source = fs.readFileSync(status.paths.brgGame);
+      if (crypto.createHash('sha1').update(source).digest('hex').toUpperCase() !== status.brgGame.hash)
+        fail(t('검증 후 BrgGame 파일이 변경되었습니다. 덮어쓰지 않습니다.', 'BrgGame changed after inspection. Nothing will be overwritten.'));
+      const bytes = (!enable && status.brgGame.enabled ? exactScopedRemovalSource(gameDirectory, source) : null) ||
+        scopedPackage.set(source, enable, scopedWarpPlan);
+      fs.writeFileSync(temps.brgGame, bytes, { flag: 'wx' });
+      targetBrgHash = sha1File(temps.brgGame);
+    } else makePackageTemp(status.paths.brgGame,
       status.brgGame.enabled === enable ? null : (enable ? profile.enablePatch : profile.disablePatch),
       targetBrgHash, temps.brgGame, profile.embeddedM2g ? 'embedded' : profile.m2g === true);
     targetMapHash = makeHeavenTemp(status.paths.heavenEntry,
@@ -642,6 +701,16 @@ function setPatchState(gameDirectory, enable, experimental = false) {
       'heaven_a01_st_col.upk': targetMapHash,
       'brgstart_pl.upk': targetBrgStartHash,
     }, temps.executable, enable);
+    if(manifest.steamBuildId==='25386710'){
+      const before=fs.readFileSync(status.paths.brgGame),after=fs.readFileSync(temps.brgGame);
+      ownedFunctions.verifyTransition(before,after,'warp','BrgGame.upk');
+      ownedFunctions.verifyOthers(before,after,'warp','BrgGame.upk');
+    }
+    if (profile.scoped) {
+      const backup = readAndValidateBackup(backupPath);
+      if (FILE_KEYS.some(key => sha1File(status.paths[key]) !== backup.files[key].sha1))
+        fail(t('준비 중 다른 도구가 게임 파일을 변경했습니다. 덮어쓰지 않습니다.', 'Another tool changed game files while staging. Nothing will be overwritten.'));
+    }
     transactionalReplace(FILE_KEYS.map((key) => ({ target: status.paths[key], temp: temps[key] })));
   } catch (error) {
     cleanupFiles(Object.values(temps));
