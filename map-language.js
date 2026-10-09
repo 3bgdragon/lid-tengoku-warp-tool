@@ -13,10 +13,11 @@ const labels = [
 // every Kismet route/control-flow byte. Only modified chunks are recompressed.
 function buildEnglish(source, expectedSourceHash) {
   if (sha(source) !== expectedSourceHash) throw Error('Map language source hash mismatch');
-  if (source.readUInt32LE() !== 0x9e2a83c1 || source.readUInt32LE(0x6d) !== 2 || source.readUInt32LE(0x71) !== 2) throw Error('Unsupported translated-map layout');
+  const chunks = source.readUInt32LE(0x71);
+  if (source.readUInt32LE() !== 0x9e2a83c1 || source.readUInt32LE(0x6d) !== 2 || chunks < 1 || chunks > 10000 || 0x75 + chunks * 16 > source.length) throw Error('Unsupported translated-map layout');
   const output = Buffer.from(source), append = [], restore = [], counts = labels.map(() => 0);
   let physical = source.length;
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < chunks; i++) {
     const slot = 0x75 + i * 16, entry = Array.from({ length: 4 }, (_, j) => source.readUInt32LE(slot + j * 4));
     const raw = unpack(source, entry); let changed = false;
     for (let n = 0; n < labels.length; n++) {

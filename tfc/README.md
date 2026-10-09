@@ -1,8 +1,10 @@
 # Tengoku Start-Floor Selector — TFC edition
 
+> Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
+
 [한국어 사용법](START-HERE.ko.md)
 
-**TFC-only prerelease: tfc-v1.2.0-rc.2.** Download the attached `*-tfc-v1.2.0-rc.2.zip`, not the Source code ZIP. This distribution includes its own launcher/runtime and no standalone launcher.
+**TFC-only prerelease: tfc-v1.2.1-rc.1.** Download the attached `*-tfc-v1.2.1-rc.1.zip`, not the Source code ZIP. This distribution includes its own launcher/runtime and no standalone launcher.
 
 Requires Node.js **22.13+** and TFC Installer **2.5.6.0**. Reviewed Steam build **25386710**.
 

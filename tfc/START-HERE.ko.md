@@ -1,9 +1,11 @@
 # 텐고쿠 워프 — TFC판 사용법
 
+> Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
+
 일반 텐고쿠 시작층을 51·101·201·301층 중 선택합니다.
 
-이 배포물은 **TFC 전용판 tfc-v1.2.0-rc.2**입니다. 기존 독립 실행판은 별도 배포물이며 이 ZIP에 포함하지 않습니다.
-릴리스의 `*-tfc-v1.2.0-rc.2.zip` 첨부 파일을 받으세요. GitHub의 Source code ZIP은 전용 배포물이 아닙니다.
+이 배포물은 **TFC 전용판 tfc-v1.2.1-rc.1**입니다. 기존 독립 실행판은 별도 배포물이며 이 ZIP에 포함하지 않습니다.
+릴리스의 `*-tfc-v1.2.1-rc.1.zip` 첨부 파일을 받으세요. GitHub의 Source code ZIP은 전용 배포물이 아닙니다.
 Node.js 22.13 이상과 TFC Installer 2.5.6.0이 필요합니다. 대응 빌드: 25386710.
 게임을 종료하고 세이브를 별도로 백업하세요.
 기존 독립 실행판을 사용했다면 해당 도구로 먼저 제거하세요. 두 방식을 혼용하지 마세요.

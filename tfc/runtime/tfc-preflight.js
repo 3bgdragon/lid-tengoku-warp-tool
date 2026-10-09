@@ -11,6 +11,7 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
  const legacy=path.join(game,'LID-Mod-State/state.json');
  if(fs.existsSync(legacy)){const state=JSON.parse(fs.readFileSync(legacy));if(state.active||state.layout)throw Error('Remove/restore standalone patches with their original tools before TFC preparation');}
  const receipt=require('./tfc-companion').readState(game);
+ require('./tfc-companion').validateNativeSupport(game,mod);
  for(const setting of receipt?.upkSettings||[]){
   if(!owned.catalog.objects.some(p=>p.mod===setting.mod&&p.file===setting.file))throw Error('Invalid installed-feature receipt');
   if(setting.mod!==mod&&owned.inspect(fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole',setting.file)),setting.mod,setting.file)!==setting.preset)throw Error('Previously installed feature changed/lost before preparation: '+setting.mod);

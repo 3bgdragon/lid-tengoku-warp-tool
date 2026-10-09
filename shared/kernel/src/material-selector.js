@@ -7,7 +7,11 @@ const ORIGINAL = Buffer.from('837840017553', 'hex');
 const FIRST_ID = 1900000000;
 const END_ID = FIRST_ID + 10000;
 
-function buildMaterialGate(caveRva, dailyCount = 7) {
+function buildMaterialGate(caveRva, dailyCount = 7, sites) {
+  const hookRva=sites?.hookRva ?? HOOK_RVA;
+  const appendRva=sites?.appendRva ?? 0x1155c4d;
+  const mapRva=sites?.mapRva ?? 0x1155ca0;
+  const nextRva=sites?.nextRva ?? 0x1155cc6;
   if (!Number.isSafeInteger(caveRva) || caveRva < 0 || caveRva > 0x7fffffff)
     throw new Error('Invalid experimental code RVA');
   if (!Number.isInteger(dailyCount) || dailyCount < 1 || dailyCount > 50)
@@ -24,17 +28,17 @@ function buildMaterialGate(caveRva, dailyCount = 7) {
   emit('4531f6');                        // xor r14d,r14d
   label('row');
   emit('83784001');                      // original is_stable == 1
-  jump('0f84', 0x1155c4d);               // original append
+  jump('0f84', appendRva);               // original append
   emit('81fe'); u32(FIRST_ID);           // cmp esi,first reserved material ID
-  jump('0f82', 0x1155ca0);               // other candidates: original map
+  jump('0f82', mapRva);                  // other candidates: original map
   emit('81fe'); u32(END_ID);
-  jump('0f83', 0x1155ca0);
+  jump('0f83', mapRva);
   emit('83784000');                      // only our non-stable candidate rows
-  jump('0f85', 0x1155ca0);
+  jump('0f85', mapRva);
   emit('4183fe'); bytes.push(dailyCount);// cmp r14d,quota
-  jump('0f83', 0x1155cc6);               // quota reached: original next row
+  jump('0f83', nextRva);                 // quota reached: original next row
   emit('41ffc6');                        // inc r14d
-  jump('e9', 0x1155c4d);                 // original append (allocation unchanged)
+  jump('e9', appendRva);                 // original append (allocation unchanged)
   const code = Buffer.from(bytes);
   for (const {at,target} of fixups) {
     const destination = typeof target === 'string' ? caveRva + labels.get(target) : target;
@@ -44,10 +48,10 @@ function buildMaterialGate(caveRva, dailyCount = 7) {
     code.writeInt32LE(delta, at);
   }
   const hook = Buffer.alloc(6, 0x90);
-  hook[0] = 0xe9; hook.writeInt32LE(caveRva - (HOOK_RVA + 5), 1);
-  if (caveRva < HOOK_RVA + ORIGINAL.length && caveRva + code.length > HOOK_RVA)
+  hook[0] = 0xe9; hook.writeInt32LE(caveRva - (hookRva + 5), 1);
+  if (caveRva < hookRva + ORIGINAL.length && caveRva + code.length > hookRva)
     throw new Error('Experimental code overlaps its hook');
-  return {hookRva: HOOK_RVA, original: Buffer.from(ORIGINAL), hook, caveRva, code,
+  return {hookRva, original: Buffer.from(ORIGINAL), hook, caveRva, code,
     firstId: FIRST_ID, endId: END_ID, dailyCount};
 }
 module.exports = {buildMaterialGate, FIRST_ID, END_ID};

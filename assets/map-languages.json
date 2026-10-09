@@ -50,5 +50,17 @@
         "bytes": "320d0700c9df0500"
       }
     ]
+  },
+  {
+    "koreanSha1": "662999AA5527D7B3F00AB3501A6C7720E8FE8986",
+    "englishSha1": "54CB6D720D79F97BC83342536207850C6199AEB2",
+    "koreanSize": 472215,
+    "englishSize": 473025,
+    "restore": [
+      {
+        "offset": 157,
+        "bytes": "0f31070088030000"
+      }
+    ]
   }
 ]

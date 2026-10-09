@@ -22,10 +22,11 @@ function peLayout(b){
  })};
 }
 function identify(data,definition,assets){
- const profileFile=path.join(assets,'native-sites-25386710.json');
+ const profileFile=path.join(assets,definition.profile||'native-sites-25386710.json');
  // Only this reviewed build is enabled. Old/unknown layouts remain rejected.
- if(definition.baseSha1!=='802B3E1181DEA1FB29CE9CA331161922902B9827'||!fs.existsSync(profileFile))return null;
+ if(!fs.existsSync(profileFile))return null;
  const profile=JSON.parse(fs.readFileSync(profileFile,'utf8'));
+ if(profile.build===25767944?profile.definitionBaseSha1!==definition.baseSha1:definition.baseSha1!=='802B3E1181DEA1FB29CE9CA331161922902B9827')return null;
  const enable=parsePatch(fs.readFileSync(path.join(assets,definition.enablePatch)));
  const disable=parsePatch(fs.readFileSync(path.join(assets,definition.disablePatch)));
  let layout;try{layout=peLayout(data);}catch{return null;}
@@ -34,6 +35,14 @@ function identify(data,definition,assets){
   if(JSON.stringify(layout)!==JSON.stringify(profile[enabled?'patched':'stock']))continue;
   const expected=enabled?enable:disable;
   if(!expected.entries.every(e=>data.subarray(e.offset,e.offset+e.bytes.length).equals(e.bytes)))continue;
+  // The copied native code also calls reviewed game functions. Matching the
+  // hook alone is not enough if another mod changes one of those dependencies.
+  if((profile.expected||[]).some(e=>{
+   const section=layout.sections.find(s=>e.rva>=s.rva&&e.rva+e.size<=s.rva+s.rawSize);
+   if(!section)return true;
+   const at=section.raw+e.rva-section.rva;
+   return !data.subarray(at,at+e.size).equals(Buffer.from(e.hex,'hex'));
+  }))continue;
   // Every existing byte the enable patch overwrites must have a recorded stock
   // expectation. Otherwise a future delta would silently widen this fallback.
   if(enable.entries.some(e=>e.offset<disable.size&&!disable.entries.some(d=>d.offset===e.offset&&d.bytes.length===e.bytes.length)))return null;

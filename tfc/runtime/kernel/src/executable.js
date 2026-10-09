@@ -10,6 +10,7 @@ const NORMALIZED='9209b02bd5db7291a9d79d4cafec116a1a036b205c60386d60bed1b0f236f8
 const STOCK_NORMALIZED='6b15ef99a7a10aca46b9b1593042ac24773317b1875f014cdee200073be377c2';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function patchExecutable(input) {
+  const reviewed=require('./native-preconditions').profileFor(input).profile;
   const exact=sha(input)===SUPPORTED;
   if(!exact&&![NORMALIZED,STOCK_NORMALIZED].includes(sha(normalizedExecutable(input)))) {
     try{require('./native-preconditions').validate(input);}
@@ -26,7 +27,7 @@ function patchExecutable(input) {
   const align=(n,a)=>Math.ceil(n/a)*a, sa=input.readUInt32LE(opt+32),fa=input.readUInt32LE(opt+36);
   if(!sa||!fa)throw new Error('잘못된 PE 정렬');
   const rva=align(Math.max(input.readUInt32LE(opt+56),...sections.map(s=>s.va+Math.max(s.vs,s.size))),sa);
-  const gate=buildMaterialGate(rva),bootstrap=buildMaterialBootstrap(align(rva+gate.code.length,16));
+  const gate=buildMaterialGate(rva,7,reviewed.vending?.selector),bootstrap=buildMaterialBootstrap(align(rva+gate.code.length,16),reviewed.vending?.bootstrap);
   const codeSize=bootstrap.caveRva-rva+bootstrap.code.length;
   const raw=align(input.length,fa),size=align(codeSize,fa);
   const section=sections.find(s=>gate.hookRva>=s.va&&gate.hookRva+6<=s.va+s.size);

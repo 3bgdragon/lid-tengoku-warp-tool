@@ -1,6 +1,8 @@
 # LET IT DIE 일반 텐고쿠 시작층 선택 도구
 
-호환성 프리릴리스 **1.5.2-rc.1** / Steam 빌드 25386710.
+> Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
+
+호환성 프리릴리스 **1.5.3-rc.1** / Steam 빌드 25386710.
 Nico·TFC의 실제 처리 엔진과 파일 복사본으로 검증했습니다. 이번 변경의 GUI·실게임 재검증은 미완료입니다.
 기존판과 TFC판은 별도 ZIP이며 혼용하지 마세요. [검증 범위와 한계](COMPATIBILITY-VALIDATION.md).
 

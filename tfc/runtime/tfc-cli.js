@@ -15,7 +15,7 @@ async function main(mod){
   game=path.resolve(game);if(path.basename(game).toLowerCase()==='brggame-steam.exe')game=path.resolve(game,'../../..');
   if(!fs.existsSync(path.join(game,controller.EXE)))throw Error('Executable not found / 실행 파일을 찾지 못했습니다');
   if(!values.json){
-   console.log(menu(mod).title+' — Steam build 25386710');
+   console.log(menu(mod).title+' — supports Steam builds 25386710 / 25767944');
    console.log('Install: option 5 → install generated folder in TFC → option 1 there. Remove: TFC uninstall → option 2.\n설치: 5번 준비 → 준비 폴더를 TFC로 적용 → 그 폴더에서 1번. 제거: TFC 제거 → 2번. 세이브는 수정하지 않습니다.');
    if(mod==='vending')console.log('Materials + decals + ammo: fixed ALL ON package. / 재료 상점·데칼 관리·탄약 충전: 세 기능 전체 고정 구성');
   }

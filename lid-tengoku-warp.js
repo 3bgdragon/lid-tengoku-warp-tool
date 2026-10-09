@@ -226,7 +226,7 @@ function identifyBrgGame(filePath) {
       return { hash, size, profileName: `${name} + M2G 나이프`, enabled: knife.baseSha1 === original.patchedSha1, profile };
     }
   }
-  if (manifest.steamBuildId === scopedWarpPlan.build) {
+  if ([scopedWarpPlan.build, '25767944'].includes(manifest.steamBuildId)) {
     try {
       const state = scopedPackage.inspect(fs.readFileSync(filePath), scopedWarpPlan);
       return { hash, size, profileName: t('워프 구간 검증 · 외부 변경 보존', 'Validated warp objects · foreign edits preserved'),
@@ -367,7 +367,7 @@ function readStatus(gameDirectory) {
 
 function selectBuild(gameDirectory) {
   manifest = JSON.parse(fs.readFileSync(path.join(ASSET_DIRECTORY, 'manifest.json'), 'utf8'));
-  for (const build of ['25386710', '25244463', '25136512']) {
+  for (const build of ['25767944', '25386710', '25244463', '25136512']) {
     const candidatePath = path.join(ASSET_DIRECTORY, `manifest-${build}.json`);
     if (!fs.existsSync(candidatePath)) continue;
     const candidate = JSON.parse(fs.readFileSync(candidatePath, 'utf8'));
@@ -701,7 +701,7 @@ function setPatchState(gameDirectory, enable, experimental = false) {
       'heaven_a01_st_col.upk': targetMapHash,
       'brgstart_pl.upk': targetBrgStartHash,
     }, temps.executable, enable);
-    if(manifest.steamBuildId==='25386710'){
+    if(['25386710','25767944'].includes(manifest.steamBuildId)){
       const before=fs.readFileSync(status.paths.brgGame),after=fs.readFileSync(temps.brgGame);
       ownedFunctions.verifyTransition(before,after,'warp','BrgGame.upk');
       ownedFunctions.verifyOthers(before,after,'warp','BrgGame.upk');
