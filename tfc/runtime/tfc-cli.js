@@ -23,6 +23,7 @@ async function main(mod){
   if(command==='exit')return;
   if(command==='prepare'){
    const result=require('./tfc-preflight').prepare(game,mod);
+   for(const fn of result.preservedFunctions||[])console.log('Preserving unrelated OFF-layout UI edit / 비활성 구간의 외부 UI 수정 보존: '+fn.file+' export '+fn.index+' '+fn.name);
    console.log('Install this prepared folder with TFC, then finish from that folder / TFC 설치 대상:\n'+result.output);return;
   }
   if(!['sync','relink','on','off','removed','off-all','restore','recover','status','detach','repair-layout'].includes(command))throw Error('Unknown command');

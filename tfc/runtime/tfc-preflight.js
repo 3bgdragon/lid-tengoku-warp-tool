@@ -18,7 +18,7 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
  }
  const cooked=path.join(source,'Game/BrgGame/CookedPCConsole');
  const patches=fs.readdirSync(cooked).filter(n=>n.endsWith('.PackagePatch'));
- const staged=[],proof=[],before={};
+ const staged=[],proof=[],before={},preservedFunctions=[];
  for(const name of patches){
   const file=name.replace(/\.PackagePatch$/,''),data=fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole',file));
   before[file]=sha(data);
@@ -39,8 +39,11 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
   // Check all existing owned functions, including other mods, after installation.
   for(const other of Object.keys(repos)){
    if(other===mod||!owned.catalog.objects.some(p=>p.mod===other&&p.file===file))continue;
-   for(const row of owned.objects(data,other,file).rows){
+   const existing=owned.objects(data,other,file).rows;
+   if(other==='vending'&&existing.some(row=>row.index===91836&&row.state==='off'&&!row.bytes.equals(row.variants[0].off))&&existing.some(row=>row.state!=='off'))throw Error('Existing vending preset is partial/conflicting; foreign UI edits cannot hide a damaged installed bridge / 설치된 자판기 패치의 부분 손상은 허용하지 않습니다');
+   for(const row of existing){
     if(row.state===null)throw Error('Existing mod has conflicting instructions: '+other+'/'+row.index);
+    if(other==='vending'&&row.index===91836&&row.state==='off'&&!row.bytes.equals(row.variants[0].off))preservedFunctions.push({file,index:row.index,name:'BrgUIMenu_SkillExchange.Tick'});
     proof.push({mod:other,file,index:row.index,expected:row.bytes.toString('base64'),hash:sha(row.bytes)});
    }
   }
@@ -59,7 +62,7 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
   fs.writeFileSync(path.join(output,'ModInfo.xml'),'<ModInfo name="LET IT DIE '+mod+' — game-specific preflight package" />\n');
   fs.writeFileSync(path.join(output,'README.txt'),'Install THIS folder with TFC immediately, then run THIS folder\'s run-tfc.bat to finish. If game files change before installation, prepare again. Do not install the unprepared source folder. Do not stack old presets.\nTFC에 이 폴더를 설치한 뒤 이 폴더의 run-tfc.bat으로 마무리하세요. 설치 전 다른 모드가 파일을 바꾸면 다시 준비하세요. 기존 프리셋을 중복 설치하지 마세요.\n');
  }catch(e){e.message+='\nIncomplete package: '+output;throw e;}
- return {output,objects:proof.length,before};
+ return {output,objects:proof.length,before,preservedFunctions};
 }
 function verify(game,source=path.resolve(__dirname,'..')){
  const file=path.join(source,'preflight.json');

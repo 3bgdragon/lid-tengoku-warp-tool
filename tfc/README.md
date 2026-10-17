@@ -2,9 +2,19 @@
 
 > Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
 
+
+## 2026-10-17 compatibility fix: vending/91836
+
+Preserves eligible independent UI edits in the reviewed uninstalled vending
+function instead of rejecting another mod's installation. Actual owned-byte,
+partial/installed-preset and unsafe length-changing merge conflicts still stop.
+TFC users must create a NEW preparation folder with this version, not reuse an
+old prepared package. [Exact scope and tests](FOREIGN-UI-VALIDATION.md).
+No gameplay settings or DB recipes were changed by this fix.
+
 [한국어 사용법](START-HERE.ko.md)
 
-**TFC-only prerelease: tfc-v1.2.1-rc.1.** Download the attached `*-tfc-v1.2.1-rc.1.zip`, not the Source code ZIP. This distribution includes its own launcher/runtime and no standalone launcher.
+**TFC-only prerelease: tfc-v1.2.2-rc.1.** Download the attached `*-tfc-v1.2.2-rc.1.zip`, not the Source code ZIP. This distribution includes its own launcher/runtime and no standalone launcher.
 
 Requires Node.js **22.13+** and TFC Installer **2.5.6.0**. Reviewed Steam build **25386710**.
 

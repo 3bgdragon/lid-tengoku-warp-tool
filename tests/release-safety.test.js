@@ -51,7 +51,7 @@ test('verified release rejects invalid game files without development gate', () 
       fs.writeFileSync(file, `sentinel:${relative}`);
     }
     const result = spawnSync(process.execPath, [path.resolve(__dirname, '../lid-tengoku-warp.js'),
-      'apply', '--yes', '--game', root], { encoding: 'utf8' });
+      'apply', '--yes', '--game', root, '--lang', 'ko'], { encoding: 'utf8' });
     assert.equal(result.status, 1);
     assert.doesNotMatch(result.stderr, /개발판의 적용을 차단/);
     assert.match(result.stderr, /brggame\.upk.*2.*0/);

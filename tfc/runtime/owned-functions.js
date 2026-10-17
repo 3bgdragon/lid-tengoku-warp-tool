@@ -6,6 +6,7 @@ const {pack,words}=require('./kernel/src/package-codec');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const catalog=require('./owned-functions.json');
 const groups=new Map();
+const foreignOffContexts=new WeakMap();
 for(const row of catalog.objects){
  const p={...row,off:Buffer.from(row.off,'base64'),on:Buffer.from(row.on,'base64')};
  if(sha(p.off)!==row.offHash||sha(p.on)!==row.onHash)throw Error('Owned function evidence damaged');
@@ -23,17 +24,48 @@ function context(variants){
  }
  return {edits,windows};
 }
+function foreignOffCompatible(bytes,variants){
+ // Only the reviewed, uninstalled SkillExchange.Tick layout is eligible.
+ // Other tools may alter independent same-size UI literals. We never compile
+ // those edits into our length-changing vending bridge or call them vanilla.
+ const v=variants[0],stock=v.off;
+ if(v.mod!=='vending'||v.file!=='BrgGame.upk'||v.index!==91836||bytes.length!==stock.length)return false;
+ let windows=foreignOffContexts.get(variants);
+ if(!windows){
+  const plan=require('./foreign-vending-off.json');
+  if(!plan||plan.before!==sha(stock)||plan.size!==stock.length||plan.scriptSize!==stock.readUInt32LE(0x2c)||plan.scriptMemory!==stock.readUInt32LE(0x28))throw Error('Foreign OFF-layout evidence mismatch');
+  const code=Buffer.from(stock.subarray(0x30,0x30+plan.scriptSize));
+  for(const jump of plan.jumps){if(code.readUInt16LE(jump.at)!==jump.before)throw Error('Foreign OFF-layout branch evidence mismatch');code.writeUInt16LE(jump.after,jump.at);}
+  const inserted=Buffer.concat([code.subarray(0,plan.at),Buffer.from(plan.insert,'hex'),code.subarray(plan.at)]),header=Buffer.from(stock.subarray(0,0x30));
+  header.writeUInt32LE(plan.scriptMemory+plan.extraMemory,0x28);header.writeUInt32LE(inserted.length,0x2c);
+  const expected=Buffer.concat([header,inserted,stock.subarray(0x30+plan.scriptSize)]);
+  if(variants.some(p=>!p.off.equals(stock)||!p.on.equals(expected)))throw Error('Foreign OFF-layout preset evidence mismatch');
+  const start=0x30+plan.at,end=0x30+plan.scriptSize;
+  windows=[[0,0x30],[Math.max(0x30,start-16),Math.min(end,start+16)],[end,stock.length]];
+  for(const jump of plan.jumps){const at=0x30+jump.at;if(at<0x30||at+2>end||stock.readUInt16LE(at)!==jump.before)throw Error('Foreign OFF-layout branch evidence mismatch');windows.push([Math.max(0x30,at-1),at+2]);}
+  foreignOffContexts.set(variants,windows);
+ }
+ return windows.every(([a,b])=>bytes.subarray(a,b).equals(stock.subarray(a,b)));
+}
 function recognize(bytes,variants){
  const c=context(variants),matches=b=>bytes.length===b.length&&(c?bytes.subarray(0,48).equals(b.subarray(0,48))&&c.windows.every(([a,z])=>bytes.subarray(a,z).equals(b.subarray(a,z))):bytes.equals(b));
  if(matches(variants[0].off))return 'off';
  for(const p of variants)if(matches(p.on))return p.preset;
+ if(foreignOffCompatible(bytes,variants))return 'off';
  return null;
 }
 function merge(bytes,variants,preset){
  const target=preset==='off'?variants[0].off:(variants.find(p=>p.preset===preset)?.on||variants[0].off);
  if(recognize(bytes,variants)===null)throw Error(`Owned instruction conflict: ${variants[0].mod} ${variants[0].file} export ${variants[0].index}; no files changed / 소유 명령어 충돌`);
  const c=context(variants);
- if(!c)return Buffer.from(target); // Length/branch changes require an exact reviewed body.
+ if(!c){
+  // OFF is a patch state, not permission to overwrite foreign instructions.
+  if(!bytes.equals(variants[0].off)&&!variants.some(p=>bytes.equals(p.on))){
+   if(preset==='off')return Buffer.from(bytes);
+   throw Error('Cannot relocate a length-changing vending preset over foreign SkillExchange.Tick instructions; nothing overwritten / 외부 데칼 메뉴 수정을 덮어쓰지 않습니다');
+  }
+  return Buffer.from(target);
+ }
  const out=Buffer.from(bytes);for(const i of c.edits)out[i]=target[i];return out;
 }
 function objects(source,mod,file){

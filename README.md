@@ -2,9 +2,19 @@
 
 > Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
 
-TFC edition: [separate download](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.1-rc.1). The repository's `tfc/` is isolated; it is NOT included in the standalone ZIP. Do not mix installation modes.
 
-Compatibility candidate **1.5.3-rc.1**: [rules and test evidence](COMPATIBILITY-VALIDATION.md).
+## 2026-10-17 compatibility fix: vending/91836
+
+Preserves eligible independent UI edits in the reviewed uninstalled vending
+function instead of rejecting another mod's installation. Actual owned-byte,
+partial/installed-preset and unsafe length-changing merge conflicts still stop.
+TFC users must create a NEW preparation folder with this version, not reuse an
+old prepared package. [Exact scope and tests](FOREIGN-UI-VALIDATION.md).
+No gameplay settings or DB recipes were changed by this fix.
+
+TFC edition: [separate download](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.2-rc.1). The repository's `tfc/` is isolated; it is NOT included in the standalone ZIP. Do not mix installation modes.
+
+Compatibility candidate **1.5.4-rc.1**: [rules and test evidence](COMPATIBILITY-VALIDATION.md).
 
 Compatibility candidate, 2026-10-04; reviewed Steam build 25386710. Actual Nico DB Mod Manager 0.10.1 and TFC Installer 2.5.6.0 engines were tested separately from S3er0i9ng Mod Manager 1.3.20. File-copy tests passed; this update has NOT been retested through the GUI or in live gameplay. Unknown/conflicting layouts remain blocked. External managers can still overwrite files from cached originals; detected preset loss requires selected-feature reinstallation, not an old whole-file restore.
 
