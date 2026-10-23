@@ -42,11 +42,13 @@ function receipt(game){
  if(!fs.existsSync(statePath(game)))return null;
  const r=readJson(statePath(game));
  if(![1,2].includes(r.format)||typeof r.active!=='boolean')fail('Invalid shared mod state / 공통 모드 기록 형식 오류');
+ const updated=require('./updated-state').notice(game,r);if(updated)fail(updated);
  return r.active?r:null;
 }
 function layoutState(game){
  if(!fs.existsSync(statePath(game)))return null;
- const value=readJson(statePath(game)).layout;
+ const recorded=readJson(statePath(game));const updated=require('./updated-state').notice(game,recorded);if(updated)fail(updated);
+ const value=recorded.layout;
  if(value===undefined||value===null)return null;
  if(value.format!==1||!/^[a-f0-9-]{36}$/.test(value.generation)||!Array.isArray(value.before)||!Array.isArray(value.after)||value.before.length!==3||value.after.length!==3||[...value.before,...value.after].some(x=>! /^[a-f0-9]{64}$/.test(x)))fail('Invalid package layout receipt / UPK 배치 기록 오류');
  return value;
@@ -67,7 +69,11 @@ function layoutBase(game,physical,allowedMod=null){
   try{
    for(const [i,file] of [[1,'BrgGame.upk'],[2,'AS_CH_Main_Male_Common_SF.upk']])for(const mod of new Set(owned.catalog.objects.filter(p=>p.file===file).map(p=>p.mod))){
     const previous=owned.objects(raw[i],mod,file).rows,current=owned.objects(physical[i],mod,file).rows;
-    for(const row of previous){const next=current.find(p=>p.index===row.index);if(mod!==allowedMod&&(!next||row.state===null||next.state!==row.state))throw Error(mod+'/'+file+' export '+row.index);}
+    for(const row of previous){
+     const next=current.find(p=>p.index===row.index),recorded=mod==='vending'?receipt(game):null;
+     const untouched=recorded&&!owned.owns(row.variants,require('./kernel/src/vending-ui').preset(recorded.config))&&next&&row.bytes.equals(next.bytes);
+     if(mod!==allowedMod&&!untouched&&(!next||row.state===null||next.state!==row.state))throw Error(mod+'/'+file+' export '+row.index);
+    }
    }
   }catch(e){fail('Compacted packages changed externally: owned feature lost/conflicted; nothing overwritten / 외부 변경으로 기능이 유실되거나 충돌했습니다: '+e.message+'\nFor recorded guard/M2G presets only: node upk-compat.js "'+game+'" --reapply=guard (or --reapply=m2g). Unknown instructions still stop. / 기록된 가드·M2G만 선택 복구할 수 있으며 알 수 없는 명령어는 계속 차단합니다.');}
   require('./kernel/src/executable-links').validatePackageLinks(physical[0],game);
@@ -111,14 +117,15 @@ function removeMaterials(game,c){
  }catch(error){try{db.exec('ROLLBACK');}catch{}throw error;}finally{db.close();}
 }
 function config(c){
- if(!c||!['ko','en'].includes(c.language)||typeof c.decals!=='boolean'||typeof c.ammo!=='boolean'||c.ammo&&!c.decals)fail('Invalid vending layer settings / 자판기 레이어 설정 오류');
+ if(!c||!['ko','en'].includes(c.language)||typeof c.decals!=='boolean'||typeof c.ammo!=='boolean')fail('Invalid vending layer settings / 자판기 레이어 설정 오류');
  return c;
 }
 function compose(base,c){
  config(c);language.setLanguage(c.language);
  const patched=exe.patchExecutable(base[0]).output;
- const upk=c.decals?pkg.patchPackage(base[1],c.ammo?require('./kernel/patches/vending-build25386710.json'):undefined):base[1];
- return [c.decals?pkg.linkExecutable(patched,base[1],upk):patched,upk];
+ const ui=require('./kernel/src/vending-ui');
+ const upk=ui.active(c)?pkg.patchPackage(base[1],ui.plan(c)):base[1];
+ return [ui.active(c)?pkg.linkExecutable(patched,base[1],upk):patched,upk];
 }
 function basePair(game,r,allowedMod=null){
  if(!/^[a-f0-9-]{36}$/.test(r.generation)||!Array.isArray(r.before)||r.before.length!==2||!Array.isArray(r.after)||r.after.length!==2)fail('Invalid layer receipt / 레이어 기록 오류');
@@ -129,13 +136,20 @@ function basePair(game,r,allowedMod=null){
   // Rebase only known owned functions. Never restore the old whole package:
   // Nico's independent byte edits must remain in the new underlying image.
   const owned=require('./owned-functions'),file='BrgGame.upk',expected=compose(base,r.config);
-  if(base[1].length<0x25||base[1].readUInt32LE(0x21)!==173671)fail('Shared files changed outside composition; scoped layout unavailable');
+  if(base[1].length<0x25||![173671,173715].includes(base[1].readUInt32LE(0x21)))fail('Shared files changed outside composition; scoped layout unavailable');
   for(const mod of new Set(owned.catalog.objects.filter(p=>p.file===file).map(p=>p.mod))){
    const old=owned.objects(expected[1],mod,file).rows,now=owned.objects(current[1],mod,file).rows;
-   for(const row of old)if(mod!==allowedMod&&(row.state===null||now.find(n=>n.index===row.index)?.state!==row.state))fail('Shared files changed outside composition: feature lost/conflicted / 기능 유실·충돌: '+mod+'/'+row.index);
+   for(const row of old)if(mod!==allowedMod){
+    const currentRow=now.find(n=>n.index===row.index);
+    // A materials-only receipt never owns a vending UI bridge. Preserve its
+    // exact unknown body; do not mistake an unchanged foreign UI for damage.
+    const untouchedForeign=mod==='vending'&&!owned.owns(row.variants,require('./kernel/src/vending-ui').preset(r.config))&&currentRow&&row.bytes.equals(currentRow.bytes);
+    if(!untouchedForeign&&(row.state===null||currentRow?.state!==row.state))fail('Shared files changed outside composition: feature lost/conflicted / 기능 유실·충돌: '+mod+'/'+row.index);
+   }
   }
-  if(owned.inspect(base[1],'vending',file)!=='off')fail('Vending baseline is not a removable owned layer');
-  const underlying=owned.set(current[1],'vending',file,'off'),linked=require('./kernel/src/executable-links'),nativeBase=Buffer.from(base[0]),masked=new Set();
+  const ui=require('./kernel/src/vending-ui'),scopePreset=ui.preset(r.config),selection=scopePreset.startsWith('ammo-')?{scopePreset}:{};
+  if(ui.active(r.config)&&!owned.set(base[1],'vending',file,'off',selection).equals(base[1]))fail('Vending baseline is not a removable owned layer');
+  const underlying=ui.active(r.config)?owned.set(current[1],'vending',file,'off',selection):current[1],linked=require('./kernel/src/executable-links'),nativeBase=Buffer.from(base[0]),masked=new Set();
   if(current[0].length!==expected[0].length)fail('External EXE size/section change; nothing overwritten');
   for(const [name,[,count]] of Object.entries(linked.PACKAGES))for(const at of linked.digestOffsets(expected[0],name,count))for(let j=0;j<20;j++)masked.add(at+j);
   for(let i=0;i<current[0].length;i++)if(current[0][i]!==expected[0][i]&&!masked.has(i)){
@@ -146,7 +160,9 @@ function basePair(game,r,allowedMod=null){
    for(const at of linked.digestOffsets(nativeBase,name,count))digest.copy(nativeBase,at);
   }
   const rebased=[nativeBase,underlying],output=compose(rebased,r.config);
-  owned.verifyTransition(current[1],output[1],'vending',file);owned.verifyOthers(current[1],output[1],'vending',file);
+  if(ui.active(r.config))owned.verifyTransition(current[1],output[1],'vending',file,{beforePreset:scopePreset,afterPreset:scopePreset});
+  else if(!current[1].equals(output[1]))fail('Materials-only rebase changed UI bytes');
+  owned.verifyOthers(current[1],output[1],'vending',file);
   if(!linked.normalizedExecutable(output[0]).equals(linked.normalizedExecutable(current[0])))fail('Scoped vending native rebase proof failed');
   linked.validatePackageLinks(current[0],game);return rebased;
  }
@@ -171,8 +187,8 @@ function registerLocked(game,backup,c){
  // Adopt an existing verified vending backup without changing any game bytes.
  const m=readJson(path.join(backup,'manifest.json'));
  if(![1,2].includes(m.version)||m.status!=='applied'||path.resolve(m.game).toLowerCase()!==path.resolve(game).toLowerCase())fail('Not an applied backup for this game / 이 게임에 적용된 백업이 아닙니다');
- const base=[fs.readFileSync(path.join(backup,'original-0')),m.decals?fs.readFileSync(path.join(backup,'original-2')):fs.readFileSync(path.join(game,FILES[1]))];
- if(hash(base[0])!==m.files[0].before||m.decals&&hash(base[1])!==m.files[2].before)fail('Backup baseline damaged / 백업 원본 손상');
+ const hasUi=!!(m.decals||m.ammo),base=[fs.readFileSync(path.join(backup,'original-0')),hasUi?fs.readFileSync(path.join(backup,'original-2')):fs.readFileSync(path.join(game,FILES[1]))];
+ if(hash(base[0])!==m.files[0].before||hasUi&&hash(base[1])!==m.files[2].before)fail('Backup baseline damaged / 백업 원본 손상');
  if(hash(fs.readFileSync(path.join(game,FILES[5])))!==m.files[1].after)fail('DB changed since legacy vending backup / 구형 자판기 백업 이후 DB가 변경됐습니다');
  c={...c,rows:materialRows(game)};
  if(c.rows.length!==106||new Set(c.rows.map(r=>r.goods_id)).size!==106)fail('Legacy material rows incomplete / 구형 재료 상품 기록이 불완전합니다');
@@ -249,10 +265,12 @@ function transact(game,kind,fn,{checkRunning=running,compact=false,acceptLostMod
   }
   if(previous||Object.hasOwn(action,'vending'))require('./kernel/src/executable-links').validatePackageLinks(fs.readFileSync(path.join(s.game,FILES[0])),s.game);
   const raw=capture(s.game),after=(compact||layoutState(game))?require('./package-layout').pair(raw):raw,result=action.result;
-  if(before[1].length>0x25&&before[1].readUInt32LE(0x21)===173671){
+  if(before[1].length>0x25&&[173671,173715].includes(before[1].readUInt32LE(0x21))){
    const owned=require('./owned-functions');
    for(const [index,file] of [[1,'BrgGame.upk'],[2,'AS_CH_Main_Male_Common_SF.upk']]){
-    if(owned.catalog.objects.some(p=>p.mod===kind&&p.file===file))owned.verifyTransition(before[index],after[index],kind,file);
+    const ui=require('./kernel/src/vending-ui'),nextConfig=Object.hasOwn(action,'vending')?action.vending?.config:previous?.config;
+    const scope=kind==='vending'?{beforePreset:previous?ui.preset(previous.config):'off',afterPreset:nextConfig?ui.preset(nextConfig):'off'}:null;
+    if(owned.catalog.objects.some(p=>p.mod===kind&&p.file===file))owned.verifyTransition(before[index],after[index],kind,file,scope);
     owned.verifyOthers(before[index],after[index],kind,file);
    }
   }

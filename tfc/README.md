@@ -1,5 +1,11 @@
 # Tengoku Start-Floor Selector — TFC edition
 
+## Steam build 25923506 / TFC 1.2.3-rc.1
+
+Recreate the preparation folder with this version. Reviewed new-build templates use the new package references; old prepared patches must not be reused. EXE/DB components still belong to the companion, not TFC. Unknown owned instructions and unsafe map changes are refused before overwriting.
+
+Do not restore an old-build whole-file backup over the updated game. Keep state and backups if update recovery is needed. [Validation](BUILD-25923506-VALIDATION.md). File/engine checks do not certify live gameplay.
+
 > Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
 
 

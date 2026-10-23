@@ -1,5 +1,13 @@
 # LET IT DIE 일반 텐고쿠 시작층 선택 도구
 
+## Steam 빌드 25923506 대응 수정 (2026-10-23)
+
+새 빌드의 EXE 위치와 UPK 객체·이름 참조를 별도로 검증했습니다. 알 수 없는 명령어 충돌은 계속 차단하며 기존 빌드 지원도 유지합니다. [검증 범위](BUILD-25923506-VALIDATION.md).
+
+Steam 업데이트 후 옛 적용 기록만 남았다면 **기록·백업을 삭제하거나 구버전 전체 백업을 복원하지 마세요.** [보존 복구 안내](RECOVER-STEAM-UPDATE.md)를 확인하세요. 새 순정 파일 6개가 모두 일치할 때만 기존 기록 폴더 전체를 명시적으로 보존 이관할 수 있습니다. 자동 삭제·이관은 하지 않습니다.
+
+TFC판은 일반판과 별도입니다. 새 빌드용 준비 폴더를 다시 생성해야 하며, 예전 준비 패치를 재사용하지 마세요. 파일·처리 엔진 테스트와 실제 게임 검증은 구분합니다.
+
 > Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
 
 

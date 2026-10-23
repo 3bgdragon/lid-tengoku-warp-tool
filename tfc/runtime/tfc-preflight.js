@@ -22,8 +22,32 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
  for(const name of patches){
   const file=name.replace(/\.PackagePatch$/,''),data=fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole',file));
   before[file]=sha(data);
-  const rows=owned.objects(data,mod,file).rows,patch=fs.readFileSync(path.join(cooked,name)),result=Buffer.from(patch);
+  const rows=owned.objects(data,mod,file).rows;let patch=fs.readFileSync(path.join(cooked,name));
   if(!owned.catalog.patches.some(p=>p.mod===mod&&p.sha256===sha(patch)))throw Error('Unreviewed/damaged TFC patch template');
+  const currentPackage=fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole/BrgGame.upk'));
+  if(currentPackage.readUInt32LE(0x21)===173715){
+   if(file==='Heaven_A01_ST_COL.upk'){
+    // The reviewed map patch carries the object table. Refuse unrelated map
+    // changes rather than letting TFC replace an unreviewed foreign object.
+    const expected=new Map(require('./build25923506/map-unowned.json').map(p=>[p.index,p]));
+    const read=require('./scoped-package').reader(data);let slot=data.readUInt32LE(0x25),found=0;
+    for(let index=0;index<data.readUInt32LE(0x21);index++){
+     const entry=read.read(slot,68),generations=entry.readUInt32LE(44);if(generations>10000)throw Error('Invalid map export generations');
+     if(expected.has(index)){
+      const p=expected.get(index),metadata=Buffer.from(entry);metadata.fill(0,32,40);
+      if(sha(metadata)!==p.metadata||entry.readUInt32LE(32)!==p.size||sha(read.read(entry.readUInt32LE(36),p.size))!==p.sha256)throw Error('Unrelated map object changed; refusing TFC overwrite: '+index);
+      found++;
+     }
+     slot+=68+generations*4;
+    }
+    if(found!==expected.size)throw Error('Missing unrelated map objects');
+   }
+   const registry=require('./build25923506/registry.json'),profile=registry.find(p=>p.oldSha256===sha(patch));
+   if(!profile)throw Error('No reviewed current-build TFC template');
+   patch=fs.readFileSync(path.join(__dirname,'build25923506',profile.file));
+   if(sha(patch)!==profile.sha256)throw Error('Current-build TFC template damaged');
+  }
+  const result=Buffer.from(patch);
   let found=0;
   for(const row of rows){
    // A selected preset may omit this object. Find only reviewed serialized bodies.
@@ -53,7 +77,7 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
  const output=path.join(path.resolve(outputRoot),mod+'-'+crypto.randomUUID());
  fs.mkdirSync(output,{recursive:true});
  try{
-  for(const name of ['runtime','GameProfile.xml','companion.js','run-tfc.bat','run.bat','COMPANION.md','START-HERE.ko.md']){
+  for(const name of ['runtime','GameProfile.xml','companion.js','recover-updated-state.js','RECOVER-STEAM-UPDATE.md','run-tfc.bat','run.bat','COMPANION.md','START-HERE.ko.md']){
    const f=path.join(source,name);if(fs.existsSync(f))fs.cpSync(f,path.join(output,name),{recursive:true});
   }
   const dir=path.join(output,'Game/BrgGame/CookedPCConsole');fs.mkdirSync(dir,{recursive:true});

@@ -26,7 +26,7 @@ function identify(data,definition,assets){
  // Only this reviewed build is enabled. Old/unknown layouts remain rejected.
  if(!fs.existsSync(profileFile))return null;
  const profile=JSON.parse(fs.readFileSync(profileFile,'utf8'));
- if(profile.build===25767944?profile.definitionBaseSha1!==definition.baseSha1:definition.baseSha1!=='802B3E1181DEA1FB29CE9CA331161922902B9827')return null;
+ if([25767944,25923506].includes(profile.build)?profile.definitionBaseSha1!==definition.baseSha1:definition.baseSha1!=='802B3E1181DEA1FB29CE9CA331161922902B9827')return null;
  const enable=parsePatch(fs.readFileSync(path.join(assets,definition.enablePatch)));
  const disable=parsePatch(fs.readFileSync(path.join(assets,definition.disablePatch)));
  let layout;try{layout=peLayout(data);}catch{return null;}

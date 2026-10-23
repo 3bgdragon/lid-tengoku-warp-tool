@@ -65,6 +65,11 @@ function verifyPackages(packages,c){
   if(packages[file])require('./owned-functions').inspect(packages[file],mod,file);
  }
  for(const mod of ['warp','vending'])if(c[mod]){
+  if(mod==='warp'&&packages['BrgGame.upk'].readUInt32LE(0x21)===173715){
+   const owned=require('./owned-functions');
+   for(const file of ['BrgGame.upk','Heaven_A01_ST_COL.upk'])if(owned.inspect(packages[file],'warp',file)!=='on')throw Error('Install matching current-build warp TFC instructions first: '+file);
+   continue;
+  }
   if(mod==='vending'){
    const state=require('./owned-functions').inspect(packages['BrgGame.upk'],'vending','BrgGame.upk');
    if(!['on','all-ko','all-en'].includes(state))throw Error('Install the matching vending TFC UPK patch first / 자판기 전체 기능 UPK를 먼저 설치하세요');
@@ -89,7 +94,7 @@ function verifyPackages(packages,c){
 function compose(base,c){
  let result=Buffer.from(base);
  if(c.warp){
-  const definitions=[{baseSha1:'802B3E1181DEA1FB29CE9CA331161922902B9827',enablePatch:'25386710-native-enable.lidbin',disablePatch:'25386710-native-disable.lidbin'},require('./tfc-assets/native-definition-25767944.json')];
+  const definitions=[{baseSha1:'802B3E1181DEA1FB29CE9CA331161922902B9827',enablePatch:'25386710-native-enable.lidbin',disablePatch:'25386710-native-disable.lidbin'},require('./tfc-assets/native-definition-25767944.json'),require('./tfc-assets/native-definition-25923506.json')];
   const def=definitions.find(d=>native.identify(result,d,assets)?.enabled===false);
   if(!def)throw Error('Expected supported stock native code; remove standalone native patches first.');
   const p=native.parsePatch(fs.readFileSync(path.join(assets,def.enablePatch))),b=Buffer.alloc(p.size);result.copy(b);for(const e of p.entries)e.bytes.copy(b,e.offset);result=b;
@@ -114,7 +119,7 @@ function reconcile(base,expected,current){
  return b;
 }
 function baseOf(game,r){if(!/^[a-f0-9]{64}$/.test(r.baseHash)||r.base!==r.baseHash)throw Error('Invalid TFC baseline');const b=fs.readFileSync(path.join(files(game).root,'bases',r.baseHash));if(sha(b)!==r.baseHash)throw Error('TFC baseline damaged');return b;}
-function readState(game){const p=files(game),file=path.join(p.root,'state.json');if(!fs.existsSync(file))return null;const r=json(file);if(r.format!=='LID-TFC-NATIVE-1'||!Array.isArray(r.rows)||!r.baseHash||typeof r.base!=='string')throw Error('Invalid TFC state');config(r.config);baseOf(game,r);return r;}
+function readState(game){const p=files(game),file=path.join(p.root,'state.json');if(!fs.existsSync(file))return null;const r=json(file);if(r.format!=='LID-TFC-NATIVE-1'||!Array.isArray(r.rows)||!r.baseHash||typeof r.base!=='string')throw Error('Invalid TFC state');config(r.config);const updated=require('./updated-state').notice(game,r,{tfc:true});if(updated)throw Error(updated);baseOf(game,r);return r;}
 function readDb(file){for(const suffix of ['-wal','-shm','-journal'])if(fs.existsSync(file+suffix))throw Error('SQLite is open/recovering: '+file+suffix);return fs.existsSync(file)?fs.readFileSync(file):null;}
 function rowsEqual(a,b){const keys=Object.keys(b).sort();return keys.every(k=>a[k]===b[k])&&Object.keys(a).length===keys.length;}
 function stageDb(folder,before,rows,enabled){

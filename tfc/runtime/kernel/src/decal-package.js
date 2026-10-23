@@ -14,6 +14,11 @@ function patchFunction(original,p){
  return Buffer.concat([header,result,original.subarray(0x30+size)]);
 }
 function patchPackage(source,selectedPlan=plan){
+ if(source.readUInt32LE(0x21)===173715){
+  const features=selectedPlan.features||['decals'],kind=features.includes('ammo')?(features.includes('decals')?'all':'ammo'):'decals';
+  const language=selectedPlan.language||'ko';
+  return require('../../owned-functions').set(source,'vending','BrgGame.upk',kind+'-'+language);
+ }
  const plan=require('./game-language').localizePlan(selectedPlan);
  const r=reader(source),wanted=new Map(plan.patches.map(p=>[p.export,p])),patches=[];
  let at=source.readUInt32LE(0x25);

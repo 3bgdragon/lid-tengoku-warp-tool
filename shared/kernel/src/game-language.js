@@ -8,6 +8,7 @@ const labels = [
 function localizePlan(plan, language = text('ko', 'en')) {
   if (language === 'ko') return plan;
   if (language !== 'en') throw Error('Unsupported game-menu language');
+  if(!plan.patches?.length||(plan.features&&!plan.features.some(f=>['decals','ammo'].includes(f))))throw Error('Game-menu translation signature count mismatch');
   const counts = labels.map(() => 0);
   const patches = plan.patches.map(patch => {
     const bytes = Buffer.from(patch.insert, 'hex');
@@ -23,7 +24,8 @@ function localizePlan(plan, language = text('ko', 'en')) {
     }
     return { ...patch, insert: bytes.toString('hex') };
   });
-  const expected = plan.features?.includes('ammo') ? [1, 1, 1] : [1, 0, 0];
+  const hasAmmo=plan.features?.includes('ammo'),hasDecals=!plan.features||plan.features.includes('decals');
+  const expected = [hasDecals?1:0,hasAmmo?1:0,hasAmmo?1:0];
   if (counts.some((count, i) => count !== expected[i])) throw Error('Game-menu translation signature count mismatch');
   return { ...plan, patches };
 }

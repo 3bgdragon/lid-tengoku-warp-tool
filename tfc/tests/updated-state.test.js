@@ -1,0 +1,18 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),cp=require('node:child_process');
+const recovery=require('../runtime/updated-state');
+const fixture=process.env.LID_UPDATED_STATE_FIXTURE;
+const r={format:2,active:true,generation:'11111111-1111-4111-8111-111111111111',before:['a'.repeat(64),'b'.repeat(64)],after:['c'.repeat(64),'d'.repeat(64)],config:{language:'ko',decals:true,ammo:true},layout:{format:1,generation:'22222222-2222-4222-8222-222222222222',before:Array(3).fill('e'.repeat(64)),after:Array(3).fill('f'.repeat(64))}};
+function make(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'lid-updated-state-')),game=path.join(dir,'game');fs.cpSync(fixture,game,{recursive:true});const state=path.join(game,'LID-Mod-State');fs.mkdirSync(path.join(state,'backups/old'),{recursive:true});fs.mkdirSync(path.join(state,'blobs'));fs.mkdirSync(path.join(state,'staging'));fs.writeFileSync(path.join(state,'state.json'),JSON.stringify(r));fs.writeFileSync(path.join(state,'backups/old/original-0'),'old backup bytes');fs.writeFileSync(path.join(state,'blobs/preserved'),'old blob bytes');return {dir,game,state};}
+function cleanup(dir){assert.equal(path.dirname(dir),path.resolve(os.tmpdir()));assert.ok(path.basename(dir).startsWith('lid-updated-state-'));fs.rmSync(dir,{recursive:true,force:true});}
+test('TFC stale-state archive is explicit, separated and retains native bases',{skip:!fixture},t=>{
+ const {dir,game,state}=make();t.after(()=>cleanup(dir));const target=path.join(game,'LID-TFC-State');fs.renameSync(state,target);
+ const old={format:'LID-TFC-NATIVE-1',config:{warp:true,vending:true},rows:[],base:'a'.repeat(64),baseHash:'a'.repeat(64),upkSettings:[{mod:'warp',file:'BrgGame.upk',preset:'on'}]};
+ fs.writeFileSync(path.join(target,'state.json'),JSON.stringify(old));fs.mkdirSync(path.join(target,'bases'));fs.writeFileSync(path.join(target,'bases/old'),'old native base');const bytes=fs.readFileSync(path.join(target,'state.json'));
+ const controller=require('../runtime/tfc-companion');assert.throws(()=>controller.readState(game),/recover-updated-state\.js/);
+ assert.equal(recovery.inspect(game,{tfc:true}).recoverable,true);assert.match(recovery.notice(game,old,{tfc:true}),/--tfc/);assert.ok(fs.readFileSync(path.join(target,'state.json')).equals(bytes));
+ const current={...old,base:recovery.STOCK[0][1],baseHash:recovery.STOCK[0][1],config:{warp:false,vending:false},upkSettings:[]};fs.writeFileSync(path.join(target,'state.json'),JSON.stringify(current));fs.copyFileSync(path.join(game,recovery.STOCK[0][0]),path.join(target,'bases',current.base));assert.deepEqual(controller.readState(game),current);assert.equal(recovery.notice(game,current,{tfc:true}),null);assert.equal(recovery.inspect(game,{tfc:true}).recoverable,false);assert.equal(recovery.archive(game,{tfc:true,checkRunning:()=>false}).changed,false);fs.writeFileSync(path.join(target,'state.json'),bytes);
+ fs.mkdirSync(state);fs.writeFileSync(path.join(state,'state.json'),JSON.stringify(r));assert.throws(()=>recovery.inspect(game,{tfc:true}),/mixed-mode/);assert.throws(()=>recovery.inspect(game),/mixed-mode/);fs.unlinkSync(path.join(state,'state.json'));fs.rmdirSync(state);
+ const result=recovery.archive(game,{tfc:true,checkRunning:()=>false});assert.equal(result.mode,'tfc');assert.equal(result.changed,true);assert.ok(fs.readFileSync(path.join(result.archive,'state.json')).equals(bytes));assert.equal(fs.readFileSync(path.join(result.archive,'bases/old'),'utf8'),'old native base');assert.ok(!fs.existsSync(target));assert.ok(recovery.matchesStock(game));
+});

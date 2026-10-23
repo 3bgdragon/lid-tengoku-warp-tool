@@ -1,5 +1,13 @@
 # LET IT DIE Standard Tengoku Start-Floor Selector
 
+## Steam build 25923506 compatibility update (2026-10-23)
+
+Uses separately reviewed native locations and/or build-specific UPK object/name references. Unknown instruction conflicts are still blocked; old-build support is retained. [Validation and limits](BUILD-25923506-VALIDATION.md).
+
+If Steam replaced the game files but left old mod state, **do not delete state/backups or restore an old-build snapshot**. Read [safe update recovery](RECOVER-STEAM-UPDATE.md). This recovery requires all six files to match the reviewed new stock build and preserves the entire old state folder. It is never automatic.
+
+TFC is a separate distribution. Generate a fresh TFC preparation folder for the new build; do not reuse an old prepared patch. File/engine tests are distinct from live gameplay verification.
+
 > Steam build 25767944 RC: [validation and limitations](BUILD-25767944-VALIDATION.md). File/engine tests completed; new-build live gameplay pending. / 새 빌드 파일·처리 엔진 검증 완료, 실게임 검증 전.
 
 

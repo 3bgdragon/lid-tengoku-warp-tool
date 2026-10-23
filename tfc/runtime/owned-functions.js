@@ -6,6 +6,13 @@ const {pack,words}=require('./kernel/src/package-codec');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const catalog=require('./owned-functions.json');
 const groups=new Map();
+// The new package has separately audited name/object references and indices.
+const currentCatalog=require('./owned-functions-25923506.json'),currentGroups=new Map();
+for(const row of currentCatalog.objects){
+ const p={...row,off:Buffer.from(row.off,'base64'),on:Buffer.from(row.on,'base64')};
+ if(sha(p.off)!==row.offHash||sha(p.on)!==row.onHash)throw Error('Current owned function evidence damaged');
+ const key=p.mod+'/'+p.file+'/'+p.index;if(!currentGroups.has(key))currentGroups.set(key,[]);currentGroups.get(key).push(p);
+}
 const foreignOffContexts=new WeakMap();
 for(const row of catalog.objects){
  const p={...row,off:Buffer.from(row.off,'base64'),on:Buffer.from(row.on,'base64')};
@@ -14,6 +21,16 @@ for(const row of catalog.objects){
  if(!groups.has(key))groups.set(key,[]);groups.get(key).push(p);
 }
 function group(mod,file,index){return groups.get(mod+'/'+file+'/'+index);}
+function owns(variants,preset){
+ if(preset==='off')return false;
+ const p=variants.find(p=>p.preset===preset);if(p)return !p.on.equals(p.off);
+ const v=variants[0];
+ // A reviewed UI preset may deliberately omit a function that it does not own.
+ // Missing per-function ownership is not an unknown global preset.
+ if(v.mod==='vending'&&v.file==='BrgGame.upk'&&/^(?:decals|all|ammo)-(ko|en)$/.test(preset)&&
+    [...catalog.objects,...currentCatalog.objects].some(p=>p.mod===v.mod&&p.file===v.file&&p.preset===preset))return false;
+ throw Error('Unknown scoped ownership preset: '+preset);
+}
 function context(variants){
  const stock=variants[0].off;
  if(variants.some(p=>!p.off.equals(stock)||p.on.length!==stock.length))return null;
@@ -69,7 +86,8 @@ function merge(bytes,variants,preset){
  const out=Buffer.from(bytes);for(const i of c.edits)out[i]=target[i];return out;
 }
 function objects(source,mod,file){
- const wanted=new Map([...groups.values()].filter(v=>v[0].mod===mod&&v[0].file===file).map(v=>[v[0].index,v]));
+ const selected=file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173715?currentGroups:groups;
+ const wanted=new Map([...selected.values()].filter(v=>v[0].mod===mod&&v[0].file===file).map(v=>[v[0].index,v]));
  if(!wanted.size)throw Error('No reviewed ownership plan: '+mod+'/'+file);
  const r=reader(source),count=source.readUInt32LE(0x21),rows=[];let at=source.readUInt32LE(0x25);
  const existing=[...wanted].filter(([,v])=>v[0].off.length).map(([i])=>i);
@@ -96,7 +114,8 @@ function inspect(source,mod,file){
  throw Error(`Conflicting/partial ${mod} package: ${file} / 모드 함수 충돌·부분 적용`);
 }
 function set(source,mod,file,preset){
- if(!['off',...new Set(catalog.objects.filter(p=>p.mod===mod&&p.file===file).map(p=>p.preset))].includes(preset))throw Error('Unknown owned preset');
+ const known=file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173715?currentCatalog:catalog;
+ if(!['off',...new Set(known.objects.filter(p=>p.mod===mod&&p.file===file).map(p=>p.preset))].includes(preset))throw Error('Unknown owned preset');
  const {r,rows}=objects(source,mod,file),replacements=rows.map(o=>({...o,next:merge(o.bytes,o.variants,preset)}));
  if(replacements.every(o=>o.bytes.equals(o.next)))return source;
  const last=r.table.length-1,tail=[r.chunk(last)];let logical=r.table[last][0]+r.table[last][1];
@@ -141,4 +160,4 @@ function verifyOthers(before,after,mod,file){
  }
  return true;
 }
-module.exports={inspect,set,objects,merge,recognize,group,verifyTransition,verifyOthers,sha,catalog};
+module.exports={inspect,set,objects,merge,recognize,group,verifyTransition,verifyOthers,owns,sha,catalog};

@@ -3,8 +3,25 @@ const {createHash}=require('node:crypto');
 const {reader,pack,words}=require('./package-codec');
 const plan=require('../patches/decal-build25386710.json');
 const sha=b=>createHash('sha256').update(b).digest('hex');
+function uiConflict(original,p,reason,declaredSize=original.length){
+ const actual={size:declaredSize,readSize:original.length,sha256:original.length===declaredSize?sha(original):null,
+  scriptSize:original.length>=0x30?original.readUInt32LE(0x2c):null,
+  scriptMemory:original.length>=0x30?original.readUInt32LE(0x28):null};
+ const expected={size:p.size,sha256:p.before,scriptSize:p.scriptSize,scriptMemory:p.scriptMemory};
+ const error=new Error('지원하지 않거나 이미 변경된 데칼 메뉴 함수: '+p.name+'\n'+
+  'Reason / 원인: '+reason+'\nExport (one-based / 1부터): '+p.export+'\n'+
+  'Actual / 실제: '+actual.size+' bytes; SHA-256: '+(actual.sha256||'not read')+'\n'+
+  'Expected / 예상: '+expected.size+' bytes; SHA-256: '+expected.sha256+'\n'+
+  'UI preflight failed before file installation / UI 검증 단계에서 중단했습니다. 게임 파일에 덮어쓰지 않았습니다.');
+ error.code='LID_VENDING_UI_CONFLICT';
+ error.diagnostics={format:'LID-VENDING-UI-CONFLICT-1',name:p.name,export:p.export,reason,actual,expected,
+  serializedDataBase64:original.length===declaredSize&&original.length<=1024*1024?original.toString('base64'):null};
+ return error;
+}
 function patchFunction(original,p){
- if(sha(original)!==p.before||original.length!==p.size)throw new Error('지원하지 않거나 이미 변경된 데칼 메뉴 함수: '+p.name);
+ p=require('./tick-compat').resolve(original,p);
+ if(original.length!==p.size)throw uiConflict(original,p,'function-size-mismatch');
+ if(sha(original)!==p.before)throw uiConflict(original,p,'function-hash-mismatch');
  const size=original.readUInt32LE(0x2c),memory=original.readUInt32LE(0x28);
  if(size!==p.scriptSize||memory!==p.scriptMemory)throw new Error('스크립트 크기 불일치');
  const code=Buffer.from(original.subarray(0x30,0x30+size));
@@ -14,6 +31,11 @@ function patchFunction(original,p){
  return Buffer.concat([header,result,original.subarray(0x30+size)]);
 }
 function patchPackage(source,selectedPlan=plan){
+ if(source.readUInt32LE(0x21)===173715){
+  const features=selectedPlan.features||['decals'],kind=features.includes('ammo')?(features.includes('decals')?'all':'ammo'):'decals';
+  const language=require('./language').text('ko','en');
+  return require('../../owned-functions').set(source,'vending','BrgGame.upk',kind+'-'+language);
+ }
  const plan=require('./game-language').localizePlan(selectedPlan);
  const r=reader(source),wanted=new Map(plan.patches.map(p=>[p.export,p])),patches=[];
  let at=source.readUInt32LE(0x25);
@@ -22,7 +44,7 @@ function patchPackage(source,selectedPlan=plan){
   if(generations>10000)throw new Error('잘못된 내보내기 테이블');
   if(wanted.has(i)){
    const p=wanted.get(i),size=entry.readUInt32LE(32),offset=entry.readUInt32LE(36);
-   if(size!==p.size)throw new Error('지원하지 않거나 이미 변경된 데칼 메뉴 함수: '+p.name);
+   if(size>1024*1024)throw uiConflict(r.read(offset,Math.min(size,0x30)),p,'function-exceeds-diagnostic-limit',size);
    patches.push({p,slot:at,replacement:patchFunction(r.read(offset,size),p)});
   }at+=68+generations*4;
  }

@@ -1,6 +1,6 @@
 'use strict';
 // Reviewed build-25386710 structure and native dependencies. No full-file hash.
-const profiles=[require('./native-preconditions-25386710.json'),require('./native-preconditions-25767944.json')];
+const profiles=[require('./native-preconditions-25386710.json'),require('./native-preconditions-25767944.json'),require('./native-preconditions-25923506.json')];
 function layout(b){
  if(b.length<64||b.toString('ascii',0,2)!=='MZ')throw Error('Unsupported PE structure');
  const pe=b.readUInt32LE(60);if(pe>b.length-24||b.toString('ascii',pe,pe+4)!=='PE\0\0')throw Error('Unsupported PE structure');

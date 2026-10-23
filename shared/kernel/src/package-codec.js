@@ -7,7 +7,7 @@ const words=(...values)=>{const b=Buffer.alloc(values.length*4);values.forEach((
 function entries(data){
  if(data.length<0x75||data.readUInt32LE()!==TAG||data.readUInt32LE(0x6d)!==2)throw new Error('지원하지 않는 UE3 LZO 패키지');
  const count=data.readUInt32LE(0x71);
- if(count!==286||data.readUInt32LE(0x21)!==173671)throw new Error('지원하지 않는 패키지 빌드');
+ if(count!==286||![173671,173715].includes(data.readUInt32LE(0x21)))throw new Error('지원하지 않는 패키지 빌드');
  const table=[];let end;
  for(let i=0;i<count;i++){
   const e=Array.from({length:4},(_,j)=>data.readUInt32LE(0x75+i*16+j*4));
