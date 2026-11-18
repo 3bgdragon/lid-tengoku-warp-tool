@@ -1,5 +1,7 @@
 # Tengoku Start-Floor Selector — TFC edition
 
+> TFC candidate 1.2.4-rc.1 — LET IT DIE 5.0.6.0 / Steam build 26639365. See [current validation and limits](BUILD-26639365-VALIDATION.md). Preserves the new vanilla Deathroid menu. Do not mix active standalone/TFC receipts. / 새 빌드 대응 후보이며 실게임 검증은 별도입니다. 일반판과 혼용하지 마세요.
+
 ## Steam build 25923506 / TFC 1.2.3-rc.1
 
 Recreate the preparation folder with this version. Reviewed new-build templates use the new package references; old prepared patches must not be reused. EXE/DB components still belong to the companion, not TFC. Unknown owned instructions and unsafe map changes are refused before overwriting.

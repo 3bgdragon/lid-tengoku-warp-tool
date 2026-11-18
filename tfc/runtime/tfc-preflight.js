@@ -25,11 +25,12 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
   const rows=owned.objects(data,mod,file).rows;let patch=fs.readFileSync(path.join(cooked,name));
   if(!owned.catalog.patches.some(p=>p.mod===mod&&p.sha256===sha(patch)))throw Error('Unreviewed/damaged TFC patch template');
   const currentPackage=fs.readFileSync(path.join(game,'BrgGame/CookedPCConsole/BrgGame.upk'));
-  if(currentPackage.readUInt32LE(0x21)===173715){
+  const templateBuild=currentPackage.readUInt32LE(0x21)===173769?'26639365':currentPackage.readUInt32LE(0x21)===173715?'25923506':null;
+  if(templateBuild){
    if(file==='Heaven_A01_ST_COL.upk'){
     // The reviewed map patch carries the object table. Refuse unrelated map
     // changes rather than letting TFC replace an unreviewed foreign object.
-    const expected=new Map(require('./build25923506/map-unowned.json').map(p=>[p.index,p]));
+    const expected=new Map(require('./build'+templateBuild+'/map-unowned.json').map(p=>[p.index,p]));
     const read=require('./scoped-package').reader(data);let slot=data.readUInt32LE(0x25),found=0;
     for(let index=0;index<data.readUInt32LE(0x21);index++){
      const entry=read.read(slot,68),generations=entry.readUInt32LE(44);if(generations>10000)throw Error('Invalid map export generations');
@@ -42,9 +43,9 @@ function prepare(game,mod,source=path.resolve(__dirname,'..'),outputRoot=path.jo
     }
     if(found!==expected.size)throw Error('Missing unrelated map objects');
    }
-   const registry=require('./build25923506/registry.json'),profile=registry.find(p=>p.oldSha256===sha(patch));
+   const registry=require('./build'+templateBuild+'/registry.json'),profile=registry.find(p=>p.oldSha256===sha(patch));
    if(!profile)throw Error('No reviewed current-build TFC template');
-   patch=fs.readFileSync(path.join(__dirname,'build25923506',profile.file));
+   patch=fs.readFileSync(path.join(__dirname,'build'+templateBuild,profile.file));
    if(sha(patch)!==profile.sha256)throw Error('Current-build TFC template damaged');
   }
   const result=Buffer.from(patch);

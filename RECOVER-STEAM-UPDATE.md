@@ -1,6 +1,6 @@
 # Steam update left old mod state / Steam 업데이트 후 구버전 기록
 
-Only use this standalone recovery when Steam replaced the game files with the reviewed clean build 25923506 but `LID-Mod-State` still records old patches. It is not a generic conflict bypass. TFC recovery is a separate explicit mode: from the TFC edition use `--tfc` for inspection and `--tfc --archive` for preserving old `LID-TFC-State`; never mix the two active receipt types.
+Only use this standalone recovery when Steam replaced the game files with one of the reviewed clean builds 26639365 or 25923506 but `LID-Mod-State` still records old patches. It is not a generic conflict bypass. TFC recovery is a separate explicit mode: from the TFC edition use `--tfc` for inspection and `--tfc --archive` for preserving old `LID-TFC-State`; never mix the two active receipt types.
 
 Close the game. From this tool folder, inspect without writing:
 

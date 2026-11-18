@@ -1,6 +1,6 @@
 # TFC state after a Steam update / Steam 업데이트 후 TFC 기록
 
-Close the game. If Steam replaced all game files with reviewed clean build 25923506 but old `LID-TFC-State` remains, inspect from this TFC folder:
+Close the game. If Steam replaced all game files with one of the reviewed clean builds 26639365 or 25923506 but old `LID-TFC-State` remains, inspect from this TFC folder:
 
 ```text
 node recover-updated-state.js "C:\Program Files (x86)\Steam\steamapps\common\LET IT DIE" --tfc

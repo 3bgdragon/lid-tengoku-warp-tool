@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "gameVersion": "Steam build 26639365",
+  "releaseStatus": "static-verified-awaiting-gameplay",
+  "brgGame": {
+    "relativePath": "BrgGame/CookedPCConsole/BrgGame.upk",
+    "profiles": {}
+  },
+  "heavenEntry": {
+    "relativePath": "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
+    "baseSha1": "B6EDA8DC827A99AF45B67D28E47A9EE2A1C89AF2",
+    "patchedSha1": "28647B88C589436C1CF62F6B4C4D5C8E84C33BCC",
+    "baseSize": 462129,
+    "patchedSize": 468965,
+    "enablePatch": "26639365-heaven-enable.lidbin",
+    "disablePatch": "26639365-heaven-disable.lidbin"
+  },
+  "brgStart": {
+    "relativePath": "BrgGame/CookedPCConsole/BrgStart_PL.upk",
+    "baseSha1": "37F699F87C634D16633CB6ECC0AB48773F67BAE6",
+    "patchedSha1": "37F699F87C634D16633CB6ECC0AB48773F67BAE6",
+    "baseSize": 1082632,
+    "patchedSize": 1082632,
+    "enablePatch": "26639365-brgstart-enable.lidbin",
+    "disablePatch": "26639365-brgstart-disable.lidbin"
+  },
+  "executable": {
+    "relativePath": "Binaries/Win64/BrgGame-Steam.exe",
+    "manifestEntries": {
+      "brggame.upk": 2,
+      "heaven_a01_st_col.upk": 1,
+      "brgstart_pl.upk": 2
+    },
+    "native": {
+      "baseSha1": "D1FEF538F24DECD741FEF48E4B7764B42745FDD8",
+      "patchedSha1": "5F292C933DA25E817A552A76F36A3D457065EEF8",
+      "baseSize": 45076480,
+      "patchedSize": 45080576,
+      "enablePatch": "26639365-native-enable.lidbin",
+      "disablePatch": "26639365-native-disable.lidbin",
+      "sectionRva": 268824576,
+      "flagRva": 268824576,
+      "floorRva": 268825600,
+      "pendingRva": 268827648,
+      "flagSize": 353,
+      "floorSize": 515,
+      "profile": "native-sites-26639365.json"
+    },
+    "nativeVariants": {},
+    "normalizedExtraEntries": {
+      "as_ch_main_male_common_sf.upk": 1
+    }
+  },
+  "starts": [
+    51,
+    101,
+    201,
+    301
+  ],
+  "steamBuildId": "26639365"
+}

@@ -136,7 +136,7 @@ function basePair(game,r,allowedMod=null){
   // Rebase only known owned functions. Never restore the old whole package:
   // Nico's independent byte edits must remain in the new underlying image.
   const owned=require('./owned-functions'),file='BrgGame.upk',expected=compose(base,r.config);
-  if(base[1].length<0x25||![173671,173715].includes(base[1].readUInt32LE(0x21)))fail('Shared files changed outside composition; scoped layout unavailable');
+  if(base[1].length<0x25||![173671,173715,173769].includes(base[1].readUInt32LE(0x21)))fail('Shared files changed outside composition; scoped layout unavailable');
   for(const mod of new Set(owned.catalog.objects.filter(p=>p.file===file).map(p=>p.mod))){
    const old=owned.objects(expected[1],mod,file).rows,now=owned.objects(current[1],mod,file).rows;
    for(const row of old)if(mod!==allowedMod){
@@ -265,7 +265,7 @@ function transact(game,kind,fn,{checkRunning=running,compact=false,acceptLostMod
   }
   if(previous||Object.hasOwn(action,'vending'))require('./kernel/src/executable-links').validatePackageLinks(fs.readFileSync(path.join(s.game,FILES[0])),s.game);
   const raw=capture(s.game),after=(compact||layoutState(game))?require('./package-layout').pair(raw):raw,result=action.result;
-  if(before[1].length>0x25&&[173671,173715].includes(before[1].readUInt32LE(0x21))){
+  if(before[1].length>0x25&&[173671,173715,173769].includes(before[1].readUInt32LE(0x21))){
    const owned=require('./owned-functions');
    for(const [index,file] of [[1,'BrgGame.upk'],[2,'AS_CH_Main_Male_Common_SF.upk']]){
     const ui=require('./kernel/src/vending-ui'),nextConfig=Object.hasOwn(action,'vending')?action.vending?.config:previous?.config;

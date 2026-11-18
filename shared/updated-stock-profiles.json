@@ -1,0 +1,60 @@
+[
+  {
+    "build": 26639365,
+    "stock": [
+      [
+        "Binaries/Win64/BrgGame-Steam.exe",
+        "6cfadbba9da3e2f3b3a4463194d247a50d2537a3ad704174730a0bbf899e42ca"
+      ],
+      [
+        "BrgGame/CookedPCConsole/BrgGame.upk",
+        "cc21738403521b114675fb4008d92c1f77254470886cc28cec096be7361cd473"
+      ],
+      [
+        "BrgGame/CookedPCConsole/AS_CH_Main_Male_Common_SF.upk",
+        "4656860fa4fa217e40969047065fcf89ec8675a2e8ef4fbfdb1fa34dc88d1380"
+      ],
+      [
+        "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
+        "807a905df9059a2eef655ef3cce7222005af3f5b07645803e542d367c62bbbe1"
+      ],
+      [
+        "BrgGame/CookedPCConsole/BrgStart_PL.upk",
+        "b3b887da8b655e80ffa0d251d8addde4842af3315f129516e834ba213759b9a8"
+      ],
+      [
+        "BrgGame/Content/masters.db",
+        "db9a81a1eb05036eb7171a993958d17a048889491fb2326cd5d686e8e010fd7a"
+      ]
+    ]
+  },
+  {
+    "build": 25923506,
+    "stock": [
+      [
+        "Binaries/Win64/BrgGame-Steam.exe",
+        "f33e91e6e8d58566bfabad8d01cd0486586a0d43fe1c58e65fc6485a417bddfd"
+      ],
+      [
+        "BrgGame/CookedPCConsole/BrgGame.upk",
+        "fec8fca21ff1ec56a71aa734232655859412f5701204c9e11064b131f40d9b94"
+      ],
+      [
+        "BrgGame/CookedPCConsole/AS_CH_Main_Male_Common_SF.upk",
+        "617d73bdeb9fd482bb4f18ec523f222c75d49768d2025a0e125bebe41866f70a"
+      ],
+      [
+        "BrgGame/CookedPCConsole/Heaven_A01_ST_COL.upk",
+        "1cc9de6052b40224405c781604cc2bb3d9745f363dedac34ec86cf17933443d3"
+      ],
+      [
+        "BrgGame/CookedPCConsole/BrgStart_PL.upk",
+        "ca7d747567043eb1a34ad53bd78092f71c3dc0516ba3010e442d2a4da2d19e66"
+      ],
+      [
+        "BrgGame/Content/masters.db",
+        "3b4cbda81b883ab2f8fce2af85ef7f7559951d7b6c335645c10d8f58a7ddc11d"
+      ]
+    ]
+  }
+]

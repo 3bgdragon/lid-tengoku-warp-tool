@@ -1,0 +1,3386 @@
+{
+  "format": "LID-UI-26639365-AUDIT",
+  "build": 26639365,
+  "exportCount": 173769,
+  "symbols": {
+    "objects": {
+      "672": "BrgPawn_BaseNative.mbDeath",
+      "14684": "BrgUIBase.mUIManager",
+      "15017": "BrgUI_Utility.GetText.ReturnValue",
+      "15151": "BrgUI_Utility",
+      "15179": "BrgUIMenuPart_ItemMiniPanel.BrgUIMenu_ItemMiniPanel_Info.mPriceOrg",
+      "15180": "BrgUIMenuPart_ItemMiniPanel.BrgUIMenu_ItemMiniPanel_Info.mPrice",
+      "15181": "BrgUIMenuPart_ItemMiniPanel.BrgUIMenu_ItemMiniPanel_Info.mPriceType",
+      "15188": "BrgUIMenuPart_ItemMiniPanel.BrgUIMenu_ItemMiniPanel_Info",
+      "25196": "BrgGameInfoNative.mNetworkErrorDialog",
+      "25197": "BrgGameInfoNative.mUserData",
+      "25205": "BrgGameInfoNative.mStageManager",
+      "25235": "BrgGameInfoNative.mDebugEditParams",
+      "25408": "BrgGameInfoNative.mMenuGamePause",
+      "25910": "BrgGameInfoNative.IsHideBloodnium.ReturnValue",
+      "27527": "BrgGameInfo.RemoteEventCheckActivate.ReturnValue",
+      "29892": "BrgGameInfo",
+      "36402": "BrgDatabase.GetConstInt.ReturnValue",
+      "36744": "BrgCommonPawn_CustomCharaNative.mSkillStatus",
+      "36761": "BrgCommonPawn_CustomCharaNative.mDeathBag",
+      "36764": "BrgCommonPawn_CustomCharaNative.mEquipPartInfo",
+      "37369": "BrgCommonPawn_CustomCharaNative.DeathBag_SearchMushroom_Emsrid.ReturnValue",
+      "37374": "BrgCommonPawn_CustomCharaNative.DeathBag_SearchBeast_Ebstid.ReturnValue",
+      "37379": "BrgCommonPawn_CustomCharaNative.DeathBag_SearchItem_Eitemid.ReturnValue",
+      "37401": "BrgCommonPawn_CustomCharaNative.DeathBag_SearchPart_Eptid.ReturnValue",
+      "37760": "BrgCommonPawn_CustomCharaNative.BrgSkillStatus.bStopPauseMenu",
+      "37805": "BrgCommonPawn_CustomCharaNative.BrgSkillStatus",
+      "37903": "BrgCommonPawn_CustomCharaNative.BrgPossessionItemInfo.mItemInfo",
+      "37908": "BrgCommonPawn_CustomCharaNative.BrgPossessionItemInfo",
+      "41839": "BrgUIMenu_Base.mStateFirst",
+      "41840": "BrgUIMenu_Base.mPrevState",
+      "41841": "BrgUIMenu_Base.mState",
+      "45981": "BrgHUD.mUIManager",
+      "46016": "BrgHUD",
+      "47098": "BrgNetworkErrorDialog.GetNetworkResponseStateAndCheckRaid.ReturnValue",
+      "47107": "BrgNetworkErrorDialog.OpenNetworkErrorDialog.ReturnValue",
+      "47116": "BrgNetworkErrorDialog.IsNetworkErrorDialogOpened.ReturnValue",
+      "47120": "BrgNetworkErrorDialog.GetNetworkErrorDialogResult.ReturnValue",
+      "47144": "BrgNetworkErrorDialog",
+      "65641": "BrgUIHUD_SystemWindow.CheckEnd.ReturnValue",
+      "65645": "BrgUIHUD_SystemWindow.CheckCancel.ReturnValue",
+      "65647": "BrgUIHUD_SystemWindow.GetYesNoSelectIndex.ReturnValue",
+      "66492": "BrgSeqAct_SkillExchangeMenu.mShopOwnerActor",
+      "70287": "BrgUIDebugEditParams.mUISelectColor",
+      "70350": "BrgUIDebugEditParams.mMenu_MushroomShop_Alpha",
+      "72292": "BrgUIHUD_FortDefenseMessageDuringSuspend.Open.ReturnValue",
+      "72294": "BrgUIHUD_FortDefenseMessageDuringSuspend.isOpened.ReturnValue",
+      "72296": "BrgUIHUD_FortDefenseMessageDuringSuspend",
+      "74710": "BrgUIMenu_Insurance.mbClosedBySuspendException",
+      "74900": "BrgUIMenu_Insurance.IsEnd.ReturnValue",
+      "76104": "BrgUIManager",
+      "76178": "BrgUIMenu_SkillExchange_SkillList.BrgUIMenu_SkillExchange_SkillListSkill.SkillID",
+      "76179": "BrgUIMenu_SkillExchange_SkillList.BrgUIMenu_SkillExchange_SkillListSkill",
+      "77463": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_Info.mBaseInfo",
+      "77474": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_Info",
+      "77478": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_Unit.mDrawInfo",
+      "77479": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_Unit.mInfo",
+      "77480": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_Unit.mUseNewInfo",
+      "77481": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_Unit",
+      "77494": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_DispAndSelectInfo.mValid",
+      "77495": "BrgUIMenuPart_ItemSelect.BrgUIMenu_ItemSelect_DispAndSelectInfo",
+      "77767": "BrgUIMenu_CommonTop2.CheckEnd.ReturnValue",
+      "77769": "BrgUIMenu_CommonTop2.CheckIn.ReturnValue",
+      "77775": "BrgUIMenu_CommonTop2.CheckInIdle.ReturnValue",
+      "77779": "BrgUIMenu_CommonTop2.GetSelectIndex.ReturnValue",
+      "77781": "BrgUIMenu_CommonTop2.CheckCancel.ReturnValue",
+      "83663": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_MenuInfo.mNextState",
+      "83664": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_MenuInfo.mFromState",
+      "83665": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_MenuInfo.mMenuUnitIndex",
+      "83666": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_MenuInfo",
+      "83667": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_DiffInfo.mState",
+      "83668": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_DiffInfo.mItemId",
+      "83669": "BrgUIMenu_ShopBase.BrgUIMenu_ShopBase_DiffInfo",
+      "83676": "BrgUIMenu_ShopBase.mSellCoinLockerItemIds",
+      "83677": "BrgUIMenu_ShopBase.mNGSC",
+      "83678": "BrgUIMenu_ShopBase.mCancelSC",
+      "83679": "BrgUIMenu_ShopBase.mOKSC",
+      "83680": "BrgUIMenu_ShopBase.mSelectSC",
+      "83682": "BrgUIMenu_ShopBase.mCommerceInterfaceResult",
+      "83683": "BrgUIMenu_ShopBase.mDbUserPartResearch",
+      "83685": "BrgUIMenu_ShopBase.mItemDispAndSelectInfo",
+      "83686": "BrgUIMenu_ShopBase.mItemSelect",
+      "83687": "BrgUIMenu_ShopBase.mValidDeathBagSellItemCount",
+      "83688": "BrgUIMenu_ShopBase.mPossessionItems",
+      "83689": "BrgUIMenu_ShopBase.mCoinLockerSellItemFlags",
+      "83690": "BrgUIMenu_ShopBase.mDeathBagSellItemFlags",
+      "83691": "BrgUIMenu_ShopBase.mSellCoinLockerItemInfos",
+      "83692": "BrgUIMenu_ShopBase.mValidCoinLockerSellItemCount",
+      "83693": "BrgUIMenu_ShopBase.mDbUserShopHistorys",
+      "83694": "BrgUIMenu_ShopBase.mNetworkResponseSortcl",
+      "83695": "BrgUIMenu_ShopBase.mNetworkResponseUpdate_research",
+      "83698": "BrgUIMenu_ShopBase.mLimitInfo",
+      "83700": "BrgUIMenu_ShopBase.mYesNoSelectIndex",
+      "83701": "BrgUIMenu_ShopBase.mSellMenuSelectIndex",
+      "83702": "BrgUIMenu_ShopBase.mBuyMenuSelectIndex",
+      "83703": "BrgUIMenu_ShopBase.mSellTopMenuSelectIndex",
+      "83704": "BrgUIMenu_ShopBase.mDeathBagFullNextState",
+      "83706": "BrgUIMenu_ShopBase.mSelectPrice",
+      "83708": "BrgUIMenu_ShopBase.mInsuranceMenu_ClosedBySuspendException",
+      "83709": "BrgUIMenu_ShopBase.mInsuranceMenu_WaitTimeCancel",
+      "83710": "BrgUIMenu_ShopBase.mIsCoinLockerSell",
+      "83712": "BrgUIMenu_ShopBase.mRequestSellSE",
+      "83713": "BrgUIMenu_ShopBase.mRequestBuySE",
+      "83714": "BrgUIMenu_ShopBase.mUpdateResearchAfterSort",
+      "83715": "BrgUIMenu_ShopBase.mEnd",
+      "83717": "BrgUIMenu_ShopBase.mMenuInfoArray",
+      "83737": "BrgUIMenu_ShopBase.SetupSellTopMenu",
+      "83749": "BrgUIMenu_ShopBase.RefreshSellItem",
+      "83754": "BrgUIMenu_ShopBase.SetButtonGuideForBuy",
+      "83766": "BrgUIMenu_ShopBase.SetButtonGuideForSell",
+      "83772": "BrgUIMenu_ShopBase.AddSellCurrentFighterItemSelectPanel.lUnitIndex",
+      "83773": "BrgUIMenu_ShopBase.AddSellCurrentFighterItemSelectPanel.lIsVip",
+      "83774": "BrgUIMenu_ShopBase.AddSellCurrentFighterItemSelectPanel.lVipIncreaseDeathBag",
+      "83775": "BrgUIMenu_ShopBase.AddSellCurrentFighterItemSelectPanel.I",
+      "83776": "BrgUIMenu_ShopBase.AddSellCurrentFighterItemSelectPanel",
+      "83779": "BrgUIMenu_ShopBase.AddCoinLockerSellItemSelectPanel",
+      "83780": "BrgUIMenu_ShopBase.SellItem.lLocalItemInfo",
+      "83781": "BrgUIMenu_ShopBase.SellItem.lDeathBagIndex",
+      "83782": "BrgUIMenu_ShopBase.SellItem",
+      "83785": "BrgUIMenu_ShopBase.BuyItem",
+      "83789": "BrgUIMenu_ShopBase.GetBuyMessage",
+      "83797": "BrgUIMenu_ShopBase.TickASync.lPeriod",
+      "83798": "BrgUIMenu_ShopBase.TickASync.lCreated",
+      "83799": "BrgUIMenu_ShopBase.TickASync.DeltaTime",
+      "83800": "BrgUIMenu_ShopBase.TickASync",
+      "83806": "BrgUIMenu_ShopBase.Tick",
+      "83821": "BrgUIMenu_ShopBase.StartWaitShopState",
+      "83824": "BrgUIMenu_ShopBase.GetAdjustShopState",
+      "83825": "BrgUIMenu_ShopBase.GetShopState.ReturnValue",
+      "83827": "BrgUIMenu_ShopBase.GetShopState",
+      "83829": "BrgUIMenu_ShopBase.Render",
+      "83864": "BrgUIMenu_ItemVendingMachine.EBrgUIMenu_ItemVendingMachine_SteroidInfo.mLocalItemInfoList",
+      "83865": "BrgUIMenu_ItemVendingMachine.EBrgUIMenu_ItemVendingMachine_SteroidInfo.mbUpdate",
+      "83866": "BrgUIMenu_ItemVendingMachine.EBrgUIMenu_ItemVendingMachine_SteroidInfo",
+      "83872": "BrgUIMenu_ItemVendingMachine.mSteroidMenuSelectIndex",
+      "83873": "BrgUIMenu_ItemVendingMachine.mDisassembleSteroids",
+      "83874": "BrgUIMenu_ItemVendingMachine.mLimitedItemExpire",
+      "83876": "BrgUIMenu_ItemVendingMachine.mSelectSkillList",
+      "83880": "BrgUIMenu_ItemVendingMachine.mRmapMenuSelectIndex",
+      "83882": "BrgUIMenu_ItemVendingMachine.mShopLimitedItems",
+      "83883": "BrgUIMenu_ItemVendingMachine.mTopMenuSelectIndex",
+      "83884": "BrgUIMenu_ItemVendingMachine.mShopLineupType",
+      "83886": "BrgUIMenu_ItemVendingMachine.mSteroidAll",
+      "83887": "BrgUIMenu_ItemVendingMachine.mRmapAll",
+      "83889": "BrgUIMenu_ItemVendingMachine.mBuyOnly",
+      "83890": "BrgUIMenu_ItemVendingMachine.mShopMenuSeqAct",
+      "83902": "BrgUIMenu_ItemVendingMachine.GetMenuIndex.ReturnValue",
+      "83903": "BrgUIMenu_ItemVendingMachine.GetMenuIndex.inDefinition",
+      "83905": "BrgUIMenu_ItemVendingMachine.GetMenuDefinition.ReturnValue",
+      "83906": "BrgUIMenu_ItemVendingMachine.GetMenuDefinition.Index",
+      "83909": "BrgUIMenu_ItemVendingMachine.SetupTopMenu.lUnitArray",
+      "83914": "BrgUIMenu_ItemVendingMachine.SetButtonGuidePopup",
+      "83918": "BrgUIMenu_ItemVendingMachine.SetButtonGuideForRecycle",
+      "83922": "BrgUIMenu_ItemVendingMachine.SetButtonGuideForLimitedItemList",
+      "83926": "BrgUIMenu_ItemVendingMachine.SetButtonGuideForDisassembleSteroid",
+      "83957": "BrgUIMenu_ItemVendingMachine.GetDiscountExpire",
+      "83958": "BrgUIMenu_ItemVendingMachine.RefreshBloodniumMenu",
+      "83959": "BrgUIMenu_ItemVendingMachine.RefreshExcahgeMenu",
+      "83973": "BrgUIMenu_ItemVendingMachine.SetupLimitedItemPopup",
+      "83978": "BrgUIMenu_ItemVendingMachine.SetupLimitedBlueprintPopup",
+      "83981": "BrgUIMenu_ItemVendingMachine.SetupRecycleRmapMenu",
+      "83985": "BrgUIMenu_ItemVendingMachine.RefreshRecycleRmapMenu",
+      "83986": "BrgUIMenu_ItemVendingMachine.RefreshRecycleDecalMenu",
+      "84002": "BrgUIMenu_ItemVendingMachine.GetRecycleMessage",
+      "84006": "BrgUIMenu_ItemVendingMachine.AddLimitedListItemSelectPanel",
+      "84007": "BrgUIMenu_ItemVendingMachine.TickASync.DeltaTime",
+      "84009": "BrgUIMenu_ItemVendingMachine.Tick.DeltaTime",
+      "84011": "BrgUIMenu_ItemVendingMachine.Render.inHUD",
+      "84014": "BrgUIMenu_SkillExchange_SkillList.BrgUIMenu_SkillExchange_SkillListHaveMushroom.numMyboHave",
+      "84015": "BrgUIMenu_SkillExchange_SkillList.BrgUIMenu_SkillExchange_SkillListHaveMushroom",
+      "84036": "BrgUIMenu_ItemVendingMachine.Recycle",
+      "84039": "BrgUIMenu_ItemVendingMachine.SetupDisassembleSteroidMenu",
+      "84040": "BrgUIMenu_ItemVendingMachine.RefreshDisassembleSteroidMenu.lCoinLockerSteroidCount",
+      "84041": "BrgUIMenu_ItemVendingMachine.RefreshDisassembleSteroidMenu.lDeathBagSteroidCount",
+      "84042": "BrgUIMenu_ItemVendingMachine.RefreshDisassembleSteroidMenu.TopMenu",
+      "84043": "BrgUIMenu_ItemVendingMachine.RefreshDisassembleSteroidMenu",
+      "84050": "BrgUIMenu_ItemVendingMachine.UpdateCurrentStockInfoSteroid",
+      "84065": "BrgUIMenu_ItemVendingMachine.Disassemble",
+      "84069": "BrgUIMenu_ItemVendingMachine.GetDisassembleMessage",
+      "84070": "BrgUIMenu_ItemVendingMachine.RefreshDisassembleSteroid",
+      "84077": "BrgUIMenu_ItemVendingMachine",
+      "91754": "BrgUIMenu_SkillExchange.SkillExchange_GachaProperty.mConfirmTextId",
+      "91757": "BrgUIMenu_SkillExchange.SkillExchange_GachaProperty.mCost",
+      "91758": "BrgUIMenu_SkillExchange.SkillExchange_GachaProperty.mIsBOXGacha",
+      "91759": "BrgUIMenu_SkillExchange.SkillExchange_GachaProperty.mIsDeathMetalGacha",
+      "91760": "BrgUIMenu_SkillExchange.SkillExchange_GachaProperty.mGachaid",
+      "91761": "BrgUIMenu_SkillExchange.SkillExchange_GachaProperty",
+      "91772": "BrgUIMenu_SkillExchange.mColorYellow",
+      "91773": "BrgUIMenu_SkillExchange.mColorWhite",
+      "91774": "BrgUIMenu_SkillExchange.mGachaMenu_MenuFont",
+      "91775": "BrgUIMenu_SkillExchange.mGachaMenu_StringFont",
+      "91776": "BrgUIMenu_SkillExchange.mGachaMenu_TitleFont",
+      "91777": "BrgUIMenu_SkillExchange.mTermsOfService",
+      "91778": "BrgUIMenu_SkillExchange.mGachaMenuSelectItemNum",
+      "91779": "BrgUIMenu_SkillExchange.mGachaMenuVisibleAlpha",
+      "91781": "BrgUIMenu_SkillExchange.mNowGachas",
+      "91782": "BrgUIMenu_SkillExchange.mNowBoxgachas",
+      "91783": "BrgUIMenu_SkillExchange.mNetBOXGachaReset",
+      "91784": "BrgUIMenu_SkillExchange.mBOXGachaLineup",
+      "91785": "BrgUIMenu_SkillExchange.mBanner",
+      "91786": "BrgUIMenu_SkillExchange.mInsuranceMenu",
+      "91787": "BrgUIMenu_SkillExchange.mCurrentGachaProperty",
+      "91788": "BrgUIMenu_SkillExchange.mGachaPropertyArray",
+      "91789": "BrgUIMenu_SkillExchange.mDbSkillGachaArray",
+      "91790": "BrgUIMenu_SkillExchange.mVoiceCueListExchangeCanceled",
+      "91791": "BrgUIMenu_SkillExchange.mVoiceCueListExchangeDecided",
+      "91793": "BrgUIMenu_SkillExchange.mVoiceCueListTopMenuIdle",
+      "91794": "BrgUIMenu_SkillExchange.mTopMenuIdleVoiceTimer",
+      "91795": "BrgUIMenu_SkillExchange.mLastVoiceCue",
+      "91796": "BrgUIMenu_SkillExchange.mVoicePlayerActor",
+      "91798": "BrgUIMenu_SkillExchange.mGachaStickerExplane",
+      "91799": "BrgUIMenu_SkillExchange.mGachaStickerImage",
+      "91800": "BrgUIMenu_SkillExchange.mGachaResultSkillId",
+      "91801": "BrgUIMenu_SkillExchange.mNetResponseError",
+      "91802": "BrgUIMenu_SkillExchange.mNetGacha",
+      "91803": "BrgUIMenu_SkillExchange.mNetPutHistoryArray",
+      "91804": "BrgUIMenu_SkillExchange.mNetShopHistoryArray",
+      "91805": "BrgUIMenu_SkillExchange.mNetSendHistory",
+      "91806": "BrgUIMenu_SkillExchange.mNetMushroomShop",
+      "91807": "BrgUIMenu_SkillExchange.mSkillPut",
+      "91808": "BrgUIMenu_SkillExchange.mEquipSkillArray",
+      "91809": "BrgUIMenu_SkillExchange.mSelectedSkill",
+      "91810": "BrgUIMenu_SkillExchange.mSelectSkillList",
+      "91811": "BrgUIMenu_SkillExchange.mSkillList",
+      "91813": "BrgUIMenu_SkillExchange.mResumeState",
+      "91814": "BrgUIMenu_SkillExchange.mLastPlayedMatinee",
+      "91815": "BrgUIMenu_SkillExchange.mGachaMenu",
+      "91816": "BrgUIMenu_SkillExchange.mTopMenu",
+      "91817": "BrgUIMenu_SkillExchange.mSequenceAction",
+      "91818": "BrgUIMenu_SkillExchange.mHaveMushroom",
+      "91819": "BrgUIMenu_SkillExchange.mHaveSkillList",
+      "91821": "BrgUIMenu_SkillExchange.mbFinishedMatinee",
+      "91822": "BrgUIMenu_SkillExchange.mIsInWelcomeMatineeNetSameTime",
+      "91823": "BrgUIMenu_SkillExchange.mEnd",
+      "91825": "BrgUIMenu_SkillExchange.mConstParam",
+      "91829": "BrgUIMenu_SkillExchange.SetGachaTopMenuType",
+      "91831": "BrgUIMenu_SkillExchange.GetCommonTop2",
+      "91840": "BrgUIMenu_SkillExchange.PrepareTopMenu",
+      "91881": "BrgUIMenu_SkillExchange.StartSkillExchange.SequenceAction",
+      "91888": "BrgUIMenu_SkillExchange.GetDbSkillGacha",
+      "91899": "BrgUIMenu_SkillExchange.MakeGachaPropertyArray",
+      "91904": "BrgUIMenu_SkillExchange.SetButtonGuide",
+      "91908": "BrgUIMenu_SkillExchange.Tick.resetMessage",
+      "91909": "BrgUIMenu_SkillExchange.Tick.gachaIndex",
+      "91910": "BrgUIMenu_SkillExchange.Tick.debugMatinee",
+      "91911": "BrgUIMenu_SkillExchange.Tick.dbSkillGachaArray",
+      "91912": "BrgUIMenu_SkillExchange.Tick.numTopMenu",
+      "91913": "BrgUIMenu_SkillExchange.Tick.CurrentTime",
+      "91914": "BrgUIMenu_SkillExchange.Tick.gachaPropertyIndex",
+      "91915": "BrgUIMenu_SkillExchange.Tick.haveExchangeHistory",
+      "91916": "BrgUIMenu_SkillExchange.Tick.haveBuyHistory",
+      "91917": "BrgUIMenu_SkillExchange.Tick.shophistory",
+      "91918": "BrgUIMenu_SkillExchange.Tick.characterId",
+      "91919": "BrgUIMenu_SkillExchange.Tick.DbChara",
+      "91920": "BrgUIMenu_SkillExchange.Tick.gachaSkillId",
+      "91921": "BrgUIMenu_SkillExchange.Tick.netResState",
+      "91922": "BrgUIMenu_SkillExchange.Tick.Matinee",
+      "91923": "BrgUIMenu_SkillExchange.Tick.confirmMessage",
+      "91924": "BrgUIMenu_SkillExchange.Tick.numExchangeMushroom",
+      "91925": "BrgUIMenu_SkillExchange.Tick.exchangeMushroom",
+      "91926": "BrgUIMenu_SkillExchange.Tick.selectSkillMode",
+      "91927": "BrgUIMenu_SkillExchange.Tick.selectSkillResult",
+      "91928": "BrgUIMenu_SkillExchange.Tick.tempState",
+      "91929": "BrgUIMenu_SkillExchange.Tick.SelectedIndex",
+      "91930": "BrgUIMenu_SkillExchange.Tick.lVisiblePartGetMenu",
+      "91931": "BrgUIMenu_SkillExchange.Tick.DeltaTime",
+      "91936": "BrgUIMenu_SkillExchange.GetStateAfterGacha",
+      "91942": "BrgUIMenu_SkillExchange.BuySticker",
+      "91949": "BrgUIMenu_SkillExchange.SellSticker",
+      "91955": "BrgUIMenu_SkillExchange.ExchangeSticker",
+      "91958": "BrgUIMenu_SkillExchange.MakeHaveInformation",
+      "91995": "BrgUIMenu_SkillExchange.GetNumSkill",
+      "92014": "BrgUIMenu_SkillExchange.MakeBuySkillList",
+      "92021": "BrgUIMenu_SkillExchange.MakeSellSkillList",
+      "92032": "BrgUIMenu_SkillExchange.MakeSkillGachaList",
+      "92042": "BrgUIMenu_SkillExchange.MakeAllSkillList",
+      "92053": "BrgUIMenu_SkillExchange.MakeExchangeSkillList",
+      "92060": "BrgUIMenu_SkillExchange.GetExchangeMushroom",
+      "92080": "BrgUIMenu_SkillExchange.MakeEquipSkillArray",
+      "92102": "BrgUIMenu_SkillExchange.GetHaveDeathMetal",
+      "92108": "BrgUIMenu_SkillExchange.InitializeGachaResult",
+      "92112": "BrgUIMenu_SkillExchange.UpdateGachaResult",
+      "92113": "BrgUIMenu_SkillExchange.Render.gachaStickerGuide",
+      "92114": "BrgUIMenu_SkillExchange.Render.inHUD",
+      "92123": "BrgUIMenu_SkillExchange.NetGetMushroomShop",
+      "92133": "BrgUIMenu_SkillExchange.NetSendHistory",
+      "92139": "BrgUIMenu_SkillExchange.NetGacha",
+      "92143": "BrgUIMenu_SkillExchange.GetGachaSkillId",
+      "92152": "BrgUIMenu_SkillExchange.GetSkillGachaMatinee",
+      "92163": "BrgUIMenu_SkillExchange.NetBOXReset",
+      "92167": "BrgUIMenu_SkillExchange.StartMatinee",
+      "92168": "BrgUIMenu_SkillExchange.NotifyEnd",
+      "92170": "BrgUIMenu_SkillExchange.IsMatineeFinished",
+      "92172": "BrgUIMenu_SkillExchange.PlayConfirmVoice",
+      "92176": "BrgUIMenu_SkillExchange.PlayRandomVoice",
+      "92179": "BrgUIMenu_SkillExchange.StopVoice",
+      "92182": "BrgUIMenu_SkillExchange.GetBackTopMenuFromGacha",
+      "92184": "BrgUIMenu_SkillExchange.SetVisibleGachaMenu",
+      "92186": "BrgUIMenu_SkillExchange",
+      "92254": "BrgUIMenu_SkillExchange_Banner.GetNumGachaBanner.ReturnValue",
+      "92350": "BrgUIMenu_SkillExchange_BoxGachaLineup.IsBoxEmpty.ReturnValue",
+      "92352": "BrgUIMenu_SkillExchange_BoxGachaLineup.IsBoxFull.ReturnValue",
+      "92365": "BrgUIMenu_SkillExchange_BoxGachaLineup.IsEnd.ReturnValue",
+      "92664": "BrgUIMenu_SkillPut.IsBusy.ReturnValue",
+      "92669": "BrgUIMenu_SkillPut.GetResult.ReturnValue",
+      "95621": "BrgUIMenuPart_ShopLimitedItems.IsFadeEnd.ReturnValue",
+      "96905": "BrgUserData.IsAutomaticshopLampOn.ReturnValue",
+      "96907": "BrgUserData.IsAutomaticshopWeeklyBuyableOn.ReturnValue",
+      "96909": "BrgUserData.DisableAutomaticshopLamp.ReturnValue",
+      "96911": "BrgUserData.DisableAutomaticshopWeeklyBuyable.ReturnValue",
+      "96938": "BrgUserData.GetChara.ReturnValue",
+      "97939": "BrgUserData.CheckVip.ReturnValue",
+      "98067": "BrgUserData.GetWaithing.ReturnValue",
+      "98224": "BrgUserData.GetGameFlag.ReturnValue",
+      "105267": "BrgUIMenu_SkillExchange_SkillList.GetResult.ReturnValue",
+      "105271": "BrgUIMenu_SkillExchange_SkillList.GetCond.ReturnValue",
+      "105307": "BrgUIMenuPart_ItemSelect.mItemMiniPanel",
+      "105369": "BrgUIMenuPart_ItemSelect.mUnits",
+      "105449": "BrgUIMenuPart_ItemSelect.AddUnitFromLocalItemInfo.ReturnValue",
+      "105469": "BrgUIMenuPart_ItemSelect.AddEmptyUnit.ReturnValue",
+      "105477": "BrgUIMenuPart_ItemSelect.SetSelectUnitIndex.ReturnValue",
+      "105575": "BrgUIMenuPart_ItemSelect.GetSelectIndex.ReturnValue",
+      "105577": "BrgUIMenuPart_ItemSelect.GetSelectPrice.ReturnValue",
+      "105579": "BrgUIMenuPart_ItemSelect.GetSelectPriceType.ReturnValue",
+      "105583": "BrgUIMenuPart_ItemSelect.GetSelectItemID.ReturnValue",
+      "105587": "BrgUIMenuPart_ItemSelect.GetSelectItemState.ReturnValue",
+      "105597": "BrgUIMenuPart_ItemSelect.ApplyDispAndSelectInfo.ReturnValue",
+      "105604": "BrgUIMenuPart_ItemSelect.CheckDisableSelect.ReturnValue",
+      "105607": "BrgUIMenuPart_ItemSelect.CheckCountRed.ReturnValue",
+      "105610": "BrgUIMenuPart_ItemSelect.GetWaitTimeSelect.ReturnValue",
+      "105640": "BrgUIMenuPart_ItemSelect.GetSelectUnitSortType.ReturnValue",
+      "106044": "BrgUIMenuPart_ItemMiniPanel.CreateItemMiniPanelInfo_Part",
+      "106116": "BrgUIMenuPart_ItemSelect.IsDisplayList.ReturnValue",
+      "117269": "BrgUIManager.mCommonStatusMenuPart",
+      "117270": "BrgUIManager.mCommonTopMenu2",
+      "117274": "BrgUIManager.mDatabase",
+      "117309": "BrgUIManager.mGameInfo",
+      "117310": "BrgUIManager.mGameInfoNative",
+      "117322": "BrgUIManager.mInsuranceMenu",
+      "117324": "BrgUIManager.mItemInfoManager",
+      "117332": "BrgUIManager.mMenuButtonGuide",
+      "117339": "BrgUIManager.mOnMemoryResource",
+      "117348": "BrgUIManager.mPawnPlayerBase",
+      "117350": "BrgUIManager.mPlayerCommonPawnNative",
+      "117353": "BrgUIManager.mPlayerCtrlCustomChara",
+      "117362": "BrgUIManager.mQuickuse",
+      "117383": "BrgUIManager.mSkillExchange",
+      "117391": "BrgUIManager.mSystemWindow",
+      "117430": "BrgUIManager.mUserData",
+      "162939": "SN_SE_SYS_DeathBag.SN_SE_SYS_DeathBag_Sort",
+      "163025": "SN_SE_SYS_Gyakufunsha.SN_SE_SYS_Gyakufunsha_Buy",
+      "163031": "SN_SE_SYS_Gyakufunsha.SN_SE_SYS_Gyakufunsha_Sell",
+      "163035": "SN_SE_SYS_Hernia.SN_SE_SYS_Hernia_Message",
+      "163091": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_Cancel",
+      "163092": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_Decal",
+      "163093": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_NG",
+      "163094": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_OK",
+      "163095": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_Poster_In",
+      "163096": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_Poster_Out",
+      "163097": "SN_SE_SYS_MomokoShop.SN_SE_SYS_MomokoShop_Select",
+      "172020": "BrgUIManager.mMenu_MushroomShop_Color",
+      "-446": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mEnable",
+      "-7714": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo",
+      "-727": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mItemType",
+      "-10334": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mDbPsPartAutoInfo",
+      "-10326": "BrgGameBase.BrgGameDefine.BrgDbPsPart_AutoSetupInfo.mDbPart",
+      "-7713": "BrgGameBase.BrgGameDefine.BrgDbPsPart_AutoSetupInfo",
+      "-3066": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPart.mCapacity",
+      "-7914": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPart",
+      "-3088": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPart.mSpare",
+      "-10333": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mDbPsPart",
+      "-3194": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPsPart.mRest",
+      "-7934": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPsPart",
+      "-3195": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPsPart.mSpare",
+      "-3192": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPsPart.mDur",
+      "-10081": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPsPart.mEptid",
+      "-3389": "BrgGameBase.BrgUIManagerBase.mEdgeInput",
+      "-2708": "BrgGameBase.BrgUtilityNativeBase.GetUtcSecond.ReturnValue",
+      "-1077": "BrgGameBase.BrgUtilityNativeBase",
+      "-2173": "BrgGameBase.BrgUtilityNativeBase.GetUtcSecond",
+      "-3621": "BrgGameBase.BrgUIFontRender.BrgUIFontRenderState.mFont",
+      "-8082": "BrgGameBase.BrgUIFontRender.BrgUIFontRenderState",
+      "-3633": "BrgGameBase.BrgUIManagerBase.mFont",
+      "-1642": "BrgGameBase.BrgUIFontRender.BrgUIFontRenderState.mScaleX",
+      "-1669": "BrgGameBase.BrgUIParamEditMenuParam.GetF.ReturnValue",
+      "-1643": "BrgGameBase.BrgUIFontRender.BrgUIFontRenderState.mScaleY",
+      "-1638": "BrgGameBase.BrgUIFontRender.BrgUIFontRenderState.mAddX",
+      "-1639": "BrgGameBase.BrgUIFontRender.BrgUIFontRenderState.mAddY",
+      "-10336": "BrgGameBase.BrgHUDBase.AnalyseColorString.ReturnValue",
+      "-930": "BrgGameBase.BrgParamMove",
+      "-299": "BrgGameBase.BrgNetworkResponseGetmushroomshop.mBoxgachas",
+      "-300": "BrgGameBase.BrgNetworkResponseGetmushroomshop.mGachas",
+      "-7664": "Engine.WorldInfo.Game",
+      "-7608": "Engine.Engine.GetCurrentWorldInfo.ReturnValue",
+      "-1174": "Engine.Engine",
+      "-2338": "Engine.Engine.GetCurrentWorldInfo",
+      "-711": "GHMEngine.GHM_SoundManager.IsPlaying.ReturnValue",
+      "-7677": "GHMEngine.GHM_SoundManager.Instance.ReturnValue",
+      "-1454": "GHMEngine.GHM_SoundManager",
+      "-2650": "GHMEngine.GHM_SoundManager.Instance",
+      "-2651": "GHMEngine.GHM_SoundManager.IsPlaying",
+      "-9800": "BrgGameBase.BrgNetworkDeclStruct.BrgDbChara.mCid",
+      "-7771": "BrgGameBase.BrgNetworkDeclStruct.BrgDbChara",
+      "-10198": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserMushroomShopHistory.mType",
+      "-8034": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserMushroomShopHistory",
+      "-10559": "BrgGameBase.BrgNetworkResponseMushroomshop.mCl",
+      "-3393": "BrgGameBase.BrgUIManagerBase.mRepeatInput",
+      "-370": "BrgGameBase.BrgNetworkResponseSkillgacha.mBoxgachas",
+      "-208": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserBoxGacha.mContents",
+      "-8024": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserBoxGacha",
+      "-121": "BrgGameBase.BrgNetworkDeclStruct.BrgDbGacha.mContents",
+      "-7826": "BrgGameBase.BrgNetworkDeclStruct.BrgDbGacha",
+      "-10302": "BrgGameBase.BrgUIManagerBase.GetLocalizeTextST.ReturnValue",
+      "-351": "BrgGameBase.BrgNetworkResponseResetboxgacha.mBoxgachas",
+      "-4809": "BrgGameBase.BrgUIResource_EnmaMenuImageManager.GetSkillStickerImage.ReturnValue",
+      "-3632": "BrgGameBase.BrgUIManagerBase.mEnmaMenuImageManager",
+      "-7089": "BrgGameBase.BrgUIResource_PauseMenu_v01.stx_ui_pausemenu_v01__mushroom_all__mushroom_v04.l__guide_sticker_v00",
+      "-9451": "BrgGameBase.BrgUIResource_PauseMenu_v01.stx_ui_pausemenu_v01__mushroom_all__mushroom_v04",
+      "-11972": "BrgGameBase.BrgUIResource_PauseMenu_v01.stx_ui_pausemenu_v01__mushroom_all.l_mushroom_v04",
+      "-9410": "BrgGameBase.BrgUIResource_PauseMenu_v01.stx_ui_pausemenu_v01__mushroom_all",
+      "-11907": "BrgGameBase.BrgUIResource_PauseMenu_v01.l_mushroom_all",
+      "-6651": "BrgGameBase.BrgUIResource_OnMemory.mPauseMenu_v01_Resource",
+      "-3380": "BrgGameBase.BrgUIImage.mPosX",
+      "-3381": "BrgGameBase.BrgUIImage.mPosY",
+      "-3382": "BrgGameBase.BrgUIImage.mUseSizeX",
+      "-3383": "BrgGameBase.BrgUIImage.mUseSizeY",
+      "-748": "BrgGameBase.BrgUIDefine.BrgUIMenu_CommonTop2Unit.mIcon",
+      "-8079": "BrgGameBase.BrgUIDefine.BrgUIMenu_CommonTop2Unit",
+      "-10300": "BrgGameBase.BrgUIDefine.BrgUIMenu_CommonTop2Unit.mName",
+      "-476": "BrgGameBase.BrgNetworkResponseInterface.IsDone.ReturnValue",
+      "-477": "BrgGameBase.BrgNetworkResponseInterface.IsError.ReturnValue",
+      "-10219": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory.mType",
+      "-8042": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory",
+      "-10215": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory.mEptid",
+      "-10217": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory.mPtid",
+      "-10214": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory.mEmsrid",
+      "-10212": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory.mEbstid",
+      "-10213": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserShopHistory.mEitemid",
+      "-10010": "BrgGameBase.BrgNetworkDeclStruct.BrgDbMushroomEntity.mEmsrid",
+      "-7900": "BrgGameBase.BrgNetworkDeclStruct.BrgDbMushroomEntity",
+      "-11": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mDbMushroomEntity",
+      "-10082": "BrgGameBase.BrgNetworkDeclStruct.BrgDbPsPart.mPtid",
+      "-9781": "BrgGameBase.BrgNetworkDeclStruct.BrgDbBeastEntity.mEbstid",
+      "-7753": "BrgGameBase.BrgNetworkDeclStruct.BrgDbBeastEntity",
+      "-10329": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mDbBeastEntity",
+      "-9921": "BrgGameBase.BrgNetworkDeclStruct.BrgDbItemEntity.mEitemid",
+      "-7845": "BrgGameBase.BrgNetworkDeclStruct.BrgDbItemEntity",
+      "-10331": "BrgGameBase.BrgGameDefine.BrgLocalItemInfo.mDbItemEntity",
+      "-758": "BrgGameBase.BrgUIManagerBase.mDeathBagSortType",
+      "-10200": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserPartResearch.mPtid",
+      "-8036": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserPartResearch",
+      "-3261": "BrgGameBase.BrgNetworkDeclStruct.BrgDbUserPartResearch.mLvl"
+    },
+    "names": {
+      "121": "AbortRestartGame",
+      "474": "AddBuyItemSelectPanel",
+      "545": "AddEmptyUnit",
+      "661": "AddParamDispNum",
+      "673": "AddPlaySoundCue",
+      "776": "AddUnitFromLocalItemInfo",
+      "894": "AllSetVisibleSelectUnit",
+      "920": "AnalyseColorString",
+      "3151": "ApplyDispAndSelectInfo",
+      "9731": "BuildCoinLockerCaches",
+      "9852": "BuyMatinee",
+      "9876": "ByeMatinee",
+      "10197": "CancelRequest",
+      "11010": "ChangeSelectUnitDispItem",
+      "11011": "ChangeSelectUnitSortType",
+      "11012": "ChangeSelectUnitSortTypeSet",
+      "11165": "CheckCancel",
+      "11188": "CheckCountRed",
+      "11212": "CheckDisableSelect",
+      "11237": "CheckEnd",
+      "11296": "CheckIn",
+      "11298": "CheckInIdle",
+      "11340": "CheckNewMark",
+      "11433": "CheckStop",
+      "11465": "CheckVip",
+      "11574": "Clear",
+      "11680": "ClearLineup",
+      "13129": "DeathBag_Delete",
+      "13150": "DeathBag_SearchBeast_Ebstid",
+      "13151": "DeathBag_SearchItem_Eitemid",
+      "13154": "DeathBag_SearchMushroom_Emsrid",
+      "13157": "DeathBag_SearchPart_Eptid",
+      "15377": "DeleteGotSkill",
+      "15601": "DisableAutomaticshopLamp",
+      "15602": "DisableAutomaticshopWeeklyBuyable",
+      "15623": "DisassembleSteroidCancelBackMenu",
+      "15791": "Draw_ExtImage",
+      "24642": "EndRequest",
+      "25740": "Finish",
+      "26916": "GetAdjustShopState",
+      "27173": "GetChara",
+      "27238": "GetCond",
+      "27248": "GetConstInt",
+      "27436": "GetDeathBagSpace",
+      "27496": "GetDispAndSelectInfo",
+      "27642": "GetF",
+      "27739": "GetGameFlag",
+      "27956": "GetLocalizeTextST",
+      "28060": "GetMenuDefinition",
+      "28061": "GetMenuIndex",
+      "28170": "GetNetworkErrorDialogResult",
+      "28172": "GetNetworkResponseStateAndCheckRaid",
+      "28199": "GetNumGachaBanner",
+      "28538": "GetResult",
+      "28562": "GetSafeMoney",
+      "28591": "GetSelectIndex",
+      "28594": "GetSelectItemID",
+      "28596": "GetSelectItemState",
+      "28599": "GetSelectPrice",
+      "28601": "GetSelectPriceType",
+      "28607": "GetSelectUnitSortType",
+      "28627": "GetShopState",
+      "28655": "GetSkillGachaArrayInPeriodID",
+      "28684": "GetSkillStickerImage",
+      "28844": "GetText",
+      "28969": "GetWaithing",
+      "28972": "GetWaitTimeSelect",
+      "29026": "GetYesNoSelectIndex",
+      "29231": "GotoTitle",
+      "30424": "Initialize",
+      "30587": "InitializeUseDeathMetal",
+      "31292": "IsAutomaticshopLampOn",
+      "31293": "IsAutomaticshopWeeklyBuyableOn",
+      "31337": "IsBoxEmpty",
+      "31338": "IsBoxFull",
+      "31353": "IsBusy",
+      "31367": "IsBuyLimit",
+      "31692": "IsDecalCancel",
+      "31693": "IsDecalSelected",
+      "31721": "IsDisplayList",
+      "31722": "IsDone",
+      "31772": "IsEnd",
+      "31814": "IsError",
+      "31829": "IsFadeEnd",
+      "31937": "IsHideBloodnium",
+      "32183": "IsNetworkErrorDialogOpened",
+      "32221": "isOpened",
+      "32359": "IsRmapCancel",
+      "32360": "IsRmapSelected",
+      "32427": "IsSteroidCancel",
+      "32428": "IsSteroidSelected",
+      "55773": "OnBackFromBuyMenu",
+      "55778": "OnBuyCancel",
+      "55779": "OnBuyFinished",
+      "55780": "OnBuyTimeWaitCancel",
+      "55800": "OnDeathBagFull",
+      "56025": "OnSellFinished",
+      "56028": "OnShopEnd",
+      "56033": "OnStartBuyChoiceIn",
+      "56074": "Open",
+      "56095": "OpenNetworkErrorDialog",
+      "57854": "Process",
+      "59299": "RecycleCancelBackMenu",
+      "59301": "RecycleMatinee",
+      "59366": "RefreshBuyItem",
+      "59385": "RefreshQuickUseItemInfo",
+      "59395": "RefreshSellMenu",
+      "59396": "RefreshShopMenu",
+      "59400": "RefreshUnits",
+      "59465": "ReleaseWaitCond",
+      "59507": "RemoteEventCheckActivate",
+      "59604": "Render",
+      "59701": "RenderGachaMenu",
+      "59825": "RenderProcess",
+      "60251": "ResetUnitArray",
+      "60326": "ResumeMenu",
+      "60330": "ResumeSelectSkillList",
+      "60929": "SelectSkillList",
+      "61162": "SetBackgroundAlpha",
+      "61163": "SetBackgroundColor",
+      "61165": "SetBackgroundVisible",
+      "61247": "SetButtonGuideNormal",
+      "61433": "SetDisableInput",
+      "61440": "SetDisplayList",
+      "61442": "SetDispState",
+      "61443": "SetDispType",
+      "61449": "SetDrawColor",
+      "61505": "SetEnableSelect",
+      "61612": "SetGachaBanner",
+      "61697": "SetInputEnable",
+      "61736": "SetItemSelectType",
+      "61740": "SetItemVMLightEnable",
+      "61795": "SetLineup",
+      "62009": "SetPauseState",
+      "62130": "SetRenderHowGet",
+      "62180": "SetSafeMoney",
+      "62211": "SetSelectUnitIndex",
+      "62263": "SetStartButtonInput",
+      "62387": "SetType",
+      "62393": "SetUnitArray",
+      "62395": "SetUnitDisableSelect",
+      "62396": "SetUnitDisableSelectForce",
+      "62397": "SetUnitEmpty",
+      "62399": "SetUnitVIPMark",
+      "62432": "SetupDecalSelect",
+      "62521": "SetupRmapSelect",
+      "62535": "SetupSteroidSelect",
+      "62543": "SetupTopMenu",
+      "62554": "SetupWhiteTexMIC",
+      "62589": "SetVisible",
+      "62605": "SetVisibleRemainTime",
+      "70655": "SortSellItems",
+      "71002": "Start",
+      "71039": "StartBuyMenu",
+      "71056": "StartCommonTop2",
+      "71175": "StartInsuranceMenu",
+      "71190": "StartLineup",
+      "71257": "StartPut",
+      "71311": "StartSkillExchange",
+      "71312": "StartSkillExchangeBanner",
+      "71332": "StartSystemMessageSub",
+      "71356": "StartUpdateResearch",
+      "71357": "StartUpdateResearchError",
+      "71372": "StartWait",
+      "73602": "Terminate",
+      "73813": "Tick",
+      "73972": "TickProcess",
+      "78177": "UpdateBuyItem",
+      "78202": "UpdateCurrentStockInfo",
+      "78216": "UpdateDispResourceNum",
+      "78949": "WelcomeMatinee"
+    }
+  },
+  "custom": {
+    "decalsMenu": 7,
+    "ammoMenu": 8,
+    "modalState": 23,
+    "normalState": 7,
+    "shopStateBase": 23
+  },
+  "startShopEvidence": {
+    "name": "BrgUIMenu_ItemVendingMachine.StartItemVendingMachine",
+    "export": 83896,
+    "size": 440,
+    "sha256": "88365f3d1866c6e521799ba3e7636310e979602fd03924325826516cf64ef0f8",
+    "at": 59,
+    "bytes": "1c0a4701002c1716"
+  },
+  "functions": [
+    {
+      "name": "BrgUIMenu_ShopBase.AddSellCurrentFighterItemSelectPanel",
+      "index": 83775,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "c8f10c6ad52d877c62763278f6a8c65f2f55a0bd0ddd2a8f11accbd9b035eac0",
+      "jumps": [
+        {
+          "at": 44,
+          "before": 160
+        },
+        {
+          "at": 124,
+          "before": 588
+        },
+        {
+          "at": 140,
+          "before": 310
+        },
+        {
+          "at": 220,
+          "before": 498
+        },
+        {
+          "at": 278,
+          "before": 498
+        },
+        {
+          "at": 347,
+          "before": 574
+        },
+        {
+          "at": 406,
+          "before": 171
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ShopBase.SellItem",
+      "index": 83781,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "bcee4d7253a5a71c2be22c0b379e41a1249ce01293ec3370e48cbf73807206dd",
+      "jumps": [
+        {
+          "at": 1,
+          "before": 67
+        },
+        {
+          "at": 41,
+          "before": 152
+        },
+        {
+          "at": 360,
+          "before": 778
+        },
+        {
+          "at": 421,
+          "before": 775
+        },
+        {
+          "at": 504,
+          "before": 1541
+        },
+        {
+          "at": 507,
+          "before": 1092
+        },
+        {
+          "at": 620,
+          "before": 1089
+        },
+        {
+          "at": 702,
+          "before": 1541
+        },
+        {
+          "at": 705,
+          "before": 1315
+        },
+        {
+          "at": 764,
+          "before": 1312
+        },
+        {
+          "at": 845,
+          "before": 1541
+        },
+        {
+          "at": 848,
+          "before": 1538
+        },
+        {
+          "at": 907,
+          "before": 1535
+        },
+        {
+          "at": 988,
+          "before": 1541
+        },
+        {
+          "at": 994,
+          "before": 1634
+        },
+        {
+          "at": 1006,
+          "before": 1634
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ShopBase.TickASync",
+      "index": 83799,
+      "at": 93,
+      "memoryAt": 121,
+      "stockSha256": "fb0ad52fb1680f0f0c2a7ceb56a33861804219f5f4a52553bce5e2e5c5b83e08",
+      "jumps": [
+        {
+          "at": 29,
+          "before": 95
+        },
+        {
+          "at": 78,
+          "before": 7504
+        },
+        {
+          "at": 115,
+          "before": 158
+        },
+        {
+          "at": 120,
+          "before": 7504
+        },
+        {
+          "at": 123,
+          "before": 404
+        },
+        {
+          "at": 128,
+          "before": 326
+        },
+        {
+          "at": 251,
+          "before": 401
+        },
+        {
+          "at": 306,
+          "before": 7504
+        },
+        {
+          "at": 309,
+          "before": 925
+        },
+        {
+          "at": 314,
+          "before": 582
+        },
+        {
+          "at": 435,
+          "before": 922
+        },
+        {
+          "at": 474,
+          "before": 740
+        },
+        {
+          "at": 546,
+          "before": 922
+        },
+        {
+          "at": 633,
+          "before": 883
+        },
+        {
+          "at": 645,
+          "before": 905
+        },
+        {
+          "at": 648,
+          "before": 902
+        },
+        {
+          "at": 660,
+          "before": 905
+        },
+        {
+          "at": 679,
+          "before": 7504
+        },
+        {
+          "at": 682,
+          "before": 1650
+        },
+        {
+          "at": 687,
+          "before": 1630
+        },
+        {
+          "at": 704,
+          "before": 1243
+        },
+        {
+          "at": 857,
+          "before": 1237
+        },
+        {
+          "at": 910,
+          "before": 7504
+        },
+        {
+          "at": 913,
+          "before": 1630
+        },
+        {
+          "at": 1028,
+          "before": 1453
+        },
+        {
+          "at": 1067,
+          "before": 1556
+        },
+        {
+          "at": 1141,
+          "before": 1630
+        },
+        {
+          "at": 1204,
+          "before": 7504
+        },
+        {
+          "at": 1207,
+          "before": 2794
+        },
+        {
+          "at": 1212,
+          "before": 1766
+        },
+        {
+          "at": 1295,
+          "before": 2137
+        },
+        {
+          "at": 1430,
+          "before": 2030
+        },
+        {
+          "at": 1483,
+          "before": 2117
+        },
+        {
+          "at": 1495,
+          "before": 2077
+        },
+        {
+          "at": 1515,
+          "before": 2092
+        },
+        {
+          "at": 1551,
+          "before": 2134
+        },
+        {
+          "at": 1567,
+          "before": 2791
+        },
+        {
+          "at": 1570,
+          "before": 2357
+        },
+        {
+          "at": 1680,
+          "before": 2344
+        },
+        {
+          "at": 1722,
+          "before": 2354
+        },
+        {
+          "at": 1735,
+          "before": 2791
+        },
+        {
+          "at": 1738,
+          "before": 2489
+        },
+        {
+          "at": 1766,
+          "before": 2486
+        },
+        {
+          "at": 1831,
+          "before": 2791
+        },
+        {
+          "at": 1834,
+          "before": 2791
+        },
+        {
+          "at": 1948,
+          "before": 2750
+        },
+        {
+          "at": 2020,
+          "before": 2791
+        },
+        {
+          "at": 2052,
+          "before": 7504
+        },
+        {
+          "at": 2055,
+          "before": 3364
+        },
+        {
+          "at": 2060,
+          "before": 2977
+        },
+        {
+          "at": 2194,
+          "before": 3361
+        },
+        {
+          "at": 2233,
+          "before": 3167
+        },
+        {
+          "at": 2329,
+          "before": 3361
+        },
+        {
+          "at": 2348,
+          "before": 3253
+        },
+        {
+          "at": 2474,
+          "before": 7504
+        },
+        {
+          "at": 2477,
+          "before": 3730
+        },
+        {
+          "at": 2482,
+          "before": 3710
+        },
+        {
+          "at": 2499,
+          "before": 3413
+        },
+        {
+          "at": 2515,
+          "before": 7504
+        },
+        {
+          "at": 2518,
+          "before": 3442
+        },
+        {
+          "at": 2544,
+          "before": 7504
+        },
+        {
+          "at": 2693,
+          "before": 3710
+        },
+        {
+          "at": 2756,
+          "before": 7504
+        },
+        {
+          "at": 2759,
+          "before": 4768
+        },
+        {
+          "at": 2764,
+          "before": 3889
+        },
+        {
+          "at": 2895,
+          "before": 4214
+        },
+        {
+          "at": 3040,
+          "before": 4166
+        },
+        {
+          "at": 3080,
+          "before": 4211
+        },
+        {
+          "at": 3116,
+          "before": 4765
+        },
+        {
+          "at": 3119,
+          "before": 4765
+        },
+        {
+          "at": 3233,
+          "before": 4442
+        },
+        {
+          "at": 3284,
+          "before": 4765
+        },
+        {
+          "at": 3287,
+          "before": 4541
+        },
+        {
+          "at": 3359,
+          "before": 4765
+        },
+        {
+          "at": 3362,
+          "before": 4724
+        },
+        {
+          "at": 3456,
+          "before": 4704
+        },
+        {
+          "at": 3490,
+          "before": 4721
+        },
+        {
+          "at": 3506,
+          "before": 4765
+        },
+        {
+          "at": 3538,
+          "before": 7504
+        },
+        {
+          "at": 3541,
+          "before": 5264
+        },
+        {
+          "at": 3546,
+          "before": 4906
+        },
+        {
+          "at": 3639,
+          "before": 5261
+        },
+        {
+          "at": 3720,
+          "before": 5158
+        },
+        {
+          "at": 3820,
+          "before": 5261
+        },
+        {
+          "at": 3839,
+          "before": 5244
+        },
+        {
+          "at": 3898,
+          "before": 7504
+        },
+        {
+          "at": 3901,
+          "before": 5947
+        },
+        {
+          "at": 3906,
+          "before": 5736
+        },
+        {
+          "at": 3923,
+          "before": 5498
+        },
+        {
+          "at": 4060,
+          "before": 7504
+        },
+        {
+          "at": 4225,
+          "before": 5944
+        },
+        {
+          "at": 4249,
+          "before": 5798
+        },
+        {
+          "at": 4268,
+          "before": 5944
+        },
+        {
+          "at": 4271,
+          "before": 5841
+        },
+        {
+          "at": 4303,
+          "before": 5944
+        },
+        {
+          "at": 4381,
+          "before": 7504
+        },
+        {
+          "at": 4384,
+          "before": 6176
+        },
+        {
+          "at": 4389,
+          "before": 6021
+        },
+        {
+          "at": 4442,
+          "before": 6173
+        },
+        {
+          "at": 4477,
+          "before": 6084
+        },
+        {
+          "at": 4482,
+          "before": 6173
+        },
+        {
+          "at": 4485,
+          "before": 6109
+        },
+        {
+          "at": 4503,
+          "before": 6173
+        },
+        {
+          "at": 4506,
+          "before": 6134
+        },
+        {
+          "at": 4524,
+          "before": 6173
+        },
+        {
+          "at": 4527,
+          "before": 6159
+        },
+        {
+          "at": 4545,
+          "before": 6173
+        },
+        {
+          "at": 4548,
+          "before": 6167
+        },
+        {
+          "at": 4553,
+          "before": 6173
+        },
+        {
+          "at": 4559,
+          "before": 6173
+        },
+        {
+          "at": 4562,
+          "before": 7504
+        },
+        {
+          "at": 4565,
+          "before": 6531
+        },
+        {
+          "at": 4570,
+          "before": 6288
+        },
+        {
+          "at": 4641,
+          "before": 6528
+        },
+        {
+          "at": 4696,
+          "before": 6466
+        },
+        {
+          "at": 4764,
+          "before": 6528
+        },
+        {
+          "at": 4813,
+          "before": 7504
+        },
+        {
+          "at": 4816,
+          "before": 6658
+        },
+        {
+          "at": 4821,
+          "before": 6608
+        },
+        {
+          "at": 4838,
+          "before": 6608
+        },
+        {
+          "at": 4877,
+          "before": 6655
+        },
+        {
+          "at": 4916,
+          "before": 7504
+        },
+        {
+          "at": 4919,
+          "before": 7013
+        },
+        {
+          "at": 4924,
+          "before": 6770
+        },
+        {
+          "at": 4995,
+          "before": 7010
+        },
+        {
+          "at": 5050,
+          "before": 6948
+        },
+        {
+          "at": 5118,
+          "before": 7010
+        },
+        {
+          "at": 5167,
+          "before": 7504
+        },
+        {
+          "at": 5170,
+          "before": 7140
+        },
+        {
+          "at": 5175,
+          "before": 7090
+        },
+        {
+          "at": 5192,
+          "before": 7090
+        },
+        {
+          "at": 5231,
+          "before": 7137
+        },
+        {
+          "at": 5270,
+          "before": 7504
+        },
+        {
+          "at": 5273,
+          "before": 7501
+        },
+        {
+          "at": 5278,
+          "before": 7419
+        },
+        {
+          "at": 5484,
+          "before": 7498
+        },
+        {
+          "at": 5543,
+          "before": 7504
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.GetMenuDefinition",
+      "index": 83906,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "12da95639dffcc7a7d69650e6e77c0acb9822855ce1d35b5b6e93043b4d4fca1",
+      "jumps": [
+        {
+          "at": 1,
+          "before": 137
+        },
+        {
+          "at": 51,
+          "before": 81
+        },
+        {
+          "at": 58,
+          "before": 107
+        },
+        {
+          "at": 62,
+          "before": 104
+        },
+        {
+          "at": 74,
+          "before": 107
+        },
+        {
+          "at": 80,
+          "before": 115
+        },
+        {
+          "at": 88,
+          "before": 123
+        },
+        {
+          "at": 96,
+          "before": 131
+        },
+        {
+          "at": 107,
+          "before": 224
+        },
+        {
+          "at": 121,
+          "before": 163
+        },
+        {
+          "at": 128,
+          "before": 189
+        },
+        {
+          "at": 132,
+          "before": 186
+        },
+        {
+          "at": 144,
+          "before": 189
+        },
+        {
+          "at": 150,
+          "before": 197
+        },
+        {
+          "at": 158,
+          "before": 205
+        },
+        {
+          "at": 166,
+          "before": 213
+        },
+        {
+          "at": 174,
+          "before": 221
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.SetupTopMenu",
+      "index": 83909,
+      "at": 798,
+      "memoryAt": 1098,
+      "stockSha256": "00d69d67cba35651153afdf24b328858e724afb778f118f23646ca3624dfe428",
+      "jumps": [
+        {
+          "at": 155,
+          "before": 1098
+        },
+        {
+          "at": 166,
+          "before": 451
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.TickASync",
+      "index": 84007,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "c695da6a64dede3518557df4aa372f85ff94ee04ee0af38de973adcd6af9f416",
+      "jumps": [
+        {
+          "at": 12,
+          "before": 8322
+        },
+        {
+          "at": 95,
+          "before": 141
+        },
+        {
+          "at": 99,
+          "before": 8322
+        },
+        {
+          "at": 102,
+          "before": 233
+        },
+        {
+          "at": 107,
+          "before": 230
+        },
+        {
+          "at": 124,
+          "before": 220
+        },
+        {
+          "at": 158,
+          "before": 230
+        },
+        {
+          "at": 171,
+          "before": 8322
+        },
+        {
+          "at": 174,
+          "before": 757
+        },
+        {
+          "at": 178,
+          "before": 679
+        },
+        {
+          "at": 187,
+          "before": 279
+        },
+        {
+          "at": 209,
+          "before": 8322
+        },
+        {
+          "at": 212,
+          "before": 318
+        },
+        {
+          "at": 240,
+          "before": 8322
+        },
+        {
+          "at": 243,
+          "before": 366
+        },
+        {
+          "at": 280,
+          "before": 8322
+        },
+        {
+          "at": 512,
+          "before": 754
+        },
+        {
+          "at": 571,
+          "before": 8322
+        },
+        {
+          "at": 574,
+          "before": 1575
+        },
+        {
+          "at": 579,
+          "before": 1041
+        },
+        {
+          "at": 596,
+          "before": 1041
+        },
+        {
+          "at": 770,
+          "before": 1080
+        },
+        {
+          "at": 798,
+          "before": 8322
+        },
+        {
+          "at": 801,
+          "before": 1555
+        },
+        {
+          "at": 872,
+          "before": 1552
+        },
+        {
+          "at": 1121,
+          "before": 1572
+        },
+        {
+          "at": 1141,
+          "before": 8322
+        },
+        {
+          "at": 1144,
+          "before": 2327
+        },
+        {
+          "at": 1149,
+          "before": 1619
+        },
+        {
+          "at": 1177,
+          "before": 8322
+        },
+        {
+          "at": 1180,
+          "before": 1898
+        },
+        {
+          "at": 1197,
+          "before": 1898
+        },
+        {
+          "at": 1371,
+          "before": 1937
+        },
+        {
+          "at": 1399,
+          "before": 8322
+        },
+        {
+          "at": 1402,
+          "before": 2307
+        },
+        {
+          "at": 1473,
+          "before": 2304
+        },
+        {
+          "at": 1653,
+          "before": 2324
+        },
+        {
+          "at": 1673,
+          "before": 8322
+        },
+        {
+          "at": 1676,
+          "before": 2739
+        },
+        {
+          "at": 1681,
+          "before": 2661
+        },
+        {
+          "at": 1718,
+          "before": 2444
+        },
+        {
+          "at": 1922,
+          "before": 2736
+        },
+        {
+          "at": 1981,
+          "before": 8322
+        },
+        {
+          "at": 1984,
+          "before": 3425
+        },
+        {
+          "at": 1989,
+          "before": 2886
+        },
+        {
+          "at": 2091,
+          "before": 3422
+        },
+        {
+          "at": 2130,
+          "before": 3050
+        },
+        {
+          "at": 2212,
+          "before": 3422
+        },
+        {
+          "at": 2278,
+          "before": 3171
+        },
+        {
+          "at": 2301,
+          "before": 3334
+        },
+        {
+          "at": 2304,
+          "before": 3201
+        },
+        {
+          "at": 2327,
+          "before": 3334
+        },
+        {
+          "at": 2330,
+          "before": 3231
+        },
+        {
+          "at": 2353,
+          "before": 3334
+        },
+        {
+          "at": 2356,
+          "before": 3256
+        },
+        {
+          "at": 2378,
+          "before": 3334
+        },
+        {
+          "at": 2381,
+          "before": 3281
+        },
+        {
+          "at": 2403,
+          "before": 3334
+        },
+        {
+          "at": 2406,
+          "before": 3306
+        },
+        {
+          "at": 2428,
+          "before": 3334
+        },
+        {
+          "at": 2431,
+          "before": 3331
+        },
+        {
+          "at": 2453,
+          "before": 3334
+        },
+        {
+          "at": 2523,
+          "before": 8322
+        },
+        {
+          "at": 2526,
+          "before": 3709
+        },
+        {
+          "at": 2531,
+          "before": 3631
+        },
+        {
+          "at": 2676,
+          "before": 3706
+        },
+        {
+          "at": 2735,
+          "before": 8322
+        },
+        {
+          "at": 2738,
+          "before": 4176
+        },
+        {
+          "at": 2743,
+          "before": 3856
+        },
+        {
+          "at": 2845,
+          "before": 4173
+        },
+        {
+          "at": 2884,
+          "before": 4040
+        },
+        {
+          "at": 2978,
+          "before": 4173
+        },
+        {
+          "at": 3078,
+          "before": 8322
+        },
+        {
+          "at": 3081,
+          "before": 4256
+        },
+        {
+          "at": 3086,
+          "before": 4236
+        },
+        {
+          "at": 3103,
+          "before": 4236
+        },
+        {
+          "at": 3146,
+          "before": 8322
+        },
+        {
+          "at": 3149,
+          "before": 4649
+        },
+        {
+          "at": 3154,
+          "before": 4427
+        },
+        {
+          "at": 3214,
+          "before": 4382
+        },
+        {
+          "at": 3240,
+          "before": 4415
+        },
+        {
+          "at": 3276,
+          "before": 4509
+        },
+        {
+          "at": 3343,
+          "before": 4646
+        },
+        {
+          "at": 3346,
+          "before": 4557
+        },
+        {
+          "at": 3391,
+          "before": 4646
+        },
+        {
+          "at": 3394,
+          "before": 4646
+        },
+        {
+          "at": 3422,
+          "before": 4646
+        },
+        {
+          "at": 3463,
+          "before": 8322
+        },
+        {
+          "at": 3466,
+          "before": 5194
+        },
+        {
+          "at": 3471,
+          "before": 4939
+        },
+        {
+          "at": 3692,
+          "before": 5191
+        },
+        {
+          "at": 3773,
+          "before": 5148
+        },
+        {
+          "at": 3842,
+          "before": 5191
+        },
+        {
+          "at": 3845,
+          "before": 5181
+        },
+        {
+          "at": 3871,
+          "before": 5191
+        },
+        {
+          "at": 3884,
+          "before": 8322
+        },
+        {
+          "at": 3887,
+          "before": 5571
+        },
+        {
+          "at": 3892,
+          "before": 5551
+        },
+        {
+          "at": 4169,
+          "before": 8322
+        },
+        {
+          "at": 4172,
+          "before": 5864
+        },
+        {
+          "at": 4177,
+          "before": 5697
+        },
+        {
+          "at": 4262,
+          "before": 5861
+        },
+        {
+          "at": 4386,
+          "before": 8322
+        },
+        {
+          "at": 4389,
+          "before": 6153
+        },
+        {
+          "at": 4394,
+          "before": 6075
+        },
+        {
+          "at": 4544,
+          "before": 6150
+        },
+        {
+          "at": 4603,
+          "before": 8322
+        },
+        {
+          "at": 4606,
+          "before": 6620
+        },
+        {
+          "at": 4611,
+          "before": 6300
+        },
+        {
+          "at": 4713,
+          "before": 6617
+        },
+        {
+          "at": 4752,
+          "before": 6484
+        },
+        {
+          "at": 4846,
+          "before": 6617
+        },
+        {
+          "at": 4946,
+          "before": 8322
+        },
+        {
+          "at": 4949,
+          "before": 6710
+        },
+        {
+          "at": 4954,
+          "before": 6680
+        },
+        {
+          "at": 4971,
+          "before": 6680
+        },
+        {
+          "at": 5020,
+          "before": 8322
+        },
+        {
+          "at": 5023,
+          "before": 7050
+        },
+        {
+          "at": 5028,
+          "before": 6848
+        },
+        {
+          "at": 5127,
+          "before": 6925
+        },
+        {
+          "at": 5179,
+          "before": 7047
+        },
+        {
+          "at": 5182,
+          "before": 6958
+        },
+        {
+          "at": 5212,
+          "before": 7047
+        },
+        {
+          "at": 5215,
+          "before": 7047
+        },
+        {
+          "at": 5243,
+          "before": 7047
+        },
+        {
+          "at": 5284,
+          "before": 8322
+        },
+        {
+          "at": 5287,
+          "before": 7607
+        },
+        {
+          "at": 5292,
+          "before": 7342
+        },
+        {
+          "at": 5521,
+          "before": 7604
+        },
+        {
+          "at": 5602,
+          "before": 7561
+        },
+        {
+          "at": 5671,
+          "before": 7604
+        },
+        {
+          "at": 5674,
+          "before": 7594
+        },
+        {
+          "at": 5700,
+          "before": 7604
+        },
+        {
+          "at": 5713,
+          "before": 8322
+        },
+        {
+          "at": 5716,
+          "before": 7934
+        },
+        {
+          "at": 5721,
+          "before": 7931
+        },
+        {
+          "at": 5738,
+          "before": 7921
+        },
+        {
+          "at": 5749,
+          "before": 7750
+        },
+        {
+          "at": 5824,
+          "before": 7781
+        },
+        {
+          "at": 5947,
+          "before": 7931
+        },
+        {
+          "at": 5960,
+          "before": 8322
+        },
+        {
+          "at": 5963,
+          "before": 8163
+        },
+        {
+          "at": 5968,
+          "before": 8160
+        },
+        {
+          "at": 5985,
+          "before": 8150
+        },
+        {
+          "at": 6116,
+          "before": 8160
+        },
+        {
+          "at": 6129,
+          "before": 8322
+        },
+        {
+          "at": 6132,
+          "before": 8319
+        },
+        {
+          "at": 6137,
+          "before": 8299
+        },
+        {
+          "at": 6245,
+          "before": 8322
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.Tick",
+      "index": 84009,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "54491846b733efcd09aa60c1777ca5a47de6e2f0d880ae72aa2b38268b89a9f0",
+      "jumps": [
+        {
+          "at": 12,
+          "before": 459
+        },
+        {
+          "at": 39,
+          "before": 456
+        },
+        {
+          "at": 44,
+          "before": 441
+        },
+        {
+          "at": 108,
+          "before": 331
+        },
+        {
+          "at": 276,
+          "before": 441
+        },
+        {
+          "at": 318,
+          "before": 459
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.Render",
+      "index": 84011,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "33bc5e07092472c050948f3100c9ece975966a81dc15321552d40406997cde76",
+      "jumps": [
+        {
+          "at": 1,
+          "before": 15
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_SkillExchange.StartSkillExchange",
+      "index": 91881,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "efe44b27053d2fb80df729b364f276be68999cad581ec69d36322ea119b22070",
+      "jumps": [
+        {
+          "at": 2,
+          "before": 185
+        },
+        {
+          "at": 605,
+          "before": 927
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_SkillExchange.Tick",
+      "index": 91931,
+      "at": 265,
+      "memoryAt": 373,
+      "stockSha256": "dcf604455ef214a853662573a91cbc41e1234202ae2e374eb1236c4f1c7a821e",
+      "jumps": [
+        {
+          "at": 150,
+          "before": 268
+        },
+        {
+          "at": 250,
+          "before": 15359
+        },
+        {
+          "at": 277,
+          "before": 399
+        },
+        {
+          "at": 281,
+          "before": 15359
+        },
+        {
+          "at": 284,
+          "before": 559
+        },
+        {
+          "at": 288,
+          "before": 526
+        },
+        {
+          "at": 342,
+          "before": 514
+        },
+        {
+          "at": 371,
+          "before": 556
+        },
+        {
+          "at": 397,
+          "before": 15359
+        },
+        {
+          "at": 400,
+          "before": 1138
+        },
+        {
+          "at": 405,
+          "before": 695
+        },
+        {
+          "at": 459,
+          "before": 695
+        },
+        {
+          "at": 530,
+          "before": 1135
+        },
+        {
+          "at": 557,
+          "before": 1023
+        },
+        {
+          "at": 709,
+          "before": 1109
+        },
+        {
+          "at": 712,
+          "before": 1074
+        },
+        {
+          "at": 744,
+          "before": 1109
+        },
+        {
+          "at": 747,
+          "before": 1094
+        },
+        {
+          "at": 760,
+          "before": 1109
+        },
+        {
+          "at": 796,
+          "before": 15359
+        },
+        {
+          "at": 799,
+          "before": 2596
+        },
+        {
+          "at": 804,
+          "before": 1702
+        },
+        {
+          "at": 896,
+          "before": 1385
+        },
+        {
+          "at": 995,
+          "before": 1463
+        },
+        {
+          "at": 1211,
+          "before": 2253
+        },
+        {
+          "at": 1246,
+          "before": 1859
+        },
+        {
+          "at": 1328,
+          "before": 2215
+        },
+        {
+          "at": 1429,
+          "before": 2005
+        },
+        {
+          "at": 1434,
+          "before": 2010
+        },
+        {
+          "at": 1439,
+          "before": 2030
+        },
+        {
+          "at": 1452,
+          "before": 2212
+        },
+        {
+          "at": 1455,
+          "before": 2050
+        },
+        {
+          "at": 1468,
+          "before": 2212
+        },
+        {
+          "at": 1510,
+          "before": 2197
+        },
+        {
+          "at": 1567,
+          "before": 2209
+        },
+        {
+          "at": 1578,
+          "before": 2212
+        },
+        {
+          "at": 1581,
+          "before": 2227
+        },
+        {
+          "at": 1614,
+          "before": 2378
+        },
+        {
+          "at": 1704,
+          "before": 15359
+        },
+        {
+          "at": 1707,
+          "before": 2482
+        },
+        {
+          "at": 1775,
+          "before": 2593
+        },
+        {
+          "at": 1798,
+          "before": 2593
+        },
+        {
+          "at": 1824,
+          "before": 2593
+        },
+        {
+          "at": 1851,
+          "before": 2555
+        },
+        {
+          "at": 1854,
+          "before": 15359
+        },
+        {
+          "at": 1857,
+          "before": 3423
+        },
+        {
+          "at": 1862,
+          "before": 3062
+        },
+        {
+          "at": 1887,
+          "before": 2951
+        },
+        {
+          "at": 1932,
+          "before": 2748
+        },
+        {
+          "at": 1962,
+          "before": 2881
+        },
+        {
+          "at": 1965,
+          "before": 2788
+        },
+        {
+          "at": 1990,
+          "before": 2881
+        },
+        {
+          "at": 1993,
+          "before": 2837
+        },
+        {
+          "at": 2023,
+          "before": 2881
+        },
+        {
+          "at": 2097,
+          "before": 3009
+        },
+        {
+          "at": 2217,
+          "before": 3420
+        },
+        {
+          "at": 2233,
+          "before": 3351
+        },
+        {
+          "at": 2249,
+          "before": 3348
+        },
+        {
+          "at": 2303,
+          "before": 3345
+        },
+        {
+          "at": 2337,
+          "before": 3345
+        },
+        {
+          "at": 2374,
+          "before": 3348
+        },
+        {
+          "at": 2377,
+          "before": 3394
+        },
+        {
+          "at": 2380,
+          "before": 3382
+        },
+        {
+          "at": 2400,
+          "before": 3394
+        },
+        {
+          "at": 2433,
+          "before": 15359
+        },
+        {
+          "at": 2436,
+          "before": 4691
+        },
+        {
+          "at": 2441,
+          "before": 4049
+        },
+        {
+          "at": 2477,
+          "before": 3561
+        },
+        {
+          "at": 2539,
+          "before": 3966
+        },
+        {
+          "at": 2542,
+          "before": 3639
+        },
+        {
+          "at": 2605,
+          "before": 3966
+        },
+        {
+          "at": 2608,
+          "before": 3951
+        },
+        {
+          "at": 2708,
+          "before": 3948
+        },
+        {
+          "at": 2742,
+          "before": 3948
+        },
+        {
+          "at": 2841,
+          "before": 3966
+        },
+        {
+          "at": 2914,
+          "before": 4688
+        },
+        {
+          "at": 2953,
+          "before": 4464
+        },
+        {
+          "at": 3049,
+          "before": 4286
+        },
+        {
+          "at": 3076,
+          "before": 4461
+        },
+        {
+          "at": 3079,
+          "before": 4352
+        },
+        {
+          "at": 3118,
+          "before": 4461
+        },
+        {
+          "at": 3121,
+          "before": 4458
+        },
+        {
+          "at": 3188,
+          "before": 4461
+        },
+        {
+          "at": 3194,
+          "before": 4503
+        },
+        {
+          "at": 3197,
+          "before": 4503
+        },
+        {
+          "at": 3224,
+          "before": 4566
+        },
+        {
+          "at": 3268,
+          "before": 4662
+        },
+        {
+          "at": 3271,
+          "before": 4650
+        },
+        {
+          "at": 3332,
+          "before": 4662
+        },
+        {
+          "at": 3365,
+          "before": 15359
+        },
+        {
+          "at": 3368,
+          "before": 4934
+        },
+        {
+          "at": 3373,
+          "before": 4859
+        },
+        {
+          "at": 3500,
+          "before": 4931
+        },
+        {
+          "at": 3556,
+          "before": 15359
+        },
+        {
+          "at": 3559,
+          "before": 5178
+        },
+        {
+          "at": 3564,
+          "before": 5103
+        },
+        {
+          "at": 3692,
+          "before": 5175
+        },
+        {
+          "at": 3748,
+          "before": 15359
+        },
+        {
+          "at": 3751,
+          "before": 5729
+        },
+        {
+          "at": 3756,
+          "before": 5509
+        },
+        {
+          "at": 3859,
+          "before": 5439
+        },
+        {
+          "at": 3925,
+          "before": 5451
+        },
+        {
+          "at": 3974,
+          "before": 5726
+        },
+        {
+          "at": 4041,
+          "before": 5635
+        },
+        {
+          "at": 4061,
+          "before": 5647
+        },
+        {
+          "at": 4131,
+          "before": 15359
+        },
+        {
+          "at": 4134,
+          "before": 6571
+        },
+        {
+          "at": 4139,
+          "before": 5850
+        },
+        {
+          "at": 4249,
+          "before": 6568
+        },
+        {
+          "at": 4276,
+          "before": 6456
+        },
+        {
+          "at": 4309,
+          "before": 6084
+        },
+        {
+          "at": 4334,
+          "before": 6052
+        },
+        {
+          "at": 4350,
+          "before": 6083
+        },
+        {
+          "at": 4353,
+          "before": 6080
+        },
+        {
+          "at": 4374,
+          "before": 6083
+        },
+        {
+          "at": 4382,
+          "before": 6208
+        },
+        {
+          "at": 4469,
+          "before": 6407
+        },
+        {
+          "at": 4630,
+          "before": 6542
+        },
+        {
+          "at": 4633,
+          "before": 6507
+        },
+        {
+          "at": 4665,
+          "before": 6542
+        },
+        {
+          "at": 4668,
+          "before": 6527
+        },
+        {
+          "at": 4681,
+          "before": 6542
+        },
+        {
+          "at": 4717,
+          "before": 15359
+        },
+        {
+          "at": 4720,
+          "before": 6942
+        },
+        {
+          "at": 4725,
+          "before": 6820
+        },
+        {
+          "at": 4750,
+          "before": 6788
+        },
+        {
+          "at": 4931,
+          "before": 6939
+        },
+        {
+          "at": 4988,
+          "before": 15359
+        },
+        {
+          "at": 4991,
+          "before": 7676
+        },
+        {
+          "at": 4996,
+          "before": 7058
+        },
+        {
+          "at": 5071,
+          "before": 7290
+        },
+        {
+          "at": 5110,
+          "before": 7204
+        },
+        {
+          "at": 5174,
+          "before": 7287
+        },
+        {
+          "at": 5177,
+          "before": 7281
+        },
+        {
+          "at": 5235,
+          "before": 7287
+        },
+        {
+          "at": 5241,
+          "before": 7287
+        },
+        {
+          "at": 5244,
+          "before": 7673
+        },
+        {
+          "at": 5247,
+          "before": 7402
+        },
+        {
+          "at": 5328,
+          "before": 7673
+        },
+        {
+          "at": 5331,
+          "before": 7543
+        },
+        {
+          "at": 5359,
+          "before": 7540
+        },
+        {
+          "at": 5429,
+          "before": 7673
+        },
+        {
+          "at": 5432,
+          "before": 7673
+        },
+        {
+          "at": 5460,
+          "before": 7673
+        },
+        {
+          "at": 5526,
+          "before": 15359
+        },
+        {
+          "at": 5529,
+          "before": 8188
+        },
+        {
+          "at": 5534,
+          "before": 7944
+        },
+        {
+          "at": 5713,
+          "before": 8185
+        },
+        {
+          "at": 5752,
+          "before": 8139
+        },
+        {
+          "at": 5849,
+          "before": 8159
+        },
+        {
+          "at": 5886,
+          "before": 15359
+        },
+        {
+          "at": 5889,
+          "before": 8525
+        },
+        {
+          "at": 5894,
+          "before": 8440
+        },
+        {
+          "at": 6073,
+          "before": 8522
+        },
+        {
+          "at": 6135,
+          "before": 15359
+        },
+        {
+          "at": 6138,
+          "before": 8851
+        },
+        {
+          "at": 6143,
+          "before": 8766
+        },
+        {
+          "at": 6319,
+          "before": 8848
+        },
+        {
+          "at": 6381,
+          "before": 15359
+        },
+        {
+          "at": 6384,
+          "before": 9391
+        },
+        {
+          "at": 6389,
+          "before": 8982
+        },
+        {
+          "at": 6505,
+          "before": 9388
+        },
+        {
+          "at": 6532,
+          "before": 9236
+        },
+        {
+          "at": 6642,
+          "before": 9362
+        },
+        {
+          "at": 6645,
+          "before": 9287
+        },
+        {
+          "at": 6677,
+          "before": 9362
+        },
+        {
+          "at": 6680,
+          "before": 9307
+        },
+        {
+          "at": 6693,
+          "before": 9362
+        },
+        {
+          "at": 6696,
+          "before": 9327
+        },
+        {
+          "at": 6709,
+          "before": 9362
+        },
+        {
+          "at": 6712,
+          "before": 9347
+        },
+        {
+          "at": 6725,
+          "before": 9362
+        },
+        {
+          "at": 6761,
+          "before": 15359
+        },
+        {
+          "at": 6764,
+          "before": 9635
+        },
+        {
+          "at": 6769,
+          "before": 9550
+        },
+        {
+          "at": 6891,
+          "before": 9632
+        },
+        {
+          "at": 6953,
+          "before": 15359
+        },
+        {
+          "at": 6956,
+          "before": 9870
+        },
+        {
+          "at": 6961,
+          "before": 9795
+        },
+        {
+          "at": 7084,
+          "before": 9867
+        },
+        {
+          "at": 7140,
+          "before": 15359
+        },
+        {
+          "at": 7143,
+          "before": 10186
+        },
+        {
+          "at": 7148,
+          "before": 10153
+        },
+        {
+          "at": 7236,
+          "before": 10083
+        },
+        {
+          "at": 7292,
+          "before": 10134
+        },
+        {
+          "at": 7330,
+          "before": 10183
+        },
+        {
+          "at": 7356,
+          "before": 15359
+        },
+        {
+          "at": 7359,
+          "before": 10428
+        },
+        {
+          "at": 7364,
+          "before": 10386
+        },
+        {
+          "at": 7487,
+          "before": 10425
+        },
+        {
+          "at": 7518,
+          "before": 15359
+        },
+        {
+          "at": 7521,
+          "before": 10662
+        },
+        {
+          "at": 7526,
+          "before": 10523
+        },
+        {
+          "at": 7588,
+          "before": 10659
+        },
+        {
+          "at": 7597,
+          "before": 10642
+        },
+        {
+          "at": 7617,
+          "before": 10622
+        },
+        {
+          "at": 7660,
+          "before": 10639
+        },
+        {
+          "at": 7680,
+          "before": 10659
+        },
+        {
+          "at": 7700,
+          "before": 15359
+        },
+        {
+          "at": 7703,
+          "before": 11016
+        },
+        {
+          "at": 7708,
+          "before": 10779
+        },
+        {
+          "at": 7788,
+          "before": 11013
+        },
+        {
+          "at": 7814,
+          "before": 10922
+        },
+        {
+          "at": 7838,
+          "before": 10907
+        },
+        {
+          "at": 7873,
+          "before": 10919
+        },
+        {
+          "at": 7884,
+          "before": 10934
+        },
+        {
+          "at": 7954,
+          "before": 15359
+        },
+        {
+          "at": 7957,
+          "before": 12042
+        },
+        {
+          "at": 7962,
+          "before": 11310
+        },
+        {
+          "at": 8030,
+          "before": 11299
+        },
+        {
+          "at": 8096,
+          "before": 11299
+        },
+        {
+          "at": 8159,
+          "before": 11656
+        },
+        {
+          "at": 8198,
+          "before": 11456
+        },
+        {
+          "at": 8262,
+          "before": 11653
+        },
+        {
+          "at": 8265,
+          "before": 11533
+        },
+        {
+          "at": 8323,
+          "before": 11653
+        },
+        {
+          "at": 8326,
+          "before": 11647
+        },
+        {
+          "at": 8331,
+          "before": 11616
+        },
+        {
+          "at": 8386,
+          "before": 11644
+        },
+        {
+          "at": 8413,
+          "before": 11653
+        },
+        {
+          "at": 8419,
+          "before": 11653
+        },
+        {
+          "at": 8422,
+          "before": 12039
+        },
+        {
+          "at": 8425,
+          "before": 11768
+        },
+        {
+          "at": 8506,
+          "before": 12039
+        },
+        {
+          "at": 8509,
+          "before": 11909
+        },
+        {
+          "at": 8537,
+          "before": 11906
+        },
+        {
+          "at": 8607,
+          "before": 12039
+        },
+        {
+          "at": 8610,
+          "before": 12039
+        },
+        {
+          "at": 8638,
+          "before": 12039
+        },
+        {
+          "at": 8704,
+          "before": 15359
+        },
+        {
+          "at": 8707,
+          "before": 12169
+        },
+        {
+          "at": 8712,
+          "before": 12115
+        },
+        {
+          "at": 8760,
+          "before": 12166
+        },
+        {
+          "at": 8803,
+          "before": 15359
+        },
+        {
+          "at": 8806,
+          "before": 12588
+        },
+        {
+          "at": 8811,
+          "before": 12498
+        },
+        {
+          "at": 8836,
+          "before": 12498
+        },
+        {
+          "at": 8910,
+          "before": 12445
+        },
+        {
+          "at": 9065,
+          "before": 12585
+        },
+        {
+          "at": 9098,
+          "before": 15359
+        },
+        {
+          "at": 9101,
+          "before": 13034
+        },
+        {
+          "at": 9106,
+          "before": 12806
+        },
+        {
+          "at": 9271,
+          "before": 13031
+        },
+        {
+          "at": 9310,
+          "before": 12993
+        },
+        {
+          "at": 9403,
+          "before": 13005
+        },
+        {
+          "at": 9436,
+          "before": 15359
+        },
+        {
+          "at": 9439,
+          "before": 13469
+        },
+        {
+          "at": 9444,
+          "before": 13165
+        },
+        {
+          "at": 9560,
+          "before": 13466
+        },
+        {
+          "at": 9587,
+          "before": 13314
+        },
+        {
+          "at": 9624,
+          "before": 13440
+        },
+        {
+          "at": 9627,
+          "before": 13365
+        },
+        {
+          "at": 9659,
+          "before": 13440
+        },
+        {
+          "at": 9662,
+          "before": 13385
+        },
+        {
+          "at": 9675,
+          "before": 13440
+        },
+        {
+          "at": 9678,
+          "before": 13405
+        },
+        {
+          "at": 9691,
+          "before": 13440
+        },
+        {
+          "at": 9694,
+          "before": 13425
+        },
+        {
+          "at": 9707,
+          "before": 13440
+        },
+        {
+          "at": 9743,
+          "before": 15359
+        },
+        {
+          "at": 9746,
+          "before": 13882
+        },
+        {
+          "at": 9751,
+          "before": 13807
+        },
+        {
+          "at": 9768,
+          "before": 13622
+        },
+        {
+          "at": 9868,
+          "before": 13703
+        },
+        {
+          "at": 10016,
+          "before": 13879
+        },
+        {
+          "at": 10072,
+          "before": 15359
+        },
+        {
+          "at": 10075,
+          "before": 14010
+        },
+        {
+          "at": 10080,
+          "before": 13977
+        },
+        {
+          "at": 10142,
+          "before": 14007
+        },
+        {
+          "at": 10168,
+          "before": 15359
+        },
+        {
+          "at": 10171,
+          "before": 14485
+        },
+        {
+          "at": 10176,
+          "before": 14175
+        },
+        {
+          "at": 10284,
+          "before": 14268
+        },
+        {
+          "at": 10350,
+          "before": 15359
+        },
+        {
+          "at": 10353,
+          "before": 14482
+        },
+        {
+          "at": 10407,
+          "before": 14437
+        },
+        {
+          "at": 10467,
+          "before": 14456
+        },
+        {
+          "at": 10503,
+          "before": 15359
+        },
+        {
+          "at": 10506,
+          "before": 14602
+        },
+        {
+          "at": 10511,
+          "before": 14546
+        },
+        {
+          "at": 10551,
+          "before": 14599
+        },
+        {
+          "at": 10596,
+          "before": 15359
+        },
+        {
+          "at": 10599,
+          "before": 14704
+        },
+        {
+          "at": 10604,
+          "before": 14684
+        },
+        {
+          "at": 10674,
+          "before": 15359
+        },
+        {
+          "at": 10677,
+          "before": 15233
+        },
+        {
+          "at": 10682,
+          "before": 14776
+        },
+        {
+          "at": 10729,
+          "before": 15230
+        },
+        {
+          "at": 10871,
+          "before": 15154
+        },
+        {
+          "at": 11047,
+          "before": 15359
+        },
+        {
+          "at": 11050,
+          "before": 15356
+        },
+        {
+          "at": 11055,
+          "before": 15336
+        },
+        {
+          "at": 11138,
+          "before": 15359
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_SkillExchange.Render",
+      "index": 92114,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "be28df7334ac7e23550bc4e972392853be1022a5f2d9b067811745015048a120",
+      "jumps": [
+        {
+          "at": 1,
+          "before": 15
+        },
+        {
+          "at": 237,
+          "before": 822
+        },
+        {
+          "at": 249,
+          "before": 453
+        },
+        {
+          "at": 322,
+          "before": 822
+        },
+        {
+          "at": 555,
+          "before": 877
+        },
+        {
+          "at": 609,
+          "before": 951
+        }
+      ]
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.GetMenuIndex",
+      "index": 83903,
+      "at": 0,
+      "memoryAt": 0,
+      "stockSha256": "159c745ce02d4b4cc46aa4d42419071ad363769a0a09fcdcd96c70ae5af0f4ad",
+      "jumps": [
+        {
+          "at": 1,
+          "before": 136
+        },
+        {
+          "at": 51,
+          "before": 81
+        },
+        {
+          "at": 58,
+          "before": 88
+        },
+        {
+          "at": 65,
+          "before": 96
+        },
+        {
+          "at": 73,
+          "before": 104
+        },
+        {
+          "at": 81,
+          "before": 130
+        },
+        {
+          "at": 86,
+          "before": 127
+        },
+        {
+          "at": 97,
+          "before": 130
+        },
+        {
+          "at": 106,
+          "before": 230
+        },
+        {
+          "at": 120,
+          "before": 162
+        },
+        {
+          "at": 127,
+          "before": 169
+        },
+        {
+          "at": 134,
+          "before": 177
+        },
+        {
+          "at": 142,
+          "before": 185
+        },
+        {
+          "at": 150,
+          "before": 193
+        },
+        {
+          "at": 158,
+          "before": 219
+        },
+        {
+          "at": 163,
+          "before": 216
+        },
+        {
+          "at": 174,
+          "before": 219
+        },
+        {
+          "at": 180,
+          "before": 227
+        }
+      ]
+    }
+  ],
+  "supportFunctions": [
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.GetMenuIndex",
+      "export": 83904,
+      "body": "E0gBANPYAAAAAAAAvUcBAAAAAAAAAAAAv0cBAAAAAAA8AQAA4ycAAPEAAADFAAAAB4gAGRkBXDkAAAkAPsoBAAABPsoBAAoANmUAAAAbwXwAAAAAAAAWBb9HAQAAAL9HAQAKUQAkAAQlClgAJAIEJgpgACQDBCwCCmgAJAQELAMKggAkBQd/AC0BsUcBAAQmBoIABCwECv//BuYABb9HAQAAAL9HAQAKogAkAAQlCqkAJAEEJgqxACQCBCwCCrkAJAMELAMKwQAkBAQsBArbACQFB9gALQGxRwEABCYG2wAELAUK4wAkBgQsBQr//wQ6vkcBAFMAAAACAAIAnW0AAAAAAAA="
+    },
+    {
+      "name": "BrgUIMenu_ItemVendingMachine.RefreshDisassembleSteroidMenu",
+      "export": 84043,
+      "body": "nkgBANPYAAAAAAAAR0gBAAAAAAAAAAAASkgBAAAAAABBCAAAGg8BAG8BAAD7AAAAFC01mUcBAJpHAQAAARolAaFHAQAnHGZIAQAWDwBJSAEANjWYRwEAmkcBAAAAGiUBoUcBAA8ASEgBADY1mEcBAJpHAQAAABomAaFHAQAH6gAtAEpIAQAZGQFcOQAACQAWygEAAAEWygEAMwAAAAAAABu78wAAAAAAABudbQAAAAAAACQGFoKaAElIAQAlFhgNAJoASEgBACUWFhYGbAEZGQFcOQAACQAWygEAAAEWygEAFwAAAAAAABu78wAAAAAAACWaAElIAQAlFhYZGQFcOQAACQAWygEAAAEWygEAFwAAAAAAABu78wAAAAAAACaaAEhIAQAlFhYEC1MAAAADAAQA6+cAAAAAAAA="
+    }
+  ]
+}

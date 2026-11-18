@@ -1,0 +1,5 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const c=require('../runtime/tfc-companion'),profile=require('../runtime/kernel/src/native-preconditions-26639365.json'),exe=process.env.LID_26639365_EXE;
+test('TFC 26639365 native components compose/remove exactly and preserve independent bytes',{skip:!exe},()=>{const b=fs.readFileSync(exe),foreign=Buffer.from(b);foreign[0x100000]^=1;for(const config of [{warp:true,vending:false},{warp:false,vending:true},{warp:true,vending:true}]){const on=c.compose(foreign,config);assert.equal(on[0x100000],foreign[0x100000]);assert(c.reconcile(foreign,on,on).equals(foreign));const bad=Buffer.from(on);bad[bad.length-1]^=1;assert.throws(()=>c.reconcile(foreign,on,bad),/Owned native/);}});
+test('TFC 26639365 native dependency mutations are rejected',{skip:!exe},()=>{const b=fs.readFileSync(exe),e=profile.expected[0],s=profile.stock.layout.sections.find(s=>e.rva>=s.rva&&e.rva<s.rva+s.rawSize);b[s.raw+e.rva-s.rva]^=1;assert.throws(()=>c.compose(b,{warp:true,vending:false}),/stock/);assert.throws(()=>c.compose(b,{warp:false,vending:true}),/Conflicting native/);});

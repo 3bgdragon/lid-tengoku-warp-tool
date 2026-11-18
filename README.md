@@ -1,5 +1,7 @@
 # LET IT DIE Standard Tengoku Start-Floor Selector
 
+> Candidate 1.5.6-rc.1: LET IT DIE 5.0.6.0 / Steam build 26639365 support. New Deathroid disassembly behavior is preserved. [Validation and limitations](BUILD-26639365-VALIDATION.md). Live gameplay is not yet verified. Standalone and TFC editions remain separate.
+
 ## Steam build 25923506 compatibility update (2026-10-23)
 
 Uses separately reviewed native locations and/or build-specific UPK object/name references. Unknown instruction conflicts are still blocked; old-build support is retained. [Validation and limits](BUILD-25923506-VALIDATION.md).

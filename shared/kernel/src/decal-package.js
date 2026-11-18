@@ -31,7 +31,7 @@ function patchFunction(original,p){
  return Buffer.concat([header,result,original.subarray(0x30+size)]);
 }
 function patchPackage(source,selectedPlan=plan){
- if(source.readUInt32LE(0x21)===173715){
+ if([173715,173769].includes(source.readUInt32LE(0x21))){
   const features=selectedPlan.features||['decals'],kind=features.includes('ammo')?(features.includes('decals')?'all':'ammo'):'decals';
   const language=require('./language').text('ko','en');
   return require('../../owned-functions').set(source,'vending','BrgGame.upk',kind+'-'+language);

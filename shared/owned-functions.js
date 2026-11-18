@@ -19,6 +19,13 @@ for(const language of ['ko','en']){
 const groups=new Map();
 // A separate reviewed catalog retains old-build receipts and never mixes refs.
 const currentCatalog=require('./owned-functions-25923506.json'),currentGroups=new Map();
+// 5.0.6 keeps its new vanilla Deathroid instructions; never reuse old ON bodies.
+const latestCatalog=require('./owned-functions-26639365.json'),latestGroups=new Map();
+for(const row of latestCatalog.objects){
+ const p={...row,off:Buffer.from(row.off,'base64'),on:Buffer.from(row.on,'base64')};
+ if(sha(p.off)!==row.offHash||sha(p.on)!==row.onHash)throw Error('Latest owned function evidence damaged');
+ const key=p.mod+'/'+p.file+'/'+p.index;if(!latestGroups.has(key))latestGroups.set(key,[]);latestGroups.get(key).push(p);
+}
 for(const row of currentCatalog.objects){
  const p={...row,off:Buffer.from(row.off,'base64'),on:Buffer.from(row.on,'base64')};
  if(sha(p.off)!==row.offHash||sha(p.on)!==row.onHash)throw Error('Current owned function evidence damaged');
@@ -90,7 +97,7 @@ function merge(bytes,variants,preset){
  const out=Buffer.from(bytes);for(const i of c.edits)out[i]=target[i];return out;
 }
 function objects(source,mod,file){
- const selected=file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173715?currentGroups:groups;
+ const selected=file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173769?latestGroups:file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173715?currentGroups:groups;
  const wanted=new Map([...selected.values()].filter(v=>v[0].mod===mod&&v[0].file===file).map(v=>[v[0].index,v]));
  if(!wanted.size)throw Error('No reviewed ownership plan: '+mod+'/'+file);
  const r=reader(source),count=source.readUInt32LE(0x21),rows=[];let at=source.readUInt32LE(0x25);
@@ -123,13 +130,13 @@ function owns(variants,preset){
  const v=variants[0];
  // Reviewed UI presets intentionally omit functions they do not own.
  if(v.mod==='vending'&&v.file==='BrgGame.upk'&&/^(?:decals|all|ammo)-(ko|en)$/.test(preset)&&
-    [...catalog.objects,...currentCatalog.objects].some(p=>p.mod===v.mod&&p.file===v.file&&p.preset===preset))return false;
+    [...catalog.objects,...currentCatalog.objects,...latestCatalog.objects].some(p=>p.mod===v.mod&&p.file===v.file&&p.preset===preset))return false;
  throw Error('Unknown scoped ownership preset: '+preset);
 }
 function isTick(v){return v[0].mod==='vending'&&v[0].file==='BrgGame.upk'&&v[0].index===91836;}
 function reviewed(bytes,variants){return bytes.equals(variants[0].off)||variants.some(p=>bytes.equals(p.on))||(isTick(variants)&&require('./kernel/src/tick-compat').identify(bytes,variants[0].off)!==null);}
 function set(source,mod,file,preset,{scopePreset=null}={}){
- const known=file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173715?currentCatalog:catalog;
+ const known=file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173769?latestCatalog:file==='BrgGame.upk'&&source.readUInt32LE(0x21)===173715?currentCatalog:catalog;
  if(!['off',...new Set(known.objects.filter(p=>p.mod===mod&&p.file===file).map(p=>p.preset))].includes(preset))throw Error('Unknown owned preset');
  if(scopePreset!==null&&!/^ammo-(ko|en)$/.test(scopePreset))throw Error('Invalid selective UI scope');
  const {r,rows}=objects(source,mod,file),replacements=rows.map(o=>({...o,next:scopePreset&&!owns(o.variants,scopePreset)?Buffer.from(o.bytes):merge(o.bytes,o.variants,preset)}));

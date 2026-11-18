@@ -65,7 +65,7 @@ function verifyPackages(packages,c){
   if(packages[file])require('./owned-functions').inspect(packages[file],mod,file);
  }
  for(const mod of ['warp','vending'])if(c[mod]){
-  if(mod==='warp'&&packages['BrgGame.upk'].readUInt32LE(0x21)===173715){
+  if(mod==='warp'&&[173715,173769].includes(packages['BrgGame.upk'].readUInt32LE(0x21))){
    const owned=require('./owned-functions');
    for(const file of ['BrgGame.upk','Heaven_A01_ST_COL.upk'])if(owned.inspect(packages[file],'warp',file)!=='on')throw Error('Install matching current-build warp TFC instructions first: '+file);
    continue;
@@ -94,7 +94,7 @@ function verifyPackages(packages,c){
 function compose(base,c){
  let result=Buffer.from(base);
  if(c.warp){
-  const definitions=[{baseSha1:'802B3E1181DEA1FB29CE9CA331161922902B9827',enablePatch:'25386710-native-enable.lidbin',disablePatch:'25386710-native-disable.lidbin'},require('./tfc-assets/native-definition-25767944.json'),require('./tfc-assets/native-definition-25923506.json')];
+  const definitions=[{baseSha1:'802B3E1181DEA1FB29CE9CA331161922902B9827',enablePatch:'25386710-native-enable.lidbin',disablePatch:'25386710-native-disable.lidbin'},require('./tfc-assets/native-definition-25767944.json'),require('./tfc-assets/native-definition-25923506.json'),require('./tfc-assets/native-definition-26639365.json')];
   const def=definitions.find(d=>native.identify(result,d,assets)?.enabled===false);
   if(!def)throw Error('Expected supported stock native code; remove standalone native patches first.');
   const p=native.parsePatch(fs.readFileSync(path.join(assets,def.enablePatch))),b=Buffer.alloc(p.size);result.copy(b);for(const e of p.entries)e.bytes.copy(b,e.offset);result=b;

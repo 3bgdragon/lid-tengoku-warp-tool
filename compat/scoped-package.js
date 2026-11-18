@@ -56,6 +56,7 @@ function reader(data){
  return {table,headerLength,chunk,dirty,read:(a,n)=>range(a,n),write:(a,b)=>range(a,b.length,b)};
 }
 function inspect(source,plan){
+ if(source.readUInt32LE(0x21)===173769)plan=require('../assets/scoped-warp-26639365.json');
  if(source.readUInt32LE(0x21)===173715)plan=require('../assets/scoped-warp-25923506.json');
  const r=reader(source),count=source.readUInt32LE(0x21),wanted=new Map(plan.objects.map(p=>[p.index,p])),definitions=compile(plan),objects=[];
  if(count<plan.exportCount||count>200000)throw Error('Unsupported export table');
@@ -82,6 +83,7 @@ function inspect(source,plan){
  return {enabled:objects[0].enabled,objects,r};
 }
 function set(source,enable,plan){
+ if(source.readUInt32LE(0x21)===173769)plan=require('../assets/scoped-warp-26639365.json');
  if(source.readUInt32LE(0x21)===173715)plan=require('../assets/scoped-warp-25923506.json');
  const state=inspect(source,plan);if(state.enabled===enable)return source;
  const {r,objects}=state;

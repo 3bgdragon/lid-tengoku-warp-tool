@@ -1,0 +1,15 @@
+{
+  "baseSha1": "D1FEF538F24DECD741FEF48E4B7764B42745FDD8",
+  "patchedSha1": "5F292C933DA25E817A552A76F36A3D457065EEF8",
+  "baseSize": 45076480,
+  "patchedSize": 45080576,
+  "enablePatch": "26639365-native-enable.lidbin",
+  "disablePatch": "26639365-native-disable.lidbin",
+  "sectionRva": 268824576,
+  "flagRva": 268824576,
+  "floorRva": 268825600,
+  "pendingRva": 268827648,
+  "flagSize": 353,
+  "floorSize": 515,
+  "profile": "native-sites-26639365.json"
+}

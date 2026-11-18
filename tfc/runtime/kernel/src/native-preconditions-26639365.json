@@ -1,0 +1,217 @@
+{
+  "format": 1,
+  "build": 26639365,
+  "stock": {
+    "size": 45076480,
+    "layout": {
+      "pe": 368,
+      "machine": 34404,
+      "optional": 240,
+      "magic": 523,
+      "entry": 25988744,
+      "sectionAlignment": 4096,
+      "fileAlignment": 512,
+      "imageSize": 268824576,
+      "headerSize": 1024,
+      "sections": [
+        {
+          "name": ".text\u0000\u0000\u0000",
+          "virtualSize": 28825100,
+          "rva": 4096,
+          "rawSize": 28825600,
+          "raw": 1024,
+          "flags": 1610612768
+        },
+        {
+          "name": ".rdata\u0000\u0000",
+          "virtualSize": 12457664,
+          "rva": 28831744,
+          "rawSize": 12457984,
+          "raw": 28826624,
+          "flags": 1073741888
+        },
+        {
+          "name": ".data\u0000\u0000\u0000",
+          "virtualSize": 224374808,
+          "rva": 41291776,
+          "rawSize": 647680,
+          "raw": 41284608,
+          "flags": 3221225536
+        },
+        {
+          "name": ".pdata\u0000\u0000",
+          "virtualSize": 1213092,
+          "rva": 265670656,
+          "rawSize": 1213440,
+          "raw": 41932288,
+          "flags": 1073741888
+        },
+        {
+          "name": "_RDATA\u0000\u0000",
+          "virtualSize": 3568,
+          "rva": 266887168,
+          "rawSize": 3584,
+          "raw": 43145728,
+          "flags": 1073741888
+        },
+        {
+          "name": ".rsrc\u0000\u0000\u0000",
+          "virtualSize": 450760,
+          "rva": 266891264,
+          "rawSize": 451072,
+          "raw": 43149312,
+          "flags": 1073741888
+        },
+        {
+          "name": ".reloc\u0000\u0000",
+          "virtualSize": 1475864,
+          "rva": 267345920,
+          "rawSize": 1476096,
+          "raw": 43600384,
+          "flags": 1107296320
+        }
+      ]
+    }
+  },
+  "warp": {
+    "size": 45080576,
+    "layout": {
+      "pe": 368,
+      "machine": 34404,
+      "optional": 240,
+      "magic": 523,
+      "entry": 25988744,
+      "sectionAlignment": 4096,
+      "fileAlignment": 512,
+      "imageSize": 268828672,
+      "headerSize": 1024,
+      "sections": [
+        {
+          "name": ".text\u0000\u0000\u0000",
+          "virtualSize": 28825100,
+          "rva": 4096,
+          "rawSize": 28825600,
+          "raw": 1024,
+          "flags": 1610612768
+        },
+        {
+          "name": ".rdata\u0000\u0000",
+          "virtualSize": 12457664,
+          "rva": 28831744,
+          "rawSize": 12457984,
+          "raw": 28826624,
+          "flags": 1073741888
+        },
+        {
+          "name": ".data\u0000\u0000\u0000",
+          "virtualSize": 224374808,
+          "rva": 41291776,
+          "rawSize": 647680,
+          "raw": 41284608,
+          "flags": 3221225536
+        },
+        {
+          "name": ".pdata\u0000\u0000",
+          "virtualSize": 1213092,
+          "rva": 265670656,
+          "rawSize": 1213440,
+          "raw": 41932288,
+          "flags": 1073741888
+        },
+        {
+          "name": "_RDATA\u0000\u0000",
+          "virtualSize": 3568,
+          "rva": 266887168,
+          "rawSize": 3584,
+          "raw": 43145728,
+          "flags": 1073741888
+        },
+        {
+          "name": ".rsrc\u0000\u0000\u0000",
+          "virtualSize": 450760,
+          "rva": 266891264,
+          "rawSize": 451072,
+          "raw": 43149312,
+          "flags": 1073741888
+        },
+        {
+          "name": ".reloc\u0000\u0000",
+          "virtualSize": 1475864,
+          "rva": 267345920,
+          "rawSize": 1476096,
+          "raw": 43600384,
+          "flags": 1107296320
+        },
+        {
+          "name": ".lidtw\u0000\u0000",
+          "virtualSize": 4096,
+          "rva": 268824576,
+          "rawSize": 4096,
+          "raw": 45076480,
+          "flags": 3758096480
+        }
+      ]
+    }
+  },
+  "expected": [
+    {
+      "rva": 17838774,
+      "size": 32,
+      "hex": "e8456d2500e8408889ff9048897c2430488b4c24284885c97405e88bc8fdfeb0"
+    },
+    {
+      "rva": 18559488,
+      "size": 496,
+      "hex": "8b45af448bf685c00f8eb40000004c8d2d9bc9f6006666660f1f8400000000004963f84803fe4869ffbc0000004803f948897c243848897db774744885f6780e443bf07c294885f6750485c074204c8d0da33e9f0041b881020000488d15b69ca100488d0ddf9ca100e8d245f9fe488bde4869dbbc00000048035da77406488d5308eb0233d2488d4f08e861ecf7ff4c892f0fb683b80000008887b80000004c893f448b442430488b4c24288b45af41ffc648ffc6443bf00f8c62ffffff4c8b6d9f4403c0448944243033f6488d4da7e81b07f8ff90488d4d8fe8e17357ff41ffc4e9fdfdffff488975cf48c745d700000000488975ef48c745f70000000048c745ff000000004889750b8975138bde4c8b7dbf448b6c24200f1f800000000085db0f88b00000003b5c24300f8da60000004863c34869c0bc00000048034424288b70088b484883784001755349637f088d4f0141894f08418b570c3bca7e3041b804000000e8f59deefe4189470c498b0f4885c9750485c074158d14850000000041b808000000e8d3d0f2fe498907498b0f488d14b94885d2742a8932eb26894c242089742438488d442420488945834533c94c8d442438488d559f488d4dcfe86a80fcff4585ed780645396f087d07ffc3e948ffffff488d45cf488944243833f6897513488b4d0b4885c97409e8"
+    },
+    {
+      "rva": 20291584,
+      "size": 64,
+      "hex": "48895c2408574883ec20488b3dc3f24801e85a13f4ffe8a57df8ff0fb6c80fb6d8e89af8feff84db7417488bd733c9e8ecddffffb001488b5c24304883c4205f"
+    },
+    {
+      "rva": 18559072,
+      "size": 64,
+      "hex": "488bc4554154415541564157488d68a14881ecf000000048c745c7feffffff488958104889701848897820488b056eb664014833c44889452744894424204889"
+    },
+    {
+      "rva": 20323840,
+      "size": 64,
+      "hex": "40574883ec4048c7442420feffffff48895c245048896c24584889742460488bfa488bf133ed896a08396a0c7419896a0c488b0a4885c9740e33d2448d4508e8"
+    },
+    {
+      "rva": 114144,
+      "size": 32,
+      "hex": "48895c2418564883ec2066833a00488bf2488bd90f84bb00000048896c243048"
+    },
+    {
+      "rva": 113936,
+      "size": 32,
+      "hex": "48895c2418564883ec208b4208488bf2488bd985c00f84a700000048896c2430"
+    },
+    {
+      "rva": 916320,
+      "size": 32,
+      "hex": "40534883ec20488bd9488b0d704073024885c9750ce8e623b000488b0d5f4073"
+    }
+  ],
+  "vending": {
+    "selector": {
+      "hookRva": 18559815,
+      "appendRva": 18559821,
+      "mapRva": 18559904,
+      "nextRva": 18559942
+    },
+    "bootstrap": {
+      "hookRva": 17838774,
+      "dailyRva": 20291584,
+      "userRva": 41849424,
+      "selectRva": 18559072,
+      "stringifyRva": 20323840,
+      "appendLiteralRva": 114144,
+      "appendStringRva": 113936,
+      "dirtyRva": 260728592,
+      "freeRva": 916320
+    }
+  }
+}
