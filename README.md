@@ -22,7 +22,7 @@ TFC users must create a NEW preparation folder with this version, not reuse an
 old prepared package. [Exact scope and tests](FOREIGN-UI-VALIDATION.md).
 No gameplay settings or DB recipes were changed by this fix.
 
-TFC edition: [separate download](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.2-rc.1). The repository's `tfc/` is isolated; it is NOT included in the standalone ZIP. Do not mix installation modes.
+TFC edition: [separate download](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.4-rc.1). The repository's `tfc/` is isolated; it is NOT included in the standalone ZIP. Do not mix installation modes.
 
 Compatibility candidate **1.5.4-rc.1**: [rules and test evidence](COMPATIBILITY-VALIDATION.md).
 

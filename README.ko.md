@@ -25,7 +25,7 @@ TFC판은 일반판과 별도입니다. 새 빌드용 준비 폴더를 다시 �
 Nico·TFC의 실제 처리 엔진과 파일 복사본으로 검증했습니다. 이번 변경의 GUI·실게임 재검증은 미완료입니다.
 기존판과 TFC판은 별도 ZIP이며 혼용하지 마세요. [검증 범위와 한계](COMPATIBILITY-VALIDATION.md).
 
-TFC 전용판은 [별도 릴리스](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.2-rc.1)로 받으세요. 저장소의 tfc/ 폴더는 독립형 ZIP에 포함하지 않습니다. 두 설치 방식을 혼용하지 마세요.
+TFC 전용판은 [별도 릴리스](https://github.com/3bgdragon/lid-tengoku-warp-tool/releases/tag/tfc-v1.2.4-rc.1)로 받으세요. 저장소의 tfc/ 폴더는 독립형 ZIP에 포함하지 않습니다. 두 설치 방식을 혼용하지 마세요.
 
 ## UPK 편집기 호환 배치 — 시험 기능
 
